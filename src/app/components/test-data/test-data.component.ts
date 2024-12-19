@@ -35977,24 +35977,47 @@ export class TestDataComponent {
   };
   extractedData = this.extractPremiumData(this.quoteData.quotes[0].data);
 
+  // organizeBenefitsData = (data: any) => {
+  //   // Organize data by group_details and then by benefits_name
+  //   const organizedData: { [groupDetails: string]: { [benefitsName: string]: any[] } } = {};
+
+  //   data.forEach((category: any) => {
+  //     category.data.primary_benefits.forEach((benefit: any) => {
+  //       const { group_details, benefits_name, benefits_options } = benefit;
+
+  //       if (!organizedData[group_details]) {
+  //         organizedData[group_details] = {};
+  //       }
+
+  //       if (!organizedData[group_details][benefits_name]) {
+  //         organizedData[group_details][benefits_name] = [];
+  //       }
+
+  //       organizedData[group_details][benefits_name].push({
+  //         category_name: category.category_name,
+  //         benefits_options,
+  //       });
+  //     });
+  //   });
+
+  //   return organizedData;
+  // };
 
   organizeBenefitsData = (data: any) => {
-    // Organize data by group_details and then by benefits_name
-    const organizedData: { [groupDetails: string]: { [benefitsName: string]: any[] } } = {};
+    const organizedData: { [groupDetails: string]: any[] } = {};
 
+    // Iterate through each category
     data.forEach((category: any) => {
       category.data.primary_benefits.forEach((benefit: any) => {
         const { group_details, benefits_name, benefits_options } = benefit;
 
         if (!organizedData[group_details]) {
-          organizedData[group_details] = {};
+          organizedData[group_details] = []; // Initialize array if not already
         }
 
-        if (!organizedData[group_details][benefits_name]) {
-          organizedData[group_details][benefits_name] = [];
-        }
-
-        organizedData[group_details][benefits_name].push({
+        // Add benefits to the group details in the organized data
+        organizedData[group_details].push({
+          benefits_name,
           category_name: category.category_name,
           benefits_options,
         });
@@ -36007,119 +36030,8 @@ export class TestDataComponent {
 
   benifitsData = this.organizeBenefitsData(this.quoteData.quotes[0].data);
 
-
   async generateDocument() {
-    // const createBenefitsTable = (organizedData: any) => {
-    //   console.log("*******************", organizedData);
-    //   const tables: any[] = [];
-      
-    //   // Loop through each group detail (table title)
-    //   Object.keys(organizedData).forEach((groupDetail) => {
-    //     // Create the header row
-    //     const headerRow = new TableRow({
-    //       children: [
-    //         new TableCell({
-    //           children: [new Paragraph({ children: [new TextRun({ text: "Benefit Name", bold: true })] })],
-    //           width: { size: 30, type: WidthType.PERCENTAGE },
-    //         }),
-    //         ...Object.keys(organizedData[groupDetail]).map((benefitName) =>
-    //           new TableCell({
-    //             children: [
-    //               new Paragraph({
-    //                 children: [new TextRun({ text: benefitName, bold: true })],
-    //               }),
-    //             ],
-    //             width: { size: 70 / Object.keys(organizedData[groupDetail]).length, type: WidthType.PERCENTAGE },
-    //           })
-    //         ),
-    //       ],
-    //     });
-
-    //     // Create rows for each benefit under the group detail
-    //     const benefitRows: any[] = [];
-    //     Object.keys(organizedData[groupDetail]).forEach((benefitName) => {
-    //       const row = new TableRow({
-    //         children: [
-    //           new TableCell({
-    //             children: [new Paragraph({ text: benefitName })],
-    //           }),
-    //           ...organizedData[groupDetail][benefitName].map((category: any) =>
-    //             new TableCell({
-    //               children: [
-    //                 new Paragraph({
-    //                   text: category.benefits_options || "",
-    //                 }),
-    //               ],
-    //             })
-    //           ),
-    //         ],
-    //       });
-
-    //       benefitRows.push(row);
-    //     });
-
-    //     // Add the title and the table to the result
-    //     tables.push(
-    //       new Paragraph({
-    //         children: [new TextRun({ text: groupDetail, bold: true, size: 20 })],
-    //       }),
-    //       new Table({
-    //         rows: [headerRow, ...benefitRows],
-    //         width: { size: 100, type: WidthType.PERCENTAGE },
-    //       })
-    //     );
-    //   });
-
-    //   return tables;
-    // };
-    // const organizedData = this.organizeBenefitsData(this.quoteData.quotes[0].data);
-    // const tables = createBenefitsTable(organizedData);
-
-
-
-
-    // async function createBlueStripImage(): Promise<Uint8Array> {
-    //   // Create a simple blue strip (1x1 pixel image) and resize it to 300x50
-    //   const canvas = require('canvas');
-    //   const { createCanvas } = canvas;
-
-    //   const width = 1;
-    //   const height = 1;
-
-    //   const canvasInstance = createCanvas(width, height);
-    //   const ctx = canvasInstance.getContext('2d');
-
-    //   // Set color to blue
-    //   ctx.fillStyle = 'blue';
-    //   ctx.fillRect(0, 0, width, height);
-
-    //   // Return the image buffer
-    //   const buffer = canvasInstance.toBuffer('image/png');
-    //   return new Uint8Array(buffer);
-    // }
-
-    // const blueStripImage = await createBlueStripImage(); 
-
-    // const headerOptions= {
-    //   children: [
-    //     new Paragraph({
-    //       children: [
-    //         new ImageRun({
-    //           data: blueStripImage.buffer as ArrayBuffer, // Use the blue strip image
-    //           transformation: {
-    //             width: 300,  // Set width to 300px
-    //             height: 50,  // Set height to 50px
-    //           },
-    //           type: 'png',
-    //         }),
-    //       ],
-    //     }),
-    //   ],
-    // };
-
-    // const header = new Header(headerOptions);
-
-
+    console.log(this.benifitsData);
 
     // to give border to each cell 
     const defaultBorders = {
@@ -36296,66 +36208,70 @@ export class TestDataComponent {
       });
 
 
-
-
-    // const createBenefitsTable = (data: any) => {
-    //   // Extract unique group details (table titles)
-    //   const groupDetailsSet = new Set<string>();
-    //   data.forEach((category: any) => {
-    //     category.data.primary_benefits.forEach((benefit: any) => {
-    //       groupDetailsSet.add(benefit.group_details);
-    //     });
-    //   });
-
-    //   console.log(groupDetailsSet);
-
+    // const createBenefitsTable = (organizedData: any) => {
     //   const tables: any[] = [];
+    //   const totalColumns = organizedData.length + 1;
 
-    //   // Loop through each group detail to create separate tables
-    //   groupDetailsSet.forEach((groupDetail) => {
-    //     // Create the header row
+    //   // Loop through each group detail (e.g., "Policy Details")
+    //   Object.keys(organizedData).forEach((groupDetail) => {
+    //     const benefitsForGroup = organizedData[groupDetail];
+
+    //     // Create the header row for categories
     //     const headerRow = new TableRow({
     //       children: [
     //         new TableCell({
-    //           children: [new Paragraph({ children: [new TextRun({ text: "Benefit Name", bold: true })] })],
-    //           width: { size: 30, type: WidthType.PERCENTAGE },
+    //           children: [new Paragraph({ children: [new TextRun({ text: "Benefits", bold: true })] })],
+    //           width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
     //         }),
-    //         ...data.map((category: any) =>
+    //         ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) =>
     //           new TableCell({
     //             children: [
     //               new Paragraph({
-    //                 children: [new TextRun({ text: category.category_name, bold: true })],
+    //                 children: [new TextRun({ text: String(categoryName), bold: true })],
     //               }),
     //             ],
-    //             width: { size: 70 / data.length, type: WidthType.PERCENTAGE },
+    //             width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
     //           })
     //         ),
     //       ],
     //     });
 
-    //     // Create data rows for the current group detail
-    //     const benefitRows: any[] = [];
-    //     const relevantBenefits = data[0].data.primary_benefits.filter(
-    //       (benefit: any) => benefit.group_details === groupDetail
-    //     );
 
-    //     relevantBenefits.forEach((benefit: any) => {
+    //     const groupDetailRow = new TableRow({
+    //       children: [
+    //         new TableCell({
+    //           children: [new Paragraph({ children: [new TextRun({ text: groupDetail, bold: true, size: 16 })] })],
+    //           columnSpan: totalColumns, // This cell will span across all columns
+    //           width: { size: 100,type: WidthType.PERCENTAGE },
+    //         }),
+    //       ],
+    //     });
+
+
+    //     // Create rows for each benefit
+    //     const benefitRows: any[] = [];
+    //     const benefitNames = Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.benefits_name)));
+
+    //     benefitNames.forEach((benefitName) => {
     //       const row = new TableRow({
     //         children: [
     //           new TableCell({
-    //             children: [new Paragraph({ text: benefit.benefits_name })],
+    //             children: [new Paragraph({ text: String(benefitName) })],
+    //             width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
     //           }),
-    //           ...data.map((category: any) => {
-    //             const categoryBenefit = category.data.primary_benefits.find(
-    //               (b: any) => b.benefits_name === benefit.benefits_name && b.group_details === groupDetail
+    //           ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
+    //             // Find the benefit for the current category and benefit name
+    //             const benefit = benefitsForGroup.find(
+    //               (b: any) => b.benefits_name === benefitName && b.category_name === categoryName
     //             );
 
     //             return new TableCell({
     //               children: [
     //                 new Paragraph({
-    //                   text: categoryBenefit ? categoryBenefit.benefits_options : "",
+    //                   text: benefit && benefit.benefits_options ? benefit.benefits_options : "N/A",
     //                 }),
     //               ],
+    //               width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
     //             });
     //           }),
     //         ],
@@ -36364,13 +36280,13 @@ export class TestDataComponent {
     //       benefitRows.push(row);
     //     });
 
-    //     // Add title and the table to the result
+    //     // Add group detail title and the table to the result
     //     tables.push(
-    //       new Paragraph({
-    //         children: [new TextRun({ text: groupDetail, bold: true, size: 20 })],
-    //       }),
+    //       // new Paragraph({
+    //       //   children: [new TextRun({ text: groupDetail, bold: true, size: 20 })],
+    //       // }),
     //       new Table({
-    //         rows: [headerRow, ...benefitRows],
+    //         rows: [headerRow,groupDetailRow,  ...benefitRows],
     //         width: { size: 100, type: WidthType.PERCENTAGE },
     //       })
     //     );
@@ -36379,21 +36295,100 @@ export class TestDataComponent {
     //   return tables;
     // };
 
-    // const tables = createBenefitsTable(this.quoteData.quotes[0].data);
+    const createBenefitsTable = (organizedData: any) => {
+      const tables: any[] = [];
+      const totalColumns = organizedData.length + 1;
 
+      // Create the header row for categories only once, before the group detail rows
+      const headerRow = new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: "Benefits", bold: true })] })],
+            width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
+          }),
+          ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
+            .map((categoryName) =>
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [new TextRun({ text: String(categoryName), bold: true })],
+                  }),
+                ],
+                width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
+              })
+            ),
+        ],
+      });
 
+      // Add headerRow once to the table
+      tables.push(new Table({
+        rows: [headerRow],
+        width: { size: 100, type: WidthType.PERCENTAGE },
+      }));
 
+      // Loop through each group detail (e.g., "Policy Details")
+      Object.keys(organizedData).forEach((groupDetail) => {
+        const benefitsForGroup = organizedData[groupDetail];
 
+        // Create group detail row with the group title, this will span all columns
+        const groupDetailRow = new TableRow({
+          children: [
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: groupDetail, bold: true, size: 16 })] })],
+              columnSpan: totalColumns, // This cell will span across all columns
+              width: { size: 100, type: WidthType.PERCENTAGE },
+            }),
+          ],
+        });
 
-    // Adding the title and tables to the document
-    const docContent: any = {
-      children: [
-        new Paragraph({
-          children: [new TextRun({ text: "Categories & Benefits", bold: true, size: 24 })],
-        }),
-        // ...tables,  // Spread the tables returned from the function
-      ],
+        // Create rows for each benefit
+        const benefitRows: any[] = [];
+        const benefitNames = Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.benefits_name)));
+
+        benefitNames.forEach((benefitName) => {
+          const row = new TableRow({
+            children: [
+              new TableCell({
+                children: [new Paragraph({ text: String(benefitName) })],
+                width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
+              }),
+              ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
+                // Find the benefit for the current category and benefit name
+                const benefit = benefitsForGroup.find(
+                  (b: any) => b.benefits_name === benefitName && b.category_name === categoryName
+                );
+
+                return new TableCell({
+                  children: [
+                    new Paragraph({
+                      text: benefit && benefit.benefits_options ? benefit.benefits_options : "N/A",
+                    }),
+                  ],
+                  width: { size: 100 / totalColumns, type: WidthType.PERCENTAGE },
+                });
+              }),
+            ],
+          });
+
+          benefitRows.push(row);
+        });
+
+        // Add group detail row and its benefit rows
+        tables.push(
+          new Table({
+            rows: [groupDetailRow, ...benefitRows],
+            width: { size: 100, type: WidthType.PERCENTAGE },
+          })
+        );
+      });
+
+      return tables;
     };
+
+
+    const organizedData = this.organizeBenefitsData(this.quoteData.quotes[0].data);
+    const tables = createBenefitsTable(organizedData);
+
     // Create the Word document
     const doc = new Document({
       sections: [
@@ -36603,13 +36598,10 @@ export class TestDataComponent {
         },
 
         {
-
           children: [
-            tableTitle("Categories & Benifits"),
-            docContent?.children
+            ...tables
           ]
         },
-
 
         {
           children: await this.createImage('assets/img_last.png', 450, 220),
@@ -36621,8 +36613,76 @@ export class TestDataComponent {
           },
 
         },
+
+        {
+          children: [
+            new Table({
+              rows: [
+                // Header Row
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      children: [new Paragraph('Age Brackets')],
+                      width: { size: 20, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph('Member Count')],
+                      columnSpan: 3,
+                    }),
+                    new TableCell({
+                      children: [new Paragraph('Gross Premium per Member')],
+                      columnSpan: 3,
+                    }),
+                    new TableCell({
+                      children: [new Paragraph('Total Gross Premium')],
+                      columnSpan: 4,
+                    }),
+                  ],
+                }),
+                // Sub-Headers Row
+                new TableRow({
+                  children: [
+                    new TableCell({ children: [] }), // Empty for "Age Brackets"
+                    ...['Employees', 'Dependents', 'Maternity'].map(
+                      (text) =>
+                        new TableCell({
+                          children: [new Paragraph(text)],
+                        })
+                    ),
+                    ...['Employees', 'Dependents', 'Maternity'].map(
+                      (text) =>
+                        new TableCell({
+                          children: [new Paragraph(text)],
+                        })
+                    ),
+                    ...['Employees', 'Dependents', 'Maternity', 'Total'].map(
+                      (text) =>
+                        new TableCell({
+                          children: [new Paragraph(text)],
+                        })
+                    ),
+                  ],
+                }),
+                // Data Row
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      children: [new Paragraph('Total')],
+                    }),
+                    ...Array(10).fill(
+                      new TableCell({
+                        children: [new Paragraph('0')],
+                      })
+                    ),
+                  ],
+                }),
+              ],
+              width: { size: 100, type: WidthType.PERCENTAGE },
+            })
+          ]
+    }
       ],
-    });
+  });
 
 
 
@@ -36634,8 +36694,8 @@ export class TestDataComponent {
 
     // Save the Word document
     Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, 'output.docx');
-      console.log('Word document created!');
-    });
+  saveAs(blob, 'output.docx');
+  console.log('Word document created!');
+});
   }
 }
