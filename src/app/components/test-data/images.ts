@@ -1042,3 +1042,667 @@
 //   }
 // }
 
+// let quoteData = {
+//     "exclusion": [
+//         {
+//             "emirates": "Abu Dhabi",
+//             "exclusion": [
+//                 {
+//                     "heading": "1.\tHealthcare Services which are not medically necessary",
+//                     "bulletPoints": [],
+//                     "title": "other"
+//                 },
+//                 {
+//                     "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
+//                     "bulletPoints": [
+//                         "Non-medical treatment services.",
+//                         "Health-related services which do not seek to improve, or which do not result in a change in the medical condition of the patient."
+//                     ],
+//                     "title": "other"
+//                 },
+//             ]
+//         },
+//         {
+//             "emirates": "Dubai",
+//             "exclusion": [
+//                 {
+//                     "heading": "1.\tHealthcare Services which are not medically necessary",
+//                     "bulletPoints": [],
+//                     "title": "other"
+//                 },
+//                 {
+//                     "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
+//                     "bulletPoints": [],
+//                     "title": "other"
+//                 },
+//             ]
+//         }
+//     ]
+// }
+
+
+let ageband = {
+    "quotes": [
+        {
+            "data": [
+                {
+                    "category_name": "Category C",
+                    "vat": 0.05,
+                    "GWP_With_Vat": 3546.65,
+                    "totalBasmahFee": 259,
+                    "totalIcpFee": null,
+                    "pdfAgeBandDetails": [
+                        {
+                            "age": "0-10",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 0,
+                                "femaleGrossPremium": 0,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 3149.2,
+                                "femaleGrossPremium": 2826.02,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "11-17",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 0,
+                                "femaleGrossPremium": 0,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 2238.52,
+                                "femaleGrossPremium": 2554.19,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "18-25",
+                            "maternityCount": 6,
+                            "maternityGrossPremium": 2482.03,
+                            "maternityTotalGrossPremium": 14892.16,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 3,
+                                "maleGrossPremium": 2792.51,
+                                "femaleGrossPremium": 3029.23,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 9087.69
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 2792.51,
+                                "femaleGrossPremium": 3029.23,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "26-30",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 3017.21,
+                                "femaleGrossPremium": 3710.54,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 3017.21,
+                                "femaleGrossPremium": 3710.54,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "31-35",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 3593.98,
+                                "femaleGrossPremium": 4388.24,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 3593.98,
+                                "femaleGrossPremium": 4388.24,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "36-40",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 4385.83,
+                                "femaleGrossPremium": 5421.61,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 4385.83,
+                                "femaleGrossPremium": 5421.61,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "41-45",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 5103.19,
+                                "femaleGrossPremium": 6880.35,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 5103.19,
+                                "femaleGrossPremium": 6880.35,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "46-50",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 6597.98,
+                                "femaleGrossPremium": 8550.57,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 6597.98,
+                                "femaleGrossPremium": 8550.57,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "51-55",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 2,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 8759.65,
+                                "femaleGrossPremium": 11186.88,
+                                "maleTotalGrossPremium": 17519.3,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 8759.65,
+                                "femaleGrossPremium": 11186.88,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "56-59",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 11835.74,
+                                "femaleGrossPremium": 13633.33,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 11835.74,
+                                "femaleGrossPremium": 13633.33,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "60-64",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 14505.7,
+                                "femaleGrossPremium": 16147.08,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 14505.7,
+                                "femaleGrossPremium": 16147.08,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "65-99",
+                            "maternityCount": 0,
+                            "maternityGrossPremium": 0,
+                            "maternityTotalGrossPremium": 0,
+                            "Employee": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 26110.25,
+                                "femaleGrossPremium": 29064.74,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 26110.25,
+                                "femaleGrossPremium": 29064.74,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            }
+                        },
+                        {
+                            "age": "Total",
+                            "maternityCount": 6,
+                            "maternityGrossPremium": 2482.03,
+                            "maternityTotalGrossPremium": 14892.16,
+                            "Dependents": {
+                                "maleCount": 0,
+                                "femaleCount": 0,
+                                "maleGrossPremium": 92089.76,
+                                "femaleGrossPremium": 107392.78,
+                                "maleTotalGrossPremium": 0,
+                                "femaleTotalGrossPremium": 0
+                            },
+                            "Employee": {
+                                "maleCount": 2,
+                                "femaleCount": 3,
+                                "maleGrossPremium": 86702.04,
+                                "femaleGrossPremium": 102012.57,
+                                "maleTotalGrossPremium": 17519.3,
+                                "femaleTotalGrossPremium": 9087.69
+                            }
+                        }
+                    ],
+
+                },
+                {
+                    "category_name": "Category C",
+                    "vat": 0.05,
+                    "GWP_With_Vat": 3546.65,
+                    "totalBasmahFee": 259,
+                    "totalIcpFee": null,
+                    "pdfAgeBandDetails": []
+                }
+             
+            ]
+        }
+    ]
+} 
+
+
+
+{
+    "category_name": "Category B",
+    "vat": 0.05,
+    "GWP_With_Vat": 3546.65,
+    "totalBasmahFee": 259,
+    "totalIcpFee": null,
+    "pdfAgeBandDetails": [
+        {
+            "age": "0-10",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 0,
+                "femaleGrossPremium": 0,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 5529.44,
+                "femaleGrossPremium": 4420.98,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "11-17",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 0,
+                "femaleGrossPremium": 0,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 3931.05,
+                "femaleGrossPremium": 3996.63,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "18-25",
+            "maternityCount": 10,
+            "maternityGrossPremium": 3490.01,
+            "maternityTotalGrossPremium": 34900.12,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 5,
+                "maleGrossPremium": 4806.93,
+                "femaleGrossPremium": 5216.45,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 26082.23
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 4806.93,
+                "femaleGrossPremium": 5216.45,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "26-30",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 5193.01,
+                "femaleGrossPremium": 6390.73,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 5193.01,
+                "femaleGrossPremium": 6390.73,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "31-35",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 6188.44,
+                "femaleGrossPremium": 7557.62,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 6188.44,
+                "femaleGrossPremium": 7557.62,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "36-40",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 7550.22,
+                "femaleGrossPremium": 9337.55,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 7550.22,
+                "femaleGrossPremium": 9337.55,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "41-45",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 8366.79,
+                "femaleGrossPremium": 11272.9,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 8366.79,
+                "femaleGrossPremium": 11272.9,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "46-50",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 10221.96,
+                "femaleGrossPremium": 13251.42,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 10221.96,
+                "femaleGrossPremium": 13251.42,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "51-55",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 2,
+                "femaleCount": 0,
+                "maleGrossPremium": 13570.9,
+                "femaleGrossPremium": 17340.46,
+                "maleTotalGrossPremium": 27141.8,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 13570.9,
+                "femaleGrossPremium": 17340.46,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "56-59",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 18334.65,
+                "femaleGrossPremium": 21130.98,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 18334.65,
+                "femaleGrossPremium": 21130.98,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "60-64",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 22471.79,
+                "femaleGrossPremium": 25027.59,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 22471.79,
+                "femaleGrossPremium": 25027.59,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "65-99",
+            "maternityCount": 0,
+            "maternityGrossPremium": 0,
+            "maternityTotalGrossPremium": 0,
+            "Employee": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 40449.22,
+                "femaleGrossPremium": 45049.66,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 40449.22,
+                "femaleGrossPremium": 45049.66,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            }
+        },
+        {
+            "age": "Total",
+            "maternityCount": 10,
+            "maternityGrossPremium": 3490.01,
+            "maternityTotalGrossPremium": 34900.12,
+            "Dependents": {
+                "maleCount": 0,
+                "femaleCount": 0,
+                "maleGrossPremium": 146614.4,
+                "femaleGrossPremium": 169992.96999999997,
+                "maleTotalGrossPremium": 0,
+                "femaleTotalGrossPremium": 0
+            },
+            "Employee": {
+                "maleCount": 2,
+                "femaleCount": 5,
+                "maleGrossPremium": 137153.91,
+                "femaleGrossPremium": 161575.36,
+                "maleTotalGrossPremium": 27141.8,
+                "femaleTotalGrossPremium": 26082.23
+            }
+        }
+    ]
+}
+
+
+// use this extraccted data and crete three tables for each category
+
+// first column of each row contain age, then two columns for Employee which contain male and female, then two columns are of  Dependents male and female, and last column is of matrnity 
+
+// first table contain count of male and female which takes maleCount and femaleCount respectively for both Employee and Dependent and last column contain maternityCount
+
+// second table contain gross premium of male and female which takes maleGrossPremium and femaleGrossPremium respectively for both Employee and Dependent and last column contain maternityGrossPremium
+
+// third table contain total gross premium of male and female which takes maleTotalGrossPremium and femaleTotalGrossPremium respectively for both Employee and Dependent and last column contain maternityTotalGrossPremium
+
+
+// create code to for table, using npm docx, take input data as extracted data mentioned in above response
