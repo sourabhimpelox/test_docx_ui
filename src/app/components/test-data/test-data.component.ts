@@ -34,8 +34,8 @@ export class TestDataComponent {
   constructor(private http: HttpClient) { }
 
 
-  CRN: string = "MG-SME-1224-1-0132"
-  quoteGeneratedDate: string = "20/08/1999"
+
+
   totalCategoryCount: number = 0
 
   quoteData = {
@@ -35891,6 +35891,9 @@ export class TestDataComponent {
     ]
   }
 
+  CRN: string = this.quoteData.companyDetails.client_reference_number
+  quoteGeneratedDate: string = this.quoteData.companyDetails.quoteGeneratedDate
+
 
   async createImage(imagePath: string, width: number, height: number): Promise<Paragraph[]> {
     // Fetch the image and convert Blob to ArrayBuffer
@@ -36029,6 +36032,69 @@ export class TestDataComponent {
 
 
   benifitsData = this.organizeBenefitsData(this.quoteData.quotes[0].data);
+
+
+
+  termsAndConditions = [
+    { text: 'Premium Payment Mode: In Advance.' },
+    {
+      text: 'All employees to be covered should be actively at work at the time of enrollment to the policy and holding valid Dubai residence visa. The offer provided is on compulsory basis for all employees.',
+    },
+    { text: 'Member Addition, Deletion & refunds if applicable will be calculated on prorata basis.' },
+    {
+      text: 'Policyholder shall update insurance immediately with any change of member status (addition, deletion & upgrade). Requests for back-dated additions/deletions shall not be honored by Insurance.',
+    },
+    { text: 'This offer valid for 30 days from the date of issuance.' },
+    {
+      text: 'Cover is subject to the Company being informed and advised of any chronic or major illness or any diagnosed to develop into major conditions at the inception of the policy as well as on the addition of any member.',
+    },
+    {
+      text: 'This offer shall be null & void in the event of misrepresentation, mis-description or non-disclosure of any materials facts pertaining to the proposal. Nondisclosure shall include non-intimation of any circumstances which may affect the insurance cover or our pricing.',
+    },
+    {
+      text: 'Referral procedure: In respect of Essential Benefit Plan members, no costs incurred for advice, consultations or treatments provided by specialists or consultants without the insured first consulting a General Practitioner (or equivalent as designated by DHA) who is licensed by DHA or another competent UAE authority will be payable by the insurer. The GP must make his referral together with reasons via the DHA e-Referrals system for the claim to be considered by the Insurer.',
+    },
+    {
+      text: 'It is agreed and understood that providing the complete information as per the health authority requirements is the responsibility of the policyholder and insurance will only provide the member card (if equivalent) & certificate of insurance after receiving the mentioned information.',
+    },
+    {
+      text: 'The benefits offered in this quotation do not comply with the Health Authority Abu Dhabi regulation for compulsory insurance.',
+    },
+    { text: 'This offer shall be null & void if the Policyholder was previously insured by Insurance under any scheme.' },
+    {
+      text: 'Pre-Existing and Chronic Conditions covered up to indemnity limit subject to 6 months waiting period for first scheme membership.',
+    },
+    { text: 'For this plan, there shall be no separate Health Card. Emirates ID shall be used as Health Card.' },
+    {
+      text: 'VAT(A): - Value Added Tax means any value added tax or similar tax payable to any authority in respect of transactions and includes, but without limitation, any other form of taxation that may be applicable to this contract.',
+    },
+    {
+      text: 'VAT (A1): All amounts expressed to be payable under this Insurance contract by the Insured to Insurance Company (MEDGULF) which (in whole or in part) constitute the consideration for any insurance services for VAT purposes are deemed to be exclusive of any VAT which is chargeable on that Insurance services, and accordingly if VAT is or becomes chargeable on any services made by MEDGULF to Insured customer under this contract.',
+    },
+    {
+      text: 'VAT (A2): MEDGULF is required to account to the relevant tax authority for VAT on that services, that insured customer must pay to MEDGULF (in addition to and at the same time as paying any other consideration for such services or at the point the VAT becomes due to be paid by MEDGULF if earlier) an amount equal to the amount of that VAT (and MEDGULF must promptly provide an appropriate VAT invoice to that Insured customer where so required to by law).',
+    },
+    { text: 'All quotations are subject to final approval from the MEDGULF Underwriting Team.' },
+  ];
+
+  acceptanceAndAcknowledgment = [
+    { text: 'Confirm knowledge and understanding of my responsibility, according to the Emirate of Dubai Health Insurance Law (No 11 of 2013) and all its subsequent circulars.' },
+    { text: 'Confirm that failure to meet such responsibility will expose the company to violations, and at no point will MEDGULF be held liable for any breach from our side.' },
+    { text: 'Confirm that all the information provided is true and accurate to the best of my knowledge.' },
+    { text: 'Confirm that this policy will incept once the premium is paid as per agreed terms and upon providing MEDGULF with all requirements.' },
+    { text: 'Confirm having read, understood, and agreed on all the mentioned terms and conditions.' },
+    { text: 'Confirm my acceptance of the submitted terms, based on the information provided in this proposal.' },
+  ];
+
+  NameAndSignature= [
+    { text: 'Name:' },
+    { text: 'Signature:' },
+    { text: 'Email:' },
+    { text: 'Contact Number:' },
+    { text: 'Date:' },
+    { text: 'Stamp:' },
+  ]
+
 
   async generateDocument() {
     console.log(this.benifitsData);
@@ -36192,12 +36258,12 @@ export class TestDataComponent {
     const premiumTableRows = createPremiumTableRows(this.extractedData);
 
 
-    const tableTitle = (titleText: string) =>
+    const contentTitle = (titleText: string, size:number) =>
       new Paragraph({
         children: [
           new TextRun({
             text: titleText,
-            size: 20,
+            size,
             font: 'Roboto',
             bold: true,
             color: '#00587C',
@@ -36388,6 +36454,47 @@ export class TestDataComponent {
 
     const organizedData = this.organizeBenefitsData(this.quoteData.quotes[0].data);
     const tables = createBenefitsTable(organizedData);
+
+
+
+    const termsAndConditions = this.termsAndConditions.map(
+      (item, index) =>
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `${index + 1}. ${item.text}`,
+              break: 1, // Line break after each list item
+            }),
+          ],
+        })
+    );
+
+
+    const acceptanceAndAcknowledgment = this.acceptanceAndAcknowledgment.map(
+      (item) =>
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `• ${item.text}`, // Add bullet point (•)
+              break: 1,
+            }),
+          ],
+        })
+    );
+
+
+    const NameAndSignature = this.NameAndSignature.map(
+      (item) =>
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `${item.text}`,
+              break: 1,
+            }),
+          ],
+        })
+    );
+    
 
     // Create the Word document
     const doc = new Document({
@@ -36589,7 +36696,7 @@ export class TestDataComponent {
         {
 
           children: [
-            tableTitle("Categories & Premium"),
+            contentTitle("Categories & Premium",20),
             new Table({
               width: { size: 100, type: WidthType.PERCENTAGE },
               rows: premiumTableRows
@@ -36600,6 +36707,35 @@ export class TestDataComponent {
         {
           children: [
             ...tables
+          ]
+        },
+        {
+          children: [
+            contentTitle("TERMS AND CONDITIONS",30),
+            termsAndConditions
+          ]
+        },
+        {
+          children: [
+            contentTitle("Acceptance of Proposal & \n Acknowledgment of Responsibilities",30),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `I, the undersigned and duly authorized by my company hereby:`, 
+                  break: 1,
+                }),
+              ],
+            }),
+            acceptanceAndAcknowledgment,
+            NameAndSignature,
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:`, 
+                  break: 1,
+                }),
+              ],
+            })
           ]
         },
 
@@ -36613,6 +36749,8 @@ export class TestDataComponent {
           },
 
         },
+
+
 
         {
           children: [
@@ -36680,9 +36818,9 @@ export class TestDataComponent {
               width: { size: 100, type: WidthType.PERCENTAGE },
             })
           ]
-    }
+        }
       ],
-  });
+    });
 
 
 
@@ -36694,8 +36832,8 @@ export class TestDataComponent {
 
     // Save the Word document
     Packer.toBlob(doc).then((blob) => {
-  saveAs(blob, 'output.docx');
-  console.log('Word document created!');
-});
+      saveAs(blob, 'output.docx');
+      console.log('Word document created!');
+    });
   }
 }
