@@ -1397,300 +1397,179 @@ let ageband = {
 
 
 
-{
-    "category_name": "Category B",
-    "vat": 0.05,
-    "GWP_With_Vat": 3546.65,
-    "totalBasmahFee": 259,
-    "totalIcpFee": null,
-    "pdfAgeBandDetails": [
+let ageband = {
+    // "quotes": [
+    //     {
+    //         "data": [
+    //             {
+    //                "category_name": "Category A",
+    //               "category_premium": 302643.41,
+    //               "category_table_id": 1275,
+    //               "GWP": 287047.84,
+    //               "GWP_With_BasmahFee": 288231.84,
+    //               "GWP_With_IcpFee": null,
+                 
+
+    //             },
+    //             {
+    //                 "category_name": "Category C",
+    //                 "vat": 0.05,
+    //                 "GWP_With_Vat": 3546.65,
+    //                 "totalBasmahFee": 259,
+    //                 "totalIcpFee": null,
+    //                 "pdfAgeBandDetails": []
+    //             }
+             
+    //         ]
+    //     }
+    // ]
+
+    let quoteData={
+
+    "quotes": [
         {
-            "age": "0-10",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 0,
-                "femaleGrossPremium": 0,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 5529.44,
-                "femaleGrossPremium": 4420.98,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "11-17",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 0,
-                "femaleGrossPremium": 0,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 3931.05,
-                "femaleGrossPremium": 3996.63,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "18-25",
-            "maternityCount": 10,
-            "maternityGrossPremium": 3490.01,
-            "maternityTotalGrossPremium": 34900.12,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 5,
-                "maleGrossPremium": 4806.93,
-                "femaleGrossPremium": 5216.45,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 26082.23
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 4806.93,
-                "femaleGrossPremium": 5216.45,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "26-30",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 5193.01,
-                "femaleGrossPremium": 6390.73,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 5193.01,
-                "femaleGrossPremium": 6390.73,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "31-35",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 6188.44,
-                "femaleGrossPremium": 7557.62,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 6188.44,
-                "femaleGrossPremium": 7557.62,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "36-40",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 7550.22,
-                "femaleGrossPremium": 9337.55,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 7550.22,
-                "femaleGrossPremium": 9337.55,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "41-45",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 8366.79,
-                "femaleGrossPremium": 11272.9,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 8366.79,
-                "femaleGrossPremium": 11272.9,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "46-50",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 10221.96,
-                "femaleGrossPremium": 13251.42,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 10221.96,
-                "femaleGrossPremium": 13251.42,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "51-55",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 2,
-                "femaleCount": 0,
-                "maleGrossPremium": 13570.9,
-                "femaleGrossPremium": 17340.46,
-                "maleTotalGrossPremium": 27141.8,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 13570.9,
-                "femaleGrossPremium": 17340.46,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "56-59",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 18334.65,
-                "femaleGrossPremium": 21130.98,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 18334.65,
-                "femaleGrossPremium": 21130.98,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "60-64",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 22471.79,
-                "femaleGrossPremium": 25027.59,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 22471.79,
-                "femaleGrossPremium": 25027.59,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "65-99",
-            "maternityCount": 0,
-            "maternityGrossPremium": 0,
-            "maternityTotalGrossPremium": 0,
-            "Employee": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 40449.22,
-                "femaleGrossPremium": 45049.66,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 40449.22,
-                "femaleGrossPremium": 45049.66,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            }
-        },
-        {
-            "age": "Total",
-            "maternityCount": 10,
-            "maternityGrossPremium": 3490.01,
-            "maternityTotalGrossPremium": 34900.12,
-            "Dependents": {
-                "maleCount": 0,
-                "femaleCount": 0,
-                "maleGrossPremium": 146614.4,
-                "femaleGrossPremium": 169992.96999999997,
-                "maleTotalGrossPremium": 0,
-                "femaleTotalGrossPremium": 0
-            },
-            "Employee": {
-                "maleCount": 2,
-                "femaleCount": 5,
-                "maleGrossPremium": 137153.91,
-                "femaleGrossPremium": 161575.36,
-                "maleTotalGrossPremium": 27141.8,
-                "femaleTotalGrossPremium": 26082.23
-            }
+            "option_name": "option 1",
+            "option_id": 0,
+            "GWP": 607142.31,
+            "option_premium": 640674.62,
+            "currency": "AED",
+            "quote_type": "indicative",
+            "quote_status": "quote_sent",
+            "risk_type": "maf",
+            "company_id": 643,
+            "quote_id": 822,
+            "selector": true,
+            "quoteMasterStatus": "quote_sent",
+            "stamp_duty": null,
+            "vat": null,
+            "quoteCreatedDate": "2024-12-06T05:06:24.000Z",
+            "optionPremiumWithoutCharges": null,
+            "minimumQuotePremium": 453156.47,
+            "optionPremiumWithoutLoading": 573615.75,
+            "specialRiskType": null,
+            "data": [
+                {
+                    "category_id": 2,
+                    "category_name": "Category B",
+                    "category_premium": 98631.91,
+                    "category_table_id": 1277,
+                    "GWP": 93791.15,
+                    "GWP_With_BasmahFee": null,
+                    "GWP_With_IcpFee": 93935.15,
+                    "vat": 0.05,
+                    "GWP_With_Vat": 4696.76,
+                    "totalBasmahFee": null,
+                    "totalIcpFee": 144,
+                    "minimumCategoryPremium": 70192,
+                    
+                    "census": [],
+                    "member_count": 6
+                },
+                {
+                    "category_id": 2,
+                    "category_name": "Category C",
+                    "category_premium": 98631.91,
+                    "category_table_id": 1277,
+                    "GWP": 93791.15,
+                    "GWP_With_BasmahFee": null,
+                    "GWP_With_IcpFee": 93935.15,
+                    "vat": 0.05,
+                    "GWP_With_Vat": 4696.76,
+                    "totalBasmahFee": null,
+                    "totalIcpFee": 144,
+                    "minimumCategoryPremium": 70192,
+                    
+                    "census": [
+                        {
+                            "census_id": 24215,
+                            "category_id": 1277,
+                            "serial_no": 75,
+                            "employee_id": 30001,
+                            "relations": "Employee",
+                            "dob": "08-09-1953",
+                            "gender": "Male",
+                            "marital_status": "Married",
+                            "nationality": "IRELAND",
+                            "visa_issuance_emirate": "Abu Dhabi",
+                            "category": "category c",
+                            "maternity_premium": null,
+                            "minimum_maternity_premium": null,
+                            "updated_maternity_premium": 0,
+                            "updated_maternity_gross_net_premium": 0,
+                            "is_maternity_eligible": 0,
+                            "client_reference_number": "MG-SME-1224-1-00092",
+                            "from_age": 60,
+                            "to_age": 90,
+                            "updated_loaded_premium": 23078.48,
+                            "version": 2,
+                            "employee_name": "John Kieran Hartnett",
+                            "member_type": "HSB",
+                            "gross_net_premium": 18232,
+                            "base_premium": 17679,
+                            "minimum_premium": 8674,
+                            "totalCommission": 0.21,
+                            "displayCensusPremium": null,
+                            "displayCensusMaternityPremium": null,
+                            "commissions": null,
+                            "commission": null,
+                            "maf_risk": "1",
+                            "premium": 23078.48,
+                            "originalCensusId": 25374,
+                            "file_name": null,
+                            "file_path": null,
+                            "folder_type": null,
+                            "age": 71
+                        },
+                        {
+                            "census_id": 24216,
+                            "category_id": 1277,
+                            "serial_no": 76,
+                            "employee_id": 30001,
+                            "relations": "Spouse",
+                            "dob": "06-07-1957",
+                            "gender": "Female",
+                            "marital_status": "Married",
+                            "nationality": "IRELAND",
+                            "visa_issuance_emirate": "Abu Dhabi",
+                            "category": "category c",
+                            "maternity_premium": null,
+                            "minimum_maternity_premium": null,
+                            "updated_maternity_premium": 0,
+                            "updated_maternity_gross_net_premium": 0,
+                            "is_maternity_eligible": 0,
+                            "client_reference_number": "MG-SME-1224-1-00092",
+                            "from_age": 60,
+                            "to_age": 90,
+                            "updated_loaded_premium": 23078.48,
+                            "version": 2,
+                            "employee_name": "Elizabeth Hartnett Hartnett",
+                            "member_type": "HSB",
+                            "gross_net_premium": 18232,
+                            "base_premium": 17679,
+                            "minimum_premium": 18073,
+                            "totalCommission": 0.21,
+                            "displayCensusPremium": null,
+                            "displayCensusMaternityPremium": null,
+                            "commissions": null,
+                            "commission": null,
+                            "maf_risk": "1",
+                            "premium": 23078.48,
+                            "originalCensusId": 25375,
+                            "file_name": null,
+                            "file_path": null,
+                            "folder_type": null,
+                            "age": 67
+                        }
+                    ],
+                    "member_count": 6
+                },
+                
+             
+            ],
+            "ageBandTableType": null
         }
-    ]
+    ],
+} 
 }
 
 
