@@ -29,10 +29,12 @@ export class TestDataComponent {
 
 
   ageBandData(data: any[]): agebandData[] {
-    return data.map(item => ({
-      category_name: item.category_name,
-      pdfAgeBandDetails: item.pdfAgeBandDetails || [],
-    }));
+    return data.map(item => {
+      return {
+        category_name: item.category_name,
+        pdfAgeBandDetails: item.pdfAgeBandDetails || [],
+      }
+    });
   }
 
   categoriesWithDetails(data: any[], quotes: any[], categoryKey = 'category') {
@@ -83,7 +85,7 @@ export class TestDataComponent {
   extractedData = this.extractPremiumData(quoteData.quotes[0].data);
 
 
-  benefitsData = (data: any, benifitName:string) => {
+  benefitsData = (data: any, benifitName: string) => {
     const organizedData: { [groupDetails: string]: any[] } = {};
     // Iterate through each category
     data.forEach((category: any) => {
@@ -104,7 +106,7 @@ export class TestDataComponent {
     });
     return organizedData;
   };
- 
+
 
   formatExclusionData(exclusionData: any) {
     return exclusionData.map((item: any) => {
@@ -171,11 +173,11 @@ export class TestDataComponent {
       const binaryString = atob(base64Data); // Decode base64 to binary
       const binaryLength = binaryString.length;
       const uint8Array = new Uint8Array(binaryLength);
-      
+
       for (let i = 0; i < binaryLength; i++) {
         uint8Array[i] = binaryString.charCodeAt(i);
       }
-    
+
       // Return a paragraph containing the image
       return new Paragraph({
         alignment: AlignmentType.CENTER,
@@ -191,7 +193,7 @@ export class TestDataComponent {
         ],
       });
     }
-    
+
 
     // borders for all tables 
     const defaultBorders = (size: number = 10, border: any = "single") => {
@@ -260,8 +262,8 @@ export class TestDataComponent {
       size: number = 18,
       before: number = 100,
       after: number = 100,
-      alignment: any = AlignmentType.LEFT ,// Default alignment to LEFT
-      color?:string
+      alignment: any = AlignmentType.LEFT,// Default alignment to LEFT
+      color?: string
     ): Paragraph {
       return new Paragraph({
         children: [
@@ -359,9 +361,9 @@ export class TestDataComponent {
                   // Centered text cell
                   new TableCell({
                     children: [
-                      textLine('*This is a system-generated quote that does not require a signature', 10, 0, 0, AlignmentType.CENTER,'#ababab'),
-                      textLine('The Mediterranean & Gulf Insurance & Reinsurance Co. B.S.C', 10, 0, 0, AlignmentType.CENTER,'#ababab'),
-                      textLine('C.R. No: 1204528 - Insurance Authority No. 91', 10, 0, 0, AlignmentType.CENTER,'#ababab'),
+                      textLine('*This is a system-generated quote that does not require a signature', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
+                      textLine('The Mediterranean & Gulf Insurance & Reinsurance Co. B.S.C', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
+                      textLine('C.R. No: 1204528 - Insurance Authority No. 91', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
                     ],
                     verticalAlign: VerticalAlign.BOTTOM,
                     width: { size: 34, type: WidthType.PERCENTAGE },
@@ -399,7 +401,7 @@ export class TestDataComponent {
             children: [
               new TextRun({
                 text: text1,
-                
+
                 color,
                 size
               }),
@@ -411,7 +413,7 @@ export class TestDataComponent {
               new TextRun({
                 text: text2,
                 size, color,
-                
+
               }),
             ],
           }),
@@ -421,7 +423,7 @@ export class TestDataComponent {
               new TextRun({
                 text: text3,
                 size, color,
-                
+
               }),
             ],
           }),
@@ -430,7 +432,7 @@ export class TestDataComponent {
     }
     //****************************************************************** */
     // cell for each table 
-    const tableCell = (text: any, isBold = false, size = 12, color = '#000000', width: number, bgColor: string = '#FFFFFF'): TableCell => {
+    const tableCell = (text: any, isBold = false, size = 12, color = '#000000', width: number, bgColor: string = '#FFFFFF',alignment: any = AlignmentType.LEFT): TableCell => {
       return new TableCell({
         children: [
           new Paragraph({
@@ -442,6 +444,7 @@ export class TestDataComponent {
                 color,
               }),
             ],
+            alignment,
             shading: {
               fill: bgColor, // Background color (Yellow) in HEX
             },
@@ -449,7 +452,7 @@ export class TestDataComponent {
         ],
         width: { size: NaN ? 16 : Number(width), type: WidthType.PERCENTAGE }, // Width in percentage
         borders: defaultBorders(10, 'single'), // Default borders
-        margins: { left: 40, top: 5, right: 10, bottom: 10 }, // Default margins
+        margins: { left: 20, top: 5, right: 10, bottom: 10 }, // Default margins
       });
     };
     //****************************************************************** */
@@ -901,51 +904,105 @@ export class TestDataComponent {
 
     //   return tableCell(String(text),isHeader,12,'#000000',)
     // }
-    function createCategoryTables(categoriesWithCensus: any[]): Table[] {
-      return categoriesWithCensus.map((category) => {
-        const rows: TableRow[] = [];
+    // function mafRiskTable(categoriesWithCensus: any[]): Table[] {
+    //   return categoriesWithCensus.map((category) => {
+    //     const rows: TableRow[] = [];
 
+    //     // Add Table Header
+    //     rows.push(
+    //       new TableRow({
+    //         children: [
+    //           tableCell("S.No", true, 12, '#000000', 20),
+    //           tableCell("Employee Id", true, 12, '#000000', 20),
+    //           tableCell("Employee Name", true, 12, '#000000', 20),
+    //           tableCell("Relations", true, 12, '#000000', 20),
+    //           tableCell("Age", true, 12, '#000000', 20),
+    //           tableCell("Category", true, 12, '#000000', 20),
+    //           tableCell("Member Type", true, 12, '#000000', 20),
+    //         ],
+    //       })
+    //     );
+
+    //     // Add Census Data Rows
+    //     category.census.forEach((census: any, index: number) => {
+    //       rows.push(
+    //         new TableRow({
+    //           children: [
+    //             tableCell((index + 1).toString(), false, 12, '#000000', 20), // S.No
+    //             tableCell(census.employee_id, false, 12, '#000000', 20), // Employee Id
+    //             tableCell(census.employee_name, false, 12, '#000000', 20), // Employee Name
+    //             tableCell(census.relations, false, 12, '#000000', 20), // Relations
+    //             tableCell(census.age.toString(), false, 12, '#000000', 20), // Age
+    //             tableCell(census.category, false, 12, '#000000', 20), // Category
+    //             tableCell(census.member_type, false, 12, '#000000', 20), // Member Type
+    //           ],
+    //         })
+    //       );
+    //     });
+
+    //     // Create Table
+    //     return new Table({
+    //       rows,
+    //       width: { size: 100, type: WidthType.PERCENTAGE },
+    //     });
+    //   });
+    // }
+
+    function mafRiskTable(categoriesWithCensus: any[]): any[] {
+      const tablesWithTitles: any[] = [];
+    
+      categoriesWithCensus.forEach((category) => {
+        const rows: TableRow[] = [];
+    
         // Add Table Header
         rows.push(
           new TableRow({
             children: [
-              tableCell("S.No", true, 12, '#000000', 20),
-              tableCell("Employee Id", true, 12, '#000000', 20),
-              tableCell("Employee Name", true, 12, '#000000', 20),
-              tableCell("Relations", true, 12, '#000000', 20),
-              tableCell("Age", true, 12, '#000000', 20),
-              tableCell("Category", true, 12, '#000000', 20),
-              tableCell("Member Type", true, 12, '#000000', 20),
+              tableCell("S.No", true, 18, '#000000', 8,'#32CD32',AlignmentType.CENTER),
+              tableCell("Employee Id", true, 18, '#000000', 14,'#32CD32',AlignmentType.CENTER),
+              tableCell("Employee Name", true, 18, '#000000', 28,'#32CD32',AlignmentType.CENTER),
+              tableCell("Relations", true, 18, '#000000', 14,'#32CD32',AlignmentType.CENTER),
+              tableCell("Age", true, 18, '#000000', 8,'#32CD32',AlignmentType.CENTER),
+              tableCell("Category", true, 18, '#000000', 14,'#32CD32',AlignmentType.CENTER),
+              tableCell("Member Type", true, 18, '#000000', 14,'#32CD32',AlignmentType.CENTER),
             ],
           })
         );
-
+    
         // Add Census Data Rows
         category.census.forEach((census: any, index: number) => {
           rows.push(
             new TableRow({
               children: [
-                tableCell((index + 1).toString(), false, 12, '#000000', 20), // S.No
-                tableCell(census.employee_id, false, 12, '#000000', 20), // Employee Id
-                tableCell(census.employee_name, false, 12, '#000000', 20), // Employee Name
-                tableCell(census.relations, false, 12, '#000000', 20), // Relations
-                tableCell(census.age.toString(), false, 12, '#000000', 20), // Age
-                tableCell(census.category, false, 12, '#000000', 20), // Category
-                tableCell(census.member_type, false, 12, '#000000', 20), // Member Type
+                tableCell((index + 1).toString(), false, 18, '#000000', 8,'#FFFFFF',AlignmentType.CENTER), // S.No
+                tableCell(census.employee_id, false, 18, '#000000', 14,'#FFFFFF',AlignmentType.CENTER), // Employee Id
+                tableCell(census.employee_name, false, 18, '#000000', 28,'#FFFFFF',AlignmentType.CENTER), // Employee Name
+                tableCell(census.relations, false, 18, '#000000', 14,'#FFFFFF',AlignmentType.CENTER), // Relations
+                tableCell(census.age.toString(), false, 18, '#000000', 8,'#FFFFFF',AlignmentType.CENTER), // Age
+                tableCell(census.category, false, 18, '#000000', 14,'#FFFFFF',AlignmentType.CENTER), // Category
+                tableCell(census.member_type, false, 18, '#000000', 14,'#FFFFFF',AlignmentType.CENTER), // Member Type
               ],
             })
           );
         });
+    
 
+        let title= tableTitle(`MAF Required Members - ${category.category}`, 24, '#AC0233')
+    
         // Create Table
-        return new Table({
+        const table = new Table({
           rows,
           width: { size: 100, type: WidthType.PERCENTAGE },
         });
+    
+        tablesWithTitles.push(title, table);
       });
+    
+      return tablesWithTitles;
     }
+    
 
-    const mafTables = createCategoryTables(getCensusByCategory);
+    const mafTables = mafRiskTable(getCensusByCategory);
 
 
     // Create the Word document
@@ -953,28 +1010,27 @@ export class TestDataComponent {
       sections: [
 
         // 1st Page 
-        // {
-        //   // children: [await createImage('assets/homepage.png', 650, 800)],
-        //   children: [await createImageFromBase64(pdfImages.homeImg, 595,800)],
-        // },
         {
-          properties: {
-            type: SectionType.CONTINUOUS, // Continuous section for layout adjustment
-            page: {
-              margin: {
-                bottom: 720, // Adjust this value to shift content upwards (default is 1440 for 1 inch)
-                top:0
-              },
-            },
-          },
-          children: [
-          await createImageFromBase64(pdfImages.homeImg, 595,800)
-          ],
-          headers: undefined, // Remove header for this section
+          children: [await createImageFromBase64(pdfImages.homeImg, 595, 800)],
         },
+        // {
+        //   properties: {
+        //     type: SectionType.CONTINUOUS, // Continuous section for layout adjustment
+        //     page: {
+        //       margin: {
+        //         bottom: 720, // Adjust this value to shift content upwards (default is 1440 for 1 inch)
+        //         top:0
+        //       },
+        //     },
+        //   },
+        //   children: [
+        //   await createImageFromBase64(pdfImages.homeImg, 595,800)
+        //   ],
+        //   headers: undefined, // Remove header for this section
+        // },
         // 2nd page 
         {
-          children: [await createImageFromBase64(pdfImages.homeImg1, 595,750)],
+          children: [await createImageFromBase64(pdfImages.homeImg1, 595, 750)],
           headers: {
             default: createHeader(),
           },
@@ -1116,7 +1172,7 @@ export class TestDataComponent {
           headers: {
             default: createHeader(),
           },
-        
+
           footers: {
             default: otherFooter("Dubai Wharf Mall 1st Floor, Ofce DWR 22&23 Al Jaddaf Waterfront P.O. Box 30476, Dubai, UAE", "", "", 18, "#00587C"),
           },
@@ -1126,10 +1182,11 @@ export class TestDataComponent {
           children: [
             new Paragraph({
               text: 'Document Title',
+            
 
             }),
             ...result.flatMap((categoryData) =>
-              createTable(categoryData.category_name, [categoryData]) // Passing a single object as an array
+              createTable(categoryData.category_name, [categoryData])
             ),
           ],
           headers: {
@@ -1142,9 +1199,6 @@ export class TestDataComponent {
 
         {
           children: [
-            new Paragraph({
-              text: 'Document Title',
-            }),
             ...mafTables
           ],
         },

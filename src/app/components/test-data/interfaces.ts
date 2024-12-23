@@ -40,3 +40,10 @@ export interface agebandData {
   pdfAgeBandDetails: PdfAgeBandDetail[];
 }
 
+// {
+//   text: "S.No",
+//   alignment: "center",
+//   bold: true,
+//   style: "header",
+//   fillColor: "#32CD32",
+// },
