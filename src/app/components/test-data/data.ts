@@ -35853,7 +35853,7 @@ export let quoteData = {
   ]
 }
 
-let CRN: string = quoteData.companyDetails.client_reference_number
+export let CRN: string = quoteData.companyDetails.client_reference_number
 let quoteGeneratedDate: string = quoteData.companyDetails.quoteGeneratedDate
 
 export let basicTableData = [

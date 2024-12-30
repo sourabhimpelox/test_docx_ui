@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { saveAs } from "file-saver";
 
-import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak } from 'docx';
+import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType } from 'docx';
 
-import { quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2 } from './data';
+import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2 } from './data';
 import { pdfImages } from './images';
 
 import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData } from './interfaces'
@@ -28,12 +28,15 @@ export class TestDataComponent {
 
 
 
-  ageBandAndMafData(data: any[]): agebandData[] {
-    return data.map(item => {
+  ageBandAndMafData(data: any[]) {
+    return data.map(category => {
       return {
-        category_name: item.category_name,
-        pdfAgeBandDetails: item.pdfAgeBandDetails || [],
-        census: item.census,
+        category_name: category.category_name,
+        pdfAgeBandDetails: category.pdfAgeBandDetails || [],
+        pdfAgeBandDetailsUnify: category.pdfAgeBandDetailsUnify || [],
+        census: category.census,
+        emirate: category.data.emirates.emirates_name,
+        tpa: category.data.tpa.tpa_name
       }
     });
   }
@@ -128,16 +131,6 @@ export class TestDataComponent {
   exclusionData = this.formatExclusionData(quoteData.exclusion)
 
 
-  // ageBandAndMafInfo(data: CensusCategory[]) {
-  //   return data
-  //     .filter((category) => category.census.length > 0) // Include only categories with at least one census item
-  //     .map((category) => ({
-  //       category: category.category_name,
-  //       census: category.census, // Include the entire census array
-  //     }));
-  // }
-
-
   async generateDocument() {
 
     //****************************************************************** */
@@ -196,6 +189,50 @@ export class TestDataComponent {
     }
 
 
+
+    function CommonCell(text: string, options: CellOptions = {}) {
+      const {
+        bold = false,
+        fontSize = 8,
+        fillColor = "#FFFFFF",
+        color = "#000000",
+        alignment = AlignmentType.LEFT,
+        rowSpan,
+        colSpan,
+        width, // Optional width
+      } = options;
+
+      return new TableCell({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: String(text),
+                bold,
+                size: fontSize * 2,
+                color,
+              }),
+            ],
+            alignment,
+            indent: {
+              left: 50,
+            },
+          }),
+        ],
+        rowSpan,
+        columnSpan: colSpan,
+        shading: {
+          fill: fillColor,
+        },
+        width,
+        // verticalAlign: VerticalAlign.CENTER, 
+        borders: defaultBorders(10, 'single'), // Default borders
+        margins: { left: 20, top:20 },
+      });
+    }
+
+
+
     // borders for all tables 
     const defaultBorders = (size: number = 10, border: any = "single") => {
       return {
@@ -227,14 +264,14 @@ export class TestDataComponent {
       });
 
     // title of each page 
-    function pageTitle(title: string, size: number = 57) {
+    function pageTitle(title: string, size: number = 57, color: string = "#00587C") {
       return new Paragraph({
         children: [
           new TextRun({
             text: title,
             bold: true,
-            color: "#00587C",
-            size
+            size,
+            color: color
 
           }),
         ],
@@ -382,6 +419,7 @@ export class TestDataComponent {
                 ],
               }),
             ],
+            layout: TableLayoutType.FIXED,
             width: {
               size: 100,
               type: WidthType.PERCENTAGE,
@@ -402,7 +440,6 @@ export class TestDataComponent {
             children: [
               new TextRun({
                 text: text1,
-
                 color,
                 size
               }),
@@ -431,38 +468,16 @@ export class TestDataComponent {
         ],
       });
     }
-    //****************************************************************** */
-    // cell for each table 
-    const tableCell = (text: any, isBold = false, size = 12, color = '#000000', width: number, bgColor: string = '#FFFFFF', alignment: any = AlignmentType.LEFT): TableCell => {
-      return new TableCell({
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: String(text), // Ensure the text is a string
-                bold: isBold, // Apply bold text if specified
-                size, // Font size in half-points
-                color,
-              }),
-            ],
-            alignment,
-            shading: {
-              fill: bgColor, // Background color (Yellow) in HEX
-            },
-          }),
-        ],
-        width: { size: NaN ? 16 : Number(width), type: WidthType.PERCENTAGE }, // Width in percentage
-        borders: defaultBorders(10, 'single'), // Default borders
-        margins: { left: 20, top: 5, right: 10, bottom: 10 }, // Default margins
-      });
-    };
+
+
     //****************************************************************** */
     // Basic Table
     const createRow1 = (label: string, value: string | undefined) =>
       new TableRow({
         children: [
-          tableCell(label, false, 18, '#000000', 35),
-          tableCell(value || '', false, 18, '#000000', 35),
+
+          CommonCell(label, { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
+          CommonCell(value || '', { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
         ],
       });
 
@@ -473,9 +488,9 @@ export class TestDataComponent {
     const createRow2 = (categoryName: string, members: number, option: string) =>
       new TableRow({
         children: [
-          tableCell(categoryName, false, 18, '#000000', 33),
-          tableCell(members, false, 18, '#000000', 33),
-          tableCell(option, false, 18, '#000000', 34),
+          CommonCell(categoryName, { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
+          CommonCell(String(members), { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
+          CommonCell(option, { fontSize: 9, bold: false, width: { size: 34, type: "pct" } }),
         ],
       });
 
@@ -499,13 +514,17 @@ export class TestDataComponent {
         rows: [
           new TableRow({
             children: [
-              tableCell("Quote 1", true, 24, '#AC0233', 33), // First column
-              tableCell(`${quote.quote_type} & ${quote.risk_type}`, true, 24, '#AC0233', 33), // Second column
-              tableCell(`${quote.currency} ${quote.option_premium}`, true, 24, '#AC0233', 33), // Third column
+              CommonCell("Quote 1", { fontSize: 11, color: "#AC0233", bold: true, width: { size: 33, type: "pct" } }), // First column
+              CommonCell(`${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote & ${(quote.risk_type).toUpperCase()}`, { fontSize: 11, bold: true, color: "#AC0233", width: { size: 34, type: "pct" } }), // Second column
+              CommonCell(`${quote.currency} ${quote.option_premium}`, { fontSize: 11, bold: true, color: "#AC0233", width: { size: 33, type: "pct" } }), // Third column
             ],
           }),
         ],
-        width: { size: 100, type: WidthType.PERCENTAGE },
+        layout: TableLayoutType.FIXED,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
       });
     }
 
@@ -517,8 +536,8 @@ export class TestDataComponent {
     const createRow3 = (tobHeader: string, values: string[]): TableRow =>
       new TableRow({
         children: [
-          tableCell(tobHeader, false, 18, '#000000', columnWidth), // First column for "Tob Header"
-          ...values.map(value => tableCell(value, false, 18, '#000000', columnWidth)), // Other columns for categories
+          CommonCell(tobHeader, { fontSize: 9, bold: false, width: { size: columnWidth, type: "pct" } }), // First column for "Tob Header"
+          ...values.map(value => CommonCell(value, { fontSize: 9, bold: false, width: { size: columnWidth, type: "pct" } })), // Other columns for categories
         ],
       });
 
@@ -529,8 +548,8 @@ export class TestDataComponent {
       // First row is the header row (Tob Header and categories)
       const headerRow = new TableRow({
         children: [
-          tableCell('Premium', true, 18, '#AC0233', columnWidth), // First column for "Tob Header"
-          ...data.map(category => tableCell(category.category_name, true, 18, '#AC0233', columnWidth)), // Columns for categories
+          CommonCell('Premium', { fontSize: 9, color: "#AC0233", bold: true, width: { size: columnWidth, type: "pct" } }), // First column for "Tob Header"
+          ...data.map(category => CommonCell(category.category_name, { fontSize: 9, color: "#AC0233", bold: true, width: { size: columnWidth, type: "pct" } })), // Columns for categories
         ],
       });
 
@@ -553,23 +572,31 @@ export class TestDataComponent {
     //****************************************************************** */
 
 
-
     const createBenefitsTable = (organizedData: any) => {
       if (Object.keys(organizedData).length === 0) {
         return [];
       }
-
 
       const tables: any[] = [];
 
       // Create the header row for categories only once, before the group detail rows
       const headerRow = new TableRow({
         children: [
-          tableCell("Benefits", true, 18, '#AC0233', columnWidth),
+          CommonCell("Benefits", {
+            fontSize: 9,
+            color: "#AC0233",
+            bold: true,
+            width: { size: columnWidth, type: "pct" },
+          }),
 
           ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
             .map((categoryName) =>
-              tableCell(String(categoryName), true, 18, '#AC0233', columnWidth)
+              CommonCell(String(categoryName), {
+                fontSize: 9,
+                color: "#AC0233",
+                bold: true,
+                width: { size: columnWidth, type: "pct" }
+              })
             ),
         ],
       });
@@ -577,7 +604,11 @@ export class TestDataComponent {
       // Add headerRow once to the table
       tables.push(new Table({
         rows: [headerRow],
-        width: { size: 100, type: WidthType.PERCENTAGE },
+        layout: TableLayoutType.FIXED,
+            width: {
+              size: 100,
+              type: WidthType.PERCENTAGE,
+            },
       }));
 
       // Loop through each group detail (e.g., "Policy Details")
@@ -588,7 +619,19 @@ export class TestDataComponent {
         const groupDetailRow = new TableRow({
           children: [
             new TableCell({
-              children: [new Paragraph({ children: [new TextRun({ text: groupDetail, bold: true, size: 18, color: '#AC0233' })] })],
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: groupDetail,
+                      bold: true,
+                      size: 18,
+                      color: '#AC0233'
+                    })],
+                  indent: {
+                    left: 50,
+                  },
+                })],
               columnSpan: 100 / totalColumns, // This cell will span across all columns
               width: { size: 100, type: WidthType.PERCENTAGE },
               borders: defaultBorders(10, 'single')
@@ -605,13 +648,21 @@ export class TestDataComponent {
         benefitNames.forEach((tob_header) => {
           const row = new TableRow({
             children: [
-              tableCell(String(tob_header), false, 18, '#000000', columnWidth),
+              CommonCell(String(tob_header), {
+                fontSize: 9,
+                bold: false,
+                width: { size: columnWidth, type: "pct" },
+              }),
               ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
                 // Find the benefit for the current category and benefit name
                 const benefit = benefitsForGroup.find(
                   (b: any) => b.tob_header === tob_header && b.category_name === categoryName
                 );
-                return tableCell(benefit && benefit.tob_value ? benefit.tob_value : "N/A", false, 18, '#000000', columnWidth);
+                return CommonCell(benefit && benefit.tob_value ? benefit.tob_value : "N/A", {
+                  fontSize: 9,
+                  bold: false,
+                  width: { size: columnWidth, type: "pct" },
+                });
               }),
             ],
           });
@@ -622,13 +673,20 @@ export class TestDataComponent {
         tables.push(
           new Table({
             rows: [groupDetailRow, ...benefitRows],
-            width: { size: 100, type: WidthType.PERCENTAGE },
+            layout: TableLayoutType.FIXED,
+            width: {
+              size: 100,
+              type: WidthType.PERCENTAGE,
+            },
           })
         );
       });
 
       return tables;
     };
+
+
+
 
     const mandatoryBenefitsData = this.benefitsData(quoteData.quotes[0].data, 'mandatory_benefits');
     const optionalBenefitsData = this.benefitsData(quoteData.quotes[0].data, 'optional_benefits');
@@ -641,21 +699,26 @@ export class TestDataComponent {
 
 
     function mafRiskTable(category: any): any[] {
-      const tablesWithTitles: any[] = [];
 
       const rows: TableRow[] = [];
+
+      const pageBreak = new Paragraph({
+        children: [],
+        pageBreakBefore: true,
+      });
 
       // Add Table Header
       rows.push(
         new TableRow({
           children: [
-            tableCell("S.No", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
-            tableCell("Employee Id", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-            tableCell("Employee Name", true, 18, '#000000', 28, '#32CD32', AlignmentType.CENTER),
-            tableCell("Relations", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-            tableCell("Age", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
-            tableCell("Category", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-            tableCell("Member Type", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+
+            CommonCell("S.No", { fontSize: 9, bold: true, width: { size: 8, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Employee Id", { fontSize: 9, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Employee Name", { fontSize: 9, bold: true, width: { size: 28, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Relations", { fontSize: 9, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Age", { fontSize: 9, bold: true, width: { size: 8, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Category", { fontSize: 9, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+            CommonCell("Member Type", { fontSize: 9, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
           ],
         })
       );
@@ -665,31 +728,33 @@ export class TestDataComponent {
         rows.push(
           new TableRow({
             children: [
-              tableCell((index + 1).toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // S.No
-              tableCell(census.employee_id, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Employee Id
-              tableCell(census.employee_name, false, 18, '#000000', 28, '#FFFFFF', AlignmentType.CENTER), // Employee Name
-              tableCell(census.relations, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Relations
-              tableCell(census.age.toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // Age
-              tableCell(census.category, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Category
-              tableCell(census.member_type, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Member Type
+              CommonCell((index + 1).toString(), { fontSize: 9, bold: false, width: { size: 8, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(String(census.employee_id), { fontSize: 9, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(census.employee_name, { fontSize: 9, bold: false, width: { size: 28, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(census.relations, { fontSize: 9, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(census.age.toString(), { fontSize: 9, bold: false, width: { size: 8, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(census.category, { fontSize: 9, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
+              CommonCell(census.member_type, { fontSize: 9, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
             ],
           })
         );
       });
 
 
-      let title = tableTitle(`MAF Required Members - ${category.category_name}`, 24, '#AC0233')
+      let title = pageTitle(`MAF Required Members - ${category.category_name}`, 24, '#AC0233')
 
       // Create Table
       const table = new Table({
         rows,
-        width: { size: 100, type: WidthType.PERCENTAGE },
+        layout: TableLayoutType.FIXED,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
       });
 
-      tablesWithTitles.push(title, table);
-      // });
 
-      return tablesWithTitles;
+      return [pageBreak, title, table]
     }
 
 
@@ -705,414 +770,401 @@ export class TestDataComponent {
       alignment?: AlignmentTypeEnum;  // Correctly specify alignment as part of the enum
       rowSpan?: number;
       colSpan?: number;
+      width?: {
+        size: number; // Width size in percentage or points
+        type: "pct";
+      };
     }
 
-    // Create a styled cell
-    function createStyledCell(text: string, options: CellOptions = {}) {
-      const {
-        bold = false,
-        fontSize = 8,
-        fillColor = "#FFFFFF",
-        color = "#000000",
-        alignment = AlignmentType.CENTER, // Use enum value directly
-        rowSpan,
-        colSpan,
-      } = options;
 
-      return new TableCell({
-        rowSpan,
-        columnSpan: colSpan,
-        shading: {
-          fill: fillColor,
-        },
-        children: [
-          new Paragraph({
-            alignment,  // Use enum value directly
-            children: [
-              new TextRun({
-                text,
-                bold,
-                size: fontSize * 2, // `docx` uses half-points for font size
-                color,
-              }),
-            ],
-          }),
-        ],
+
+
+
+
+
+    function createCategoryTable(
+      categoryName: string,
+      titleText: string,
+      tableType: "memberCount" | "grossPremium" | "totalGrossPremium",
+      details: any[]
+    ): Table {
+      // Title for the section
+      const title = tableTitle(`${titleText} - ${categoryName}`, 24, "#AC0233");
+
+      // Header Rows for the table
+      const headers: TableRow[] = [
+        new TableRow({
+          children: [
+            CommonCell("Age band", {
+              fillColor: "#B7B5CF",
+              color: "#365d7c",
+              bold: true,
+              fontSize: 8,
+              rowSpan: 3,
+              alignment: AlignmentType.CENTER
+            }),
+            CommonCell(
+              tableType === "memberCount" ? "Member Count" :
+                tableType === "grossPremium" ? "Gross Premium" : "Total Gross Premium",
+              { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5, alignment: AlignmentType.CENTER }
+            ),
+          ],
+        }),
+        new TableRow({
+          children: [
+            CommonCell("Employees", {
+              fillColor: "#E7E5EF",
+              bold: true,
+              fontSize: 8,
+              colSpan: 2,
+              alignment: AlignmentType.CENTER
+            }),
+            CommonCell("Dependents", {
+              fillColor: "#E7E5EF",
+              bold: true,
+              fontSize: 8,
+              colSpan: 2,
+              alignment: AlignmentType.CENTER
+            }),
+            CommonCell("Maternity", {
+              fillColor: "#E7E5EF",
+              bold: true,
+              fontSize: 8,
+              rowSpan: 2,
+              alignment: AlignmentType.CENTER
+            }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            CommonCell("Male", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
+          ],
+        }),
+      ];
+
+      // Add data rows based on the details provided
+      const dataRows: TableRow[] = details.map((row: any) => {
+        const type = tableType === "memberCount" ? "Count" :
+          tableType === "grossPremium" ? "GrossPremium" : "TotalGrossPremium";
+
+        return new TableRow({
+          children: [
+            CommonCell(row.age, { fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell(row.Employee[`male${type}`].toString(), { fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell(row.Employee[`female${type}`].toString(), { fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell(row.Dependents[`male${type}`].toString(), { fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell(row.Dependents[`female${type}`].toString(), { fontSize: 8, alignment: AlignmentType.CENTER }),
+            CommonCell(row[`maternity${type}`].toString(), { fontSize: 8, alignment: AlignmentType.CENTER }),
+          ],
+        });
       });
+
+      // Add an empty row at the end
+
+      if (tableType === "memberCount" || tableType === "grossPremium") {
+        dataRows.push(
+          new TableRow({
+            children: [CommonCell("", { colSpan: 6, fontSize: 8, alignment: AlignmentType.CENTER })],
+          })
+        );
+      }
+
+
+      // Create the table
+      const table = new Table({
+        rows: [...headers, ...dataRows],
+        layout: TableLayoutType.FIXED,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 1 },
+          bottom: { style: BorderStyle.SINGLE, size: 1 },
+          left: { style: BorderStyle.SINGLE, size: 1 },
+          right: { style: BorderStyle.SINGLE, size: 1 },
+        },
+      });
+
+      return table;
     }
 
-    // Function to create table for member count, gross premium, and total gross premium
-    function createTableForCategory(category: any) {
 
-      let title =  tableTitle(`Age Band - ${category.category_name}`, 24, '#AC0233')
-      const tableRows = [
-        new TableRow({
-          children: [
-            createStyledCell("Age band", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
-            createStyledCell("Member Count", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Employees", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", bold: true, fontSize: 8, rowSpan: 2 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-          ],
-        }),
-      ];
+    function AgeBandTable1(category: any) {
 
-
-
-      // Loop through the age band details for the current category
-      category.pdfAgeBandDetails.forEach((row: any) => {
-        tableRows.push(
-          new TableRow({
-            children: [
-              createStyledCell(row.age, { fontSize: 8 }),
-              createStyledCell(row.Employee.maleCount.toString(), { fontSize: 8 }),
-              createStyledCell(row.Employee.femaleCount.toString(), { fontSize: 8 }),
-              createStyledCell(row.Dependents.maleCount.toString(), { fontSize: 8 }),
-              createStyledCell(row.Dependents.femaleCount.toString(), { fontSize: 8 }),
-              createStyledCell(row.maternityCount.toString(), { fontSize: 8 }),
-            ],
-          })
-        );
+      const pageBreak = new Paragraph({
+        children: [],
+        pageBreakBefore: true,
       });
 
-      tableRows.push(
-        new TableRow({
-          children: [
-            createStyledCell("", { colSpan: 6, fontSize: 8 }),
-          ],
-        })
+      const title = pageTitle(`Age Band - ${category.category_name}`, 24, '#AC0233');
+
+      // Create reusable tables
+      const memberCountTable = createCategoryTable(
+        category.category_name,
+        "Member Count",
+        "memberCount",
+        category.pdfAgeBandDetails
       );
 
-
-
-      // Create the table for Member Count
-      const memberCountTable = new Table({
-        rows: tableRows,
-        width: {
-          size: 100,
-          type: WidthType.PERCENTAGE,
-        },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 1 },
-          bottom: { style: BorderStyle.SINGLE, size: 1 },
-          left: { style: BorderStyle.SINGLE, size: 1 },
-          right: { style: BorderStyle.SINGLE, size: 1 },
-        },
-      });
-
-      // Table for Gross Premium (maleGrossPremium, femaleGrossPremium, maternityGrossPremium)
-      const grossPremiumRows = [
-        new TableRow({
-          children: [
-            createStyledCell("Age band", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
-            createStyledCell("Gross Premium", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Employees", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", bold: true, fontSize: 8, rowSpan: 2 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-          ],
-        }),
-      ];
-
-      category.pdfAgeBandDetails.forEach((row: any) => {
-        grossPremiumRows.push(
-          new TableRow({
-            children: [
-              createStyledCell(row.age, { fontSize: 8 }),
-              createStyledCell(row.Employee.maleGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Employee.femaleGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Dependents.maleGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Dependents.femaleGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.maternityGrossPremium.toFixed(2), { fontSize: 8 }),
-            ],
-          })
-        );
-      });
-
-      grossPremiumRows.push(
-        new TableRow({
-          children: [
-            createStyledCell("", { colSpan: 6, fontSize: 8 }), // 6 is the number of columns
-          ],
-        })
+      const grossPremiumTable = createCategoryTable(
+        category.category_name,
+        "Gross Premium",
+        "grossPremium",
+        category.pdfAgeBandDetails
       );
 
+      const totalGrossPremiumTable = createCategoryTable(
+        category.category_name,
+        "Total Gross Premium",
+        "totalGrossPremium",
+        category.pdfAgeBandDetails
+      );
 
-
-      const grossPremiumTable = new Table({
-        rows: grossPremiumRows,
-        width: {
-          size: 100,
-          type: WidthType.PERCENTAGE,
-        },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 1 },
-          bottom: { style: BorderStyle.SINGLE, size: 1 },
-          left: { style: BorderStyle.SINGLE, size: 1 },
-          right: { style: BorderStyle.SINGLE, size: 1 },
-        },
-      });
-
-      // Table for Total Gross Premium (maleTotalGrossPremium, femaleTotalGrossPremium, maternityTotalGrossPremium)
-      const totalGrossPremiumRows = [
-        new TableRow({
-          children: [
-            createStyledCell("Age band", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
-            createStyledCell("Total Gross Premium", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Employees", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", bold: true, fontSize: 8, rowSpan: 2 }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Male", { fillColor: "#E7E5EF", fontSize: 8 }),
-            createStyledCell("Female", { fillColor: "#E7E5EF", fontSize: 8 }),
-          ],
-        }),
-      ];
-
-      category.pdfAgeBandDetails.forEach((row: any) => {
-        totalGrossPremiumRows.push(
-          new TableRow({
-            children: [
-              createStyledCell(row.age, { fontSize: 8 }),
-              createStyledCell(row.Employee.maleTotalGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Employee.femaleTotalGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Dependents.maleTotalGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.Dependents.femaleTotalGrossPremium.toFixed(2), { fontSize: 8 }),
-              createStyledCell(row.maternityTotalGrossPremium.toFixed(2), { fontSize: 8 }),
-            ],
-          })
-        );
-      });
-
-
-
-
-      const totalGrossPremiumTable = new Table({
-        rows: totalGrossPremiumRows,
-        width: {
-          size: 100,
-          type: WidthType.PERCENTAGE,
-        },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 1 },
-          bottom: { style: BorderStyle.SINGLE, size: 1 },
-          left: { style: BorderStyle.SINGLE, size: 1 },
-          right: { style: BorderStyle.SINGLE, size: 1 },
-        },
-      });
-
-      return [title,memberCountTable, grossPremiumTable, totalGrossPremiumTable];
+      return [pageBreak, title, memberCountTable, grossPremiumTable, totalGrossPremiumTable];
     }
 
     const ageBandTables = ageBandAndMafInfo.map((category, index) => {
-
-      // Create the tables for the category
-      const table1 = createTableForCategory(category);
-      const table2 = mafRiskTable(category);
-
-
       const content = [];
 
-      // Add a page break before categories except the first one
-      if (index > 0) {
-        content.push(
-          new Paragraph({
-            pageBreakBefore: true
-          })
-        );
+      // Check if MAF data is available for the category
+      if (category.census && category.census.length > 0) {
+        const mafTable = mafRiskTable(category);
+        content.push(...mafTable);
       }
 
-      // Add the category name and the table1
-      content.push(
-        ...table2,
-        ...table1
-      );
+      let ageBandTable
+
+
+      if (category.emirate.trim().toLowerCase() === "dubai" && category.tpa.trim().toLowerCase() === "nextcare") {
+        ageBandTable = AgeBandTable2(category)
+      } else if (category.emirate.trim().toLowerCase() === "abu dhabi" && category.tpa.trim().toLowerCase() === "nextcare") {
+        ageBandTable = AgeBandTable3(category)
+      } else {
+        ageBandTable = AgeBandTable1(category);
+      }
+
+
+      content.push(...ageBandTable);
 
       return content;
     });
 
-    //****************************************************************** */
+    function AgeBandTable2(category: any) {
+      let details = category.pdfAgeBandDetailsUnify;
+      const pageBreak = new Paragraph({
+        children: [],
+        pageBreakBefore: true,
+      });
 
-    function createTableForCategory2(category: any) {
-      const tableRows = [
+      const title = pageTitle(`Age Band - ${category.category_name}`, 24, '#AC0233');
+
+      const headers = [
         new TableRow({
           children: [
-            createStyledCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
-            createStyledCell("Dubai", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5 }),
+            CommonCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Dubai", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5, width: { size: 16.67 * 5, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
         new TableRow({
           children: [
-            createStyledCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
-            createStyledCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8 }),
+            CommonCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
         new TableRow({
           children: [
-            createStyledCell("Employees & Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
-            createStyledCell("Maternity Eligible", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
-            createStyledCell("Employees & Dependents excl. Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
-            createStyledCell("Maternity Premium Per Eligible Female", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
-            createStyledCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            CommonCell("Employees & Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Maternity Eligible", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Employees & Dependents excl. Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Maternity Premium Per Eligible Female", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
       ];
+
+      // Add data rows based on the details provided
+      const dataRows: TableRow[] = details.map((row: any) => {
+        return new TableRow({
+
+          children: [
+            CommonCell(row.age, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Age cell width
+            CommonCell(row.member_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Member Count cell width
+            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Gross Premium per member cell width
+            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Gross Premium per member cell width (duplicated, check if needed)
+            CommonCell(row.maternity_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Maternity Gross Premium cell width
+            CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Total Gross Premium cell width
+          ],
+        });
+      });
+
+      // Total row
+      let totalMembersCount = 0;
+      let totalMaternityCount = 0;
+      let weightedSumGrossPremium = 0;
+      let totalMaternityGrossPremium = 0;
+      let totalGrossPremium = 0;
+
+      details.forEach((row: any) => {
+        totalMembersCount += row.members_count || 0;
+        totalMaternityCount += row.maternity_count || 0;
+        weightedSumGrossPremium += (row.members_count || 0) * (row.members_gross_premium || 0);
+        totalMaternityGrossPremium += (row.maternity_count || 0) * (row.maternity_gross_premium || 0);
+        totalGrossPremium += row.total_gross_premium || 0;
+      });
+
+      const totalMembersGrossPremium = totalMembersCount > 0
+        ? (weightedSumGrossPremium / totalMembersCount).toFixed(2)
+        : '0';
+      const maternityGrossPremiumPerMember = totalMaternityCount > 0
+        ? (totalMaternityGrossPremium / totalMaternityCount).toFixed(2)
+        : '0';
+
+      const totalRow = new TableRow({
+        children: [
+          CommonCell("Total", { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(String(totalMembersCount), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(String(totalMaternityCount), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(totalMembersGrossPremium, { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(maternityGrossPremiumPerMember, { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(totalGrossPremium.toFixed(2), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+        ],
+      });
 
       // Create the table for Member Count
       const memberCountTable = new Table({
-        rows: tableRows,
+        rows: [...headers, ...dataRows, totalRow],
+        layout: TableLayoutType.FIXED,
         width: {
           size: 100,
           type: WidthType.PERCENTAGE,
-        },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 1 },
-          bottom: { style: BorderStyle.SINGLE, size: 1 },
-          left: { style: BorderStyle.SINGLE, size: 1 },
-          right: { style: BorderStyle.SINGLE, size: 1 },
-        },
+        }
       });
 
-
-      return [memberCountTable];
+      return [pageBreak, title, memberCountTable];
     }
 
 
+    function AgeBandTable3(category: any) {
+      let details = category.pdfAgeBandDetailsUnify;
+      const pageBreak = new Paragraph({
+        children: [],
+        pageBreakBefore: true,
+      });
 
-    const ageBandTables2 = ageBandAndMafInfo.map((category, index) => {
-      // Create the tables for the category
-      const tables = createTableForCategory2(category);
+      const title = pageTitle(`Age Band - ${category.category_name}`, 24, '#AC0233');
 
-      const content = [];
-
-      // Add a page break before categories except the first one
-      if (index > 0) {
-        content.push(
-          new Paragraph({
-            pageBreakBefore: true
-          })
-        );
-      }
-
-      // Add the category name and the tables
-      content.push(
-        tableTitle(`Age Band - ${category.category_name}`, 24, '#AC0233'),
-        ...tables
-      );
-
-      return content;
-    });
-
-
-
-    function createTableForCategory3(category: any) {
-
-      const tableRows2 = [
+      const headers = [
         new TableRow({
           children: [
-            createStyledCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
-            createStyledCell("Abhu Dhabi", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 10 }),
+            CommonCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Abhu Dhabi", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 10, width: { size: 9.09 * 10, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
         new TableRow({
           children: [
-            createStyledCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3 }),
-            createStyledCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3 }),
-            createStyledCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 4 }),
+            CommonCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 4, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
         new TableRow({
           children: [
-            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
-            createStyledCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
       ];
 
+      // Add data rows based on the details provided
+      // Add data rows based on the details provided
+      const dataRows: TableRow[] = details.map((row: any) => {
+        return new TableRow({
+
+          children: [
+            CommonCell(row.age || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.employee_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.dependent_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.maternity_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.employee_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.dependent_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.maternity_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell((row.employee_gross_premium * row.employee_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell((row.dependent_gross_premium * row.dependent_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell((row.maternity_gross_premium * row.maternity_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(((row.employee_gross_premium * row.employee_count) + (row.dependent_gross_premium * row.dependent_count) + (row.maternity_gross_premium * row.maternity_count)).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          ],
+        });
+      });
+
+      // total row 
+      let totalEmployeesCount = 0;
+      let totalDependentsCount = 0;
+      let totalMaternityCount = 0;
+      let employeeGrossPremiumPerMember = 0;
+      let dependentGrossPremiumPerMember = 0;
+      let maternityGrossPremiumPerMember = 0;
+      let employeeTotalGrossPremium = 0;
+      let dependentTotalGrossPremium = 0;
+      let maternityTotalGrossPremium = 0;
+      let totalGrossPremium = 0;
+      details.forEach((row: any) => {
+        totalEmployeesCount += row.employee_count || 0;
+        totalDependentsCount += row.dependent_count || 0;
+        totalMaternityCount += row.maternity_count || 0;
+        employeeTotalGrossPremium += (row.employee_count * row.employee_gross_premium) || 0;
+        dependentTotalGrossPremium += (row.dependent_count * row.dependent_gross_premium) || 0;
+        maternityTotalGrossPremium += (row.maternity_count * row.maternity_gross_premium) || 0;
+        totalGrossPremium += ((row.employee_count * row.employee_gross_premium) + (row.dependent_count * row.dependent_gross_premium) + (row.maternity_count * row.maternity_gross_premium)) || 0;
+      });
+      employeeGrossPremiumPerMember = employeeTotalGrossPremium / totalEmployeesCount;
+      dependentGrossPremiumPerMember = dependentTotalGrossPremium / totalDependentsCount;
+      maternityGrossPremiumPerMember = maternityTotalGrossPremium / totalMaternityCount;
+
+
+      const totalRow = new TableRow({
+        children: [
+          CommonCell("Total", { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(String(totalEmployeesCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(String(totalDependentsCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(String(totalMaternityCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(employeeGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(dependentGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(maternityGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(employeeTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(dependentTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(maternityTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          CommonCell(totalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+        ],
+      });
+
+
       // Create the table for Member Count
       const memberCountTable2 = new Table({
-        rows: tableRows2,
+        rows: [...headers, ...dataRows, totalRow],
+        layout: TableLayoutType.FIXED,
         width: {
           size: 100,
           type: WidthType.PERCENTAGE,
         },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 1 },
-          bottom: { style: BorderStyle.SINGLE, size: 1 },
-          left: { style: BorderStyle.SINGLE, size: 1 },
-          right: { style: BorderStyle.SINGLE, size: 1 },
-        },
       });
 
-      return [memberCountTable2];
+      return [pageBreak, title, memberCountTable2];
     }
 
 
-
-    const ageBandTables3 = ageBandAndMafInfo.map((category, index) => {
-      // Create the tables for the category
-      const tables = createTableForCategory3(category);
-
-      const content = [];
-
-      // Add a page break before categories except the first one
-      if (index > 0) {
-        content.push(
-          new Paragraph({
-            pageBreakBefore: true
-          })
-        );
-      }
-
-      // Add the category name and the tables
-      content.push(
-        tableTitle(`Age Band - ${category.category_name}`, 24, '#AC0233'),
-        ...tables
-      );
-
-      return content;
-    });
     //****************************************************************** */
 
     // Terms and Conditions Page 
@@ -1144,7 +1196,7 @@ export class TestDataComponent {
         }
 
         // Add title for each section
-        paragraphs.push(pageTitle("General Exclusions", 57));
+        paragraphs.push(pageTitle("General Exclusions", 57, "00587C"));
 
         // Add Exclusions for each Emirate
         emirateData.exclusions.forEach((exclusion: Exclusion) => {
@@ -1286,39 +1338,49 @@ export class TestDataComponent {
         {
           children: [
             new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
               rows: [
                 new TableRow({
                   children: [
-                    tableCell('Basic Details', true, 24, '#00587C', 35),
-                    tableCell("", false, 12, '#000000', 65)
+                    CommonCell('Basic Details', { color: "#00587C", fontSize: 9, bold: true, width: { size: 35, type: "pct" }, alignment: AlignmentType.LEFT }),
+                    CommonCell("", { fontSize: 6, bold: false, width: { size: 65, type: "pct" } })
                   ],
                 }),
                 ...basicTableRows,
               ],
+              layout: TableLayoutType.FIXED,
+              width: {
+                size: 100,
+                type: WidthType.PERCENTAGE,
+              },
+              
             }),
             spaceParagraph,
             new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
               rows: [
                 // Header row with three columns: categoryName, members, and premium
                 new TableRow({
                   children: [
-                    tableCell('Categories', true, 18, '#AC0233', 33, '#E7E5EF'),
-                    tableCell('Members', true, 18, '#AC0233', 33, '#E7E5EF'),
-                    tableCell('Option 1', true, 18, '#AC0233', 34, '#E7E5EF')
+
+                    CommonCell('Categories', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+                    CommonCell('Members', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+                    CommonCell('Option 1', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 34, type: "pct" } })
                   ],
                 }),
                 // Dynamically created rows based on category data
                 ...categoryMemberTableRows,
                 new TableRow({
                   children: [
-                    tableCell('Total', true, 18, '#000000', 33),
-                    tableCell(String(this.totalCategoryCount), true, 18, '#000000', 33),
-                    tableCell(`${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`, true, 18, '000000', 34)
+                    CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+                    CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+                    CommonCell(`${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`, { fontSize: 9, bold: true, width: { size: 34, type: "pct" } })
                   ],
                 }),
               ],
+              layout: TableLayoutType.FIXED,
+              width: {
+                size: 100,
+                type: WidthType.PERCENTAGE,
+              },
             })
           ],
           headers: {
@@ -1335,31 +1397,25 @@ export class TestDataComponent {
             summaryTable,
             tableTitle("Categories & Premium", 24, '#AC0233'),
             new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              rows: premiumTableRows
+              rows: premiumTableRows,
+              layout: TableLayoutType.FIXED,
+              width: {
+                size: 100,
+                type: WidthType.PERCENTAGE,
+              },
             }),
-            tableTitle("Categories & Benifits", 24, '#AC0233'),
+            tableTitle("Categories & Benefits", 24, '#AC0233'),
             ...mandatoryBenefitsTable,
             ...optionalBenefitsTable
           ]
         },
-        // {
-        //   children: [
-        //     ...mafTables
-        //   ],
-        // },
         {
           children: ageBandTables.flat(),
         },
-        {
-          children: ageBandTables2.flat()
-        },
-        {
-          children: ageBandTables3.flat()
-        },
+
         {
           children: [
-            pageTitle("Terms and Conditions", 57),
+            pageTitle("Terms and Conditions", 57, "00587C"),
             ...termsConditions
           ],
 
@@ -1372,7 +1428,7 @@ export class TestDataComponent {
         {
           children:
             [
-              pageTitle("Acceptance of Proposal & Acknowledgment of Responsibilities", 57),
+              pageTitle("Acceptance of Proposal & Acknowledgment of Responsibilities", 57, "#00587C"),
               textLine("I, the undersigned and duly authorized by my company hereby:", 18, 100, 100, AlignmentType.LEFT),
               ...acceptance,
               spaceParagraph,
@@ -1384,7 +1440,7 @@ export class TestDataComponent {
         {
           children:
             [
-              pageTitle("Policy Issuance Requirements", 57),
+              pageTitle("Policy Issuance Requirements", 57, "00587C"),
               textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, 100, 100, AlignmentType.LEFT),
               ...policyInsuranceRequirements1,
               textLine("Should any assistance be needed, please do not hesitate to contact us via:", 18, 100, 100, AlignmentType.LEFT),
@@ -1425,7 +1481,7 @@ export class TestDataComponent {
 
     // Save the Word document
     Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, 'output.docx');
+      saveAs(blob, `${CRN}.docx`);
       console.log('Word document created!');
     });
   }
