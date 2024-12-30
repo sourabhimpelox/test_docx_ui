@@ -38,6 +38,7 @@ export interface PdfAgeBandDetail {
 export interface agebandData {
   category_name: string;
   pdfAgeBandDetails: PdfAgeBandDetail[];
+  census:{}[]
 }
 
 // {

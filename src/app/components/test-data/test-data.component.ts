@@ -28,11 +28,12 @@ export class TestDataComponent {
 
 
 
-  ageBandData(data: any[]): agebandData[] {
+  ageBandAndMafData(data: any[]): agebandData[] {
     return data.map(item => {
       return {
         category_name: item.category_name,
         pdfAgeBandDetails: item.pdfAgeBandDetails || [],
+        census: item.census,
       }
     });
   }
@@ -127,14 +128,14 @@ export class TestDataComponent {
   exclusionData = this.formatExclusionData(quoteData.exclusion)
 
 
-  getCensusByCategory(data: CensusCategory[]) {
-    return data
-      .filter((category) => category.census.length > 0) // Include only categories with at least one census item
-      .map((category) => ({
-        category: category.category_name,
-        census: category.census, // Include the entire census array
-      }));
-  }
+  // ageBandAndMafInfo(data: CensusCategory[]) {
+  //   return data
+  //     .filter((category) => category.census.length > 0) // Include only categories with at least one census item
+  //     .map((category) => ({
+  //       category: category.category_name,
+  //       census: category.census, // Include the entire census array
+  //     }));
+  // }
 
 
   async generateDocument() {
@@ -635,72 +636,64 @@ export class TestDataComponent {
     const optionalBenefitsTable = createBenefitsTable(optionalBenefitsData);
 
     //****************************************************************** */
-    // maf Risk Table 
 
-    function mafRiskTable(categoriesWithCensus: any[]): any[] {
+    const ageBandAndMafInfo = this.ageBandAndMafData(quoteData.quotes[0].data);
+
+
+    function mafRiskTable(category: any): any[] {
       const tablesWithTitles: any[] = [];
 
-      categoriesWithCensus.forEach((category) => {
-        const rows: TableRow[] = [];
+      const rows: TableRow[] = [];
 
-        // Add Table Header
+      // Add Table Header
+      rows.push(
+        new TableRow({
+          children: [
+            tableCell("S.No", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
+            tableCell("Employee Id", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+            tableCell("Employee Name", true, 18, '#000000', 28, '#32CD32', AlignmentType.CENTER),
+            tableCell("Relations", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+            tableCell("Age", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
+            tableCell("Category", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+            tableCell("Member Type", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+          ],
+        })
+      );
+
+      // Add Census Data Rows
+      category.census.forEach((census: any, index: number) => {
         rows.push(
           new TableRow({
             children: [
-              tableCell("S.No", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
-              tableCell("Employee Id", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-              tableCell("Employee Name", true, 18, '#000000', 28, '#32CD32', AlignmentType.CENTER),
-              tableCell("Relations", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-              tableCell("Age", true, 18, '#000000', 8, '#32CD32', AlignmentType.CENTER),
-              tableCell("Category", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
-              tableCell("Member Type", true, 18, '#000000', 14, '#32CD32', AlignmentType.CENTER),
+              tableCell((index + 1).toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // S.No
+              tableCell(census.employee_id, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Employee Id
+              tableCell(census.employee_name, false, 18, '#000000', 28, '#FFFFFF', AlignmentType.CENTER), // Employee Name
+              tableCell(census.relations, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Relations
+              tableCell(census.age.toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // Age
+              tableCell(census.category, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Category
+              tableCell(census.member_type, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Member Type
             ],
           })
         );
-
-        // Add Census Data Rows
-        category.census.forEach((census: any, index: number) => {
-          rows.push(
-            new TableRow({
-              children: [
-                tableCell((index + 1).toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // S.No
-                tableCell(census.employee_id, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Employee Id
-                tableCell(census.employee_name, false, 18, '#000000', 28, '#FFFFFF', AlignmentType.CENTER), // Employee Name
-                tableCell(census.relations, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Relations
-                tableCell(census.age.toString(), false, 18, '#000000', 8, '#FFFFFF', AlignmentType.CENTER), // Age
-                tableCell(census.category, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Category
-                tableCell(census.member_type, false, 18, '#000000', 14, '#FFFFFF', AlignmentType.CENTER), // Member Type
-              ],
-            })
-          );
-        });
-
-
-        let title = tableTitle(`MAF Required Members - ${category.category}`, 24, '#AC0233')
-
-        // Create Table
-        const table = new Table({
-          rows,
-          width: { size: 100, type: WidthType.PERCENTAGE },
-        });
-
-        tablesWithTitles.push(title, table);
       });
+
+
+      let title = tableTitle(`MAF Required Members - ${category.category_name}`, 24, '#AC0233')
+
+      // Create Table
+      const table = new Table({
+        rows,
+        width: { size: 100, type: WidthType.PERCENTAGE },
+      });
+
+      tablesWithTitles.push(title, table);
+      // });
 
       return tablesWithTitles;
     }
 
-    let getCensusByCategory = this.getCensusByCategory(quoteData.quotes[0].data)
-    const mafTables = mafRiskTable(getCensusByCategory);
-
 
     //****************************************************************** */
-
-
-    // to give border to each cell 
-
-    const ageBandInfo = this.ageBandData(quoteData.quotes[0].data);
-
 
     // Define the CellOptions interface
     type AlignmentTypeEnum = typeof AlignmentType[keyof typeof AlignmentType];
@@ -750,6 +743,8 @@ export class TestDataComponent {
 
     // Function to create table for member count, gross premium, and total gross premium
     function createTableForCategory(category: any) {
+
+      let title =  tableTitle(`Age Band - ${category.category_name}`, 24, '#AC0233')
       const tableRows = [
         new TableRow({
           children: [
@@ -938,12 +933,88 @@ export class TestDataComponent {
         },
       });
 
-      return [memberCountTable, grossPremiumTable, totalGrossPremiumTable];
+      return [title,memberCountTable, grossPremiumTable, totalGrossPremiumTable];
     }
 
-    const ageBandTables = ageBandInfo.map((category, index) => {
+    const ageBandTables = ageBandAndMafInfo.map((category, index) => {
+
       // Create the tables for the category
-      const tables = createTableForCategory(category);
+      const table1 = createTableForCategory(category);
+      const table2 = mafRiskTable(category);
+
+
+      const content = [];
+
+      // Add a page break before categories except the first one
+      if (index > 0) {
+        content.push(
+          new Paragraph({
+            pageBreakBefore: true
+          })
+        );
+      }
+
+      // Add the category name and the table1
+      content.push(
+        ...table2,
+        ...table1
+      );
+
+      return content;
+    });
+
+    //****************************************************************** */
+
+    function createTableForCategory2(category: any) {
+      const tableRows = [
+        new TableRow({
+          children: [
+            createStyledCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
+            createStyledCell("Dubai", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5 }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createStyledCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
+            createStyledCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2 }),
+            createStyledCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8 }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createStyledCell("Employees & Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
+            createStyledCell("Maternity Eligible", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
+            createStyledCell("Employees & Dependents excl. Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
+            createStyledCell("Maternity Premium Per Eligible Female", { fillColor: "#E7E5EF", fontSize: 8, bold: true, }),
+            createStyledCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+          ],
+        }),
+      ];
+
+      // Create the table for Member Count
+      const memberCountTable = new Table({
+        rows: tableRows,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 1 },
+          bottom: { style: BorderStyle.SINGLE, size: 1 },
+          left: { style: BorderStyle.SINGLE, size: 1 },
+          right: { style: BorderStyle.SINGLE, size: 1 },
+        },
+      });
+
+
+      return [memberCountTable];
+    }
+
+
+
+    const ageBandTables2 = ageBandAndMafInfo.map((category, index) => {
+      // Create the tables for the category
+      const tables = createTableForCategory2(category);
 
       const content = [];
 
@@ -965,6 +1036,83 @@ export class TestDataComponent {
       return content;
     });
 
+
+
+    function createTableForCategory3(category: any) {
+
+      const tableRows2 = [
+        new TableRow({
+          children: [
+            createStyledCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3 }),
+            createStyledCell("Abhu Dhabi", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 10 }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createStyledCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3 }),
+            createStyledCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3 }),
+            createStyledCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 4 }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+            createStyledCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true }),
+          ],
+        }),
+      ];
+
+      // Create the table for Member Count
+      const memberCountTable2 = new Table({
+        rows: tableRows2,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 1 },
+          bottom: { style: BorderStyle.SINGLE, size: 1 },
+          left: { style: BorderStyle.SINGLE, size: 1 },
+          right: { style: BorderStyle.SINGLE, size: 1 },
+        },
+      });
+
+      return [memberCountTable2];
+    }
+
+
+
+    const ageBandTables3 = ageBandAndMafInfo.map((category, index) => {
+      // Create the tables for the category
+      const tables = createTableForCategory3(category);
+
+      const content = [];
+
+      // Add a page break before categories except the first one
+      if (index > 0) {
+        content.push(
+          new Paragraph({
+            pageBreakBefore: true
+          })
+        );
+      }
+
+      // Add the category name and the tables
+      content.push(
+        tableTitle(`Age Band - ${category.category_name}`, 24, '#AC0233'),
+        ...tables
+      );
+
+      return content;
+    });
     //****************************************************************** */
 
     // Terms and Conditions Page 
@@ -1195,13 +1343,19 @@ export class TestDataComponent {
             ...optionalBenefitsTable
           ]
         },
+        // {
+        //   children: [
+        //     ...mafTables
+        //   ],
+        // },
         {
           children: ageBandTables.flat(),
         },
         {
-          children: [
-            ...mafTables
-          ],
+          children: ageBandTables2.flat()
+        },
+        {
+          children: ageBandTables3.flat()
         },
         {
           children: [
