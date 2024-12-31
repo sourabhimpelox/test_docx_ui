@@ -1,3 +1,6 @@
+import { AlignmentType } from 'docx';
+
+
 export interface PremiumDetail {
   group_details: string;
   tob_header: string;
@@ -38,15 +41,24 @@ export interface PdfAgeBandDetail {
 export interface agebandData {
   category_name: string;
   pdfAgeBandDetails: PdfAgeBandDetail[];
-  census:{}[];
+  census: {}[];
   // emirates:string;
 
 }
 
-// {
-//   text: "S.No",
-//   alignment: "center",
-//   bold: true,
-//   style: "header",
-//   fillColor: "#32CD32",
-// },
+
+// Define the CellOptions interface
+type AlignmentTypeEnum = typeof AlignmentType[keyof typeof AlignmentType];
+export interface CellOptions {
+  bold?: boolean;
+  fontSize?: number;
+  fillColor?: string;
+  color?: string;
+  alignment?: AlignmentTypeEnum;  // Correctly specify alignment as part of the enum
+  rowSpan?: number;
+  colSpan?: number;
+  width?: {
+    size: number; // Width size in percentage or points
+    type: "pct";
+  };
+}

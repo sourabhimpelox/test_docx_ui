@@ -7,8 +7,7 @@ import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell,
 import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2 } from './data';
 import { pdfImages } from './images';
 
-import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData } from './interfaces'
-
+import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData, CellOptions } from './interfaces'
 
 
 @Component({
@@ -17,30 +16,13 @@ import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAge
   styleUrls: ['./test-data.component.css']
 })
 
-
 export class TestDataComponent {
 
-
   constructor(private http: HttpClient) { }
-
   totalCategoryCount: number = 0
+  quotesData:any=quoteData
 
-
-
-
-  ageBandAndMafData(data: any[]) {
-    return data.map(category => {
-      return {
-        category_name: category.category_name,
-        pdfAgeBandDetails: category.pdfAgeBandDetails || [],
-        pdfAgeBandDetailsUnify: category.pdfAgeBandDetailsUnify || [],
-        census: category.census,
-        emirate: category.data.emirates.emirates_name,
-        tpa: category.data.tpa.tpa_name
-      }
-    });
-  }
-
+  // categoey details table data 
   categoriesWithDetails(data: any[], quotes: any[], categoryKey = 'category') {
     const categoryCounts: Record<string, number> = data.reduce((acc: Record<string, number>, item: any) => {
       const category = item[categoryKey];
@@ -65,12 +47,10 @@ export class TestDataComponent {
         }
       );
 
-
       // Extract the "Total Premium" tob_value
       const totalPremiumValue = matchingQuote?.data.premium_details.find(
         (detail: any) => detail.tob_header === "Total Premium"
       )?.tob_value || null;
-
 
       return {
         categoryName: categoryName,
@@ -80,16 +60,17 @@ export class TestDataComponent {
     });
   }
 
-  extractPremiumData = (quoteData: any[]) => {
+  // premium table data 
+  PremiumTableData = (quoteData: any[]) => {
     return quoteData.map((category: any) => ({
       category_name: category.category_name,
       premium_details: category.data?.premium_details || category.premium_details || [],
     }));
   };
-  extractedData = this.extractPremiumData(quoteData.quotes[0].data);
+  extractedData = this.PremiumTableData(quoteData.quotes[0].data);
 
-
-  benefitsData = (data: any, benifitName: string) => {
+// benifits table data 
+  benefitsTableData = (data: any, benifitName: string) => {
     const organizedData: { [groupDetails: string]: any[] } = {};
     // Iterate through each category
     data.forEach((category: any) => {
@@ -111,7 +92,21 @@ export class TestDataComponent {
     return organizedData;
   };
 
+  // age band table data 
+  ageBandAndMafData(data: any[]) {
+    return data.map(category => {
+      return {
+        category_name: category.category_name,
+        pdfAgeBandDetails: category.pdfAgeBandDetails || [],
+        pdfAgeBandDetailsUnify: category.pdfAgeBandDetailsUnify || [],
+        census: category.census,
+        emirate: category.data.emirates.emirates_name,
+        tpa: category.data.tpa.tpa_name
+      }
+    });
+  }
 
+// exclusion data 
   formatExclusionData(exclusionData: any) {
     return exclusionData.map((item: any) => {
       return {
@@ -127,15 +122,7 @@ export class TestDataComponent {
     });
   }
 
-
-  exclusionData = this.formatExclusionData(quoteData.exclusion)
-
-
   async generateDocument() {
-
-    //****************************************************************** */
-
-
 
     // mostly used reusable snippets 
     // for images
@@ -189,7 +176,7 @@ export class TestDataComponent {
     }
 
 
-
+    // common cell for every table 
     function CommonCell(text: string, options: CellOptions = {}) {
       const {
         bold = false,
@@ -227,11 +214,9 @@ export class TestDataComponent {
         width,
         // verticalAlign: VerticalAlign.CENTER, 
         borders: defaultBorders(10, 'single'), // Default borders
-        margins: { left: 20, top:20 },
+        margins: { left: 20, top: 20 },
       });
     }
-
-
 
     // borders for all tables 
     const defaultBorders = (size: number = 10, border: any = "single") => {
@@ -243,12 +228,13 @@ export class TestDataComponent {
       };
     };
 
+
     // to create number of columns according to category 
     const totalColumns = quoteData.quotes[0].data.length + 1
     const columnWidth = 100 / totalColumns
 
-    // title of each table 
 
+    // title of each table 
     const tableTitle = (titleText: string, size: number = 24, color: string = '#AC0233') =>
       new Paragraph({
         children: [
@@ -263,6 +249,7 @@ export class TestDataComponent {
         alignment: 'left',
       });
 
+
     // title of each page 
     function pageTitle(title: string, size: number = 57, color: string = "#00587C") {
       return new Paragraph({
@@ -272,12 +259,11 @@ export class TestDataComponent {
             bold: true,
             size,
             color: color
-
           }),
         ],
-        heading: "Heading1", // Sets this paragraph as a heading
+        heading: "Heading1",
         spacing: {
-          after: 200, // Space after the heading
+          after: 200,
         },
         alignment: 'left'
       });
@@ -293,6 +279,7 @@ export class TestDataComponent {
       ],
       spacing: { after: 200 }, // Adjust space between tables
     });
+
 
     // to add any line 
     function textLine(
@@ -328,7 +315,7 @@ export class TestDataComponent {
         throw new Error("Failed to get canvas context.");
       }
 
-      ctx.fillStyle = "#00587C"; // Green color
+      ctx.fillStyle = "#00587C";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Convert canvas to base64
@@ -336,7 +323,7 @@ export class TestDataComponent {
 
       // Decode base64 to binary data
       const base64Data = base64Image.split(",")[1]; // Remove the "data:image/png;base64," prefix
-      const binaryString = atob(base64Data); // Decode base64 string
+      const binaryString = atob(base64Data);
       const binaryData = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         binaryData[i] = binaryString.charCodeAt(i);
@@ -377,9 +364,8 @@ export class TestDataComponent {
     // Create footer content
     async function createFooter(imagePath: string): Promise<Footer> {
       // Fetch the image using createImage function
-      const footerImage = await createImageFromBase64(imagePath, 220, 120); // Adjust size as needed
+      const footerImage = await createImageFromBase64(imagePath, 220, 120);
 
-      // Create the footer
       return new Footer({
         children: [
           new Table({
@@ -428,10 +414,9 @@ export class TestDataComponent {
         ],
       });
     }
-
     const footer = await createFooter(pdfImages.footerImg);
 
-    // other footer 
+    // Custome footer for other pages
     function customFooter(text1: string, text2: string, text3: string, size: number, color: string): Footer {
       return new Footer({
         children: [
@@ -461,27 +446,42 @@ export class TestDataComponent {
               new TextRun({
                 text: text3,
                 size, color,
-
               }),
             ],
           }),
         ],
       });
     }
-
-
     //****************************************************************** */
     // Basic Table
+
     const createRow1 = (label: string, value: string | undefined) =>
       new TableRow({
         children: [
-
           CommonCell(label, { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
           CommonCell(value || '', { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
         ],
       });
-
-    const basicTableRows = basicTableData.map(({ label, value }) => createRow1(label, value));
+    
+    const basicTableRows = [
+      new TableRow({
+        children: [
+          CommonCell('Basic Details', { color: "#00587C", fontSize: 9, bold: true, width: { size: 35, type: "pct" }, alignment: AlignmentType.LEFT }),
+          CommonCell("", { fontSize: 6, bold: false, width: { size: 65, type: "pct" } })
+        ],
+      }),
+      ...basicTableData.map(({ label, value }) => createRow1(label, value)),
+    ];
+    
+    let basicDetailsTable = new Table({
+      rows: basicTableRows,
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+    });
+    
     //****************************************************************** */
     // category member table 
 
@@ -493,18 +493,47 @@ export class TestDataComponent {
           CommonCell(option, { fontSize: 9, bold: false, width: { size: 34, type: "pct" } }),
         ],
       });
-
-
-    let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category')
-
-    const categoryMemberTableRows = categoryData
-      .sort((a, b) => {
-        // Compare category names in alphabetical order
-        if (a.categoryName < b.categoryName) return -1;
-        if (a.categoryName > b.categoryName) return 1;
-        return 0;
-      })
-      .map(({ categoryName, members, option }) => createRow2(categoryName, members, option));
+    
+    let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
+    
+    const categoryMemberTableRows = [
+      ...categoryData
+        .sort((a, b) => {
+          // Compare category names in alphabetical order
+          if (a.categoryName < b.categoryName) return -1;
+          if (a.categoryName > b.categoryName) return 1;
+          return 0;
+        })
+        .map(({ categoryName, members, option }) => createRow2(categoryName, members, option)),
+      // Add the "Total" row
+      new TableRow({
+        children: [
+          CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+          CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+          CommonCell(`${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`, { fontSize: 9, bold: true, width: { size: 34, type: "pct" } }),
+        ],
+      }),
+    ];
+    
+    let categoriesDetailsTable=new Table({
+      rows: [
+        // Header row
+        new TableRow({
+          children: [
+            CommonCell('Categories', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+            CommonCell('Members', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
+            CommonCell('Option 1', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 34, type: "pct" } }),
+          ],
+        }),
+        // Dynamically created rows including the "Total" row
+        ...categoryMemberTableRows,
+      ],
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+    });
 
     //****************************************************************** */
     // quote summary row 
@@ -542,6 +571,7 @@ export class TestDataComponent {
       });
 
     const createPremiumTableRows = (data: Category[]): TableRow[] => {
+      console.log("premium table", columnWidth);
       // Extract the tob_headers (unique keys in each category)
       const tobHeaders = data[0].premium_details.map((item: PremiumDetail) => item.tob_header);
 
@@ -570,9 +600,10 @@ export class TestDataComponent {
     const premiumTableRows = createPremiumTableRows(this.extractedData);
 
     //****************************************************************** */
-
+    // Category and Benifits table
 
     const createBenefitsTable = (organizedData: any) => {
+      console.log("benifits table",columnWidth);
       if (Object.keys(organizedData).length === 0) {
         return [];
       }
@@ -591,7 +622,7 @@ export class TestDataComponent {
 
           ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
             .map((categoryName) =>
-              CommonCell(String(categoryName), {
+              CommonCell(categoryName, {
                 fontSize: 9,
                 color: "#AC0233",
                 bold: true,
@@ -605,39 +636,27 @@ export class TestDataComponent {
       tables.push(new Table({
         rows: [headerRow],
         layout: TableLayoutType.FIXED,
-            width: {
-              size: 100,
-              type: WidthType.PERCENTAGE,
-            },
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
       }));
 
       // Loop through each group detail (e.g., "Policy Details")
       Object.keys(organizedData).forEach((groupDetail) => {
         const benefitsForGroup = organizedData[groupDetail];
 
+
         // Create group detail row with the group title, this will span all columns
         const groupDetailRow = new TableRow({
           children: [
-            new TableCell({
-              children: [
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text: groupDetail,
-                      bold: true,
-                      size: 18,
-                      color: '#AC0233'
-                    })],
-                  indent: {
-                    left: 50,
-                  },
-                })],
-              columnSpan: 100 / totalColumns, // This cell will span across all columns
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              borders: defaultBorders(10, 'single')
+            CommonCell(groupDetail, {
+              fontSize: 9,
+              bold: true,
+              color: "#AC0233",
+              width: { size: 100, type: "pct" },
+              colSpan: 100/columnWidth
             }),
-            // tableCell(groupDetail,true,16,'#000000', 100)
-
           ],
         });
 
@@ -673,11 +692,8 @@ export class TestDataComponent {
         tables.push(
           new Table({
             rows: [groupDetailRow, ...benefitRows],
-            layout: TableLayoutType.FIXED,
-            width: {
-              size: 100,
-              type: WidthType.PERCENTAGE,
-            },
+            // layout: TableLayoutType.FIXED,
+            width: {size: 100,type: WidthType.PERCENTAGE},
           })
         );
       });
@@ -685,18 +701,14 @@ export class TestDataComponent {
       return tables;
     };
 
-
-
-
-    const mandatoryBenefitsData = this.benefitsData(quoteData.quotes[0].data, 'mandatory_benefits');
-    const optionalBenefitsData = this.benefitsData(quoteData.quotes[0].data, 'optional_benefits');
+    const mandatoryBenefitsData = this.benefitsTableData(quoteData.quotes[0].data, 'mandatory_benefits');
+    const optionalBenefitsData = this.benefitsTableData(quoteData.quotes[0].data, 'optional_benefits');
     const mandatoryBenefitsTable = createBenefitsTable(mandatoryBenefitsData);
     const optionalBenefitsTable = createBenefitsTable(optionalBenefitsData);
 
     //****************************************************************** */
 
     const ageBandAndMafInfo = this.ageBandAndMafData(quoteData.quotes[0].data);
-
 
     function mafRiskTable(category: any): any[] {
 
@@ -740,7 +752,6 @@ export class TestDataComponent {
         );
       });
 
-
       let title = pageTitle(`MAF Required Members - ${category.category_name}`, 24, '#AC0233')
 
       // Create Table
@@ -753,34 +764,72 @@ export class TestDataComponent {
         },
       });
 
-
       return [pageBreak, title, table]
     }
 
 
     //****************************************************************** */
+    // Age band Tables 
+ 
+    const ageBandTables = ageBandAndMafInfo.map((category, index) => {
+      const content = [];
 
-    // Define the CellOptions interface
-    type AlignmentTypeEnum = typeof AlignmentType[keyof typeof AlignmentType];
-    interface CellOptions {
-      bold?: boolean;
-      fontSize?: number;
-      fillColor?: string;
-      color?: string;
-      alignment?: AlignmentTypeEnum;  // Correctly specify alignment as part of the enum
-      rowSpan?: number;
-      colSpan?: number;
-      width?: {
-        size: number; // Width size in percentage or points
-        type: "pct";
-      };
+      // Check if MAF data is available for the category
+      if (category.census && category.census.length > 0) {
+        const mafTable = mafRiskTable(category);
+        content.push(...mafTable);
+      }
+
+      let ageBandTable
+
+      if (category.emirate.trim().toLowerCase() === "dubai" && category.tpa.trim().toLowerCase() === "nextcare") {
+        ageBandTable = AgeBandTable2(category)
+      } else if (category.emirate.trim().toLowerCase() === "abu dhabi" && category.tpa.trim().toLowerCase() === "nextcare") {
+        ageBandTable = AgeBandTable3(category)
+      } else {
+        ageBandTable = AgeBandTable1(category);
+      }
+
+
+      content.push(...ageBandTable);
+
+      return content;
+    });
+
+    // age band table type 1
+    function AgeBandTable1(category: any) {
+
+      const pageBreak = new Paragraph({
+        children: [],
+        pageBreakBefore: true,
+      });
+
+      const title = pageTitle(`Age Band - ${category.category_name}`, 24, '#AC0233');
+
+      // Create reusable tables
+      const memberCountTable = createCategoryTable(
+        category.category_name,
+        "Member Count",
+        "memberCount",
+        category.pdfAgeBandDetails
+      );
+
+      const grossPremiumTable = createCategoryTable(
+        category.category_name,
+        "Gross Premium",
+        "grossPremium",
+        category.pdfAgeBandDetails
+      );
+
+      const totalGrossPremiumTable = createCategoryTable(
+        category.category_name,
+        "Total Gross Premium",
+        "totalGrossPremium",
+        category.pdfAgeBandDetails
+      );
+
+      return [pageBreak, title, memberCountTable, grossPremiumTable, totalGrossPremiumTable];
     }
-
-
-
-
-
-
 
     function createCategoryTable(
       categoryName: string,
@@ -863,7 +912,6 @@ export class TestDataComponent {
       });
 
       // Add an empty row at the end
-
       if (tableType === "memberCount" || tableType === "grossPremium") {
         dataRows.push(
           new TableRow({
@@ -871,7 +919,6 @@ export class TestDataComponent {
           })
         );
       }
-
 
       // Create the table
       const table = new Table({
@@ -892,67 +939,7 @@ export class TestDataComponent {
       return table;
     }
 
-
-    function AgeBandTable1(category: any) {
-
-      const pageBreak = new Paragraph({
-        children: [],
-        pageBreakBefore: true,
-      });
-
-      const title = pageTitle(`Age Band - ${category.category_name}`, 24, '#AC0233');
-
-      // Create reusable tables
-      const memberCountTable = createCategoryTable(
-        category.category_name,
-        "Member Count",
-        "memberCount",
-        category.pdfAgeBandDetails
-      );
-
-      const grossPremiumTable = createCategoryTable(
-        category.category_name,
-        "Gross Premium",
-        "grossPremium",
-        category.pdfAgeBandDetails
-      );
-
-      const totalGrossPremiumTable = createCategoryTable(
-        category.category_name,
-        "Total Gross Premium",
-        "totalGrossPremium",
-        category.pdfAgeBandDetails
-      );
-
-      return [pageBreak, title, memberCountTable, grossPremiumTable, totalGrossPremiumTable];
-    }
-
-    const ageBandTables = ageBandAndMafInfo.map((category, index) => {
-      const content = [];
-
-      // Check if MAF data is available for the category
-      if (category.census && category.census.length > 0) {
-        const mafTable = mafRiskTable(category);
-        content.push(...mafTable);
-      }
-
-      let ageBandTable
-
-
-      if (category.emirate.trim().toLowerCase() === "dubai" && category.tpa.trim().toLowerCase() === "nextcare") {
-        ageBandTable = AgeBandTable2(category)
-      } else if (category.emirate.trim().toLowerCase() === "abu dhabi" && category.tpa.trim().toLowerCase() === "nextcare") {
-        ageBandTable = AgeBandTable3(category)
-      } else {
-        ageBandTable = AgeBandTable1(category);
-      }
-
-
-      content.push(...ageBandTable);
-
-      return content;
-    });
-
+    // age band table type 2
     function AgeBandTable2(category: any) {
       let details = category.pdfAgeBandDetailsUnify;
       const pageBreak = new Paragraph({
@@ -992,12 +979,12 @@ export class TestDataComponent {
         return new TableRow({
 
           children: [
-            CommonCell(row.age, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Age cell width
-            CommonCell(row.member_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Member Count cell width
-            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Gross Premium per member cell width
-            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Gross Premium per member cell width (duplicated, check if needed)
-            CommonCell(row.maternity_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Maternity Gross Premium cell width
-            CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), // Total Gross Premium cell width
+            CommonCell(row.age, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.member_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), 
+            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.maternity_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+            CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), 
           ],
         });
       });
@@ -1048,7 +1035,7 @@ export class TestDataComponent {
       return [pageBreak, title, memberCountTable];
     }
 
-
+    // age band table type 3
     function AgeBandTable3(category: any) {
       let details = category.pdfAgeBandDetailsUnify;
       const pageBreak = new Paragraph({
@@ -1164,7 +1151,6 @@ export class TestDataComponent {
       return [pageBreak, title, memberCountTable2];
     }
 
-
     //****************************************************************** */
 
     // Terms and Conditions Page 
@@ -1182,6 +1168,7 @@ export class TestDataComponent {
     );
     //****************************************************************** */
 
+    // Exclusion section 
     let createExclusionsSection = (data: EmirateData[]): Paragraph[] => {
       const paragraphs: Paragraph[] = [];
 
@@ -1232,8 +1219,8 @@ export class TestDataComponent {
       return paragraphs;
     };
 
-    // Exclusion list
-    let exclusion = createExclusionsSection(this.exclusionData)
+    let exclusionData = this.formatExclusionData(quoteData.exclusion)
+    let exclusion = createExclusionsSection(exclusionData)
 
 
     //****************************************************************** */
@@ -1309,19 +1296,13 @@ export class TestDataComponent {
 
     //****************************************************************** */
 
-
-
-
     // Create the Word document
     const doc = new Document({
       sections: [
-
         // 1st Page 
         {
           children: [await createImageFromBase64(pdfImages.homeImg, 595, 800)],
         },
-
-
         // 2nd page 
         {
           children: [await createImageFromBase64(pdfImages.homeImg1, 595, 750)],
@@ -1332,56 +1313,12 @@ export class TestDataComponent {
             default: customFooter("Confdential, unpublished property of MEDGULF.Do not duplicate or distribute.", "Use and distribution is limited solely to authorized personnel.", "", 13, "#ababab"),
           }
         },
-
-
         // 3rd page 
         {
           children: [
-            new Table({
-              rows: [
-                new TableRow({
-                  children: [
-                    CommonCell('Basic Details', { color: "#00587C", fontSize: 9, bold: true, width: { size: 35, type: "pct" }, alignment: AlignmentType.LEFT }),
-                    CommonCell("", { fontSize: 6, bold: false, width: { size: 65, type: "pct" } })
-                  ],
-                }),
-                ...basicTableRows,
-              ],
-              layout: TableLayoutType.FIXED,
-              width: {
-                size: 100,
-                type: WidthType.PERCENTAGE,
-              },
-              
-            }),
+            basicDetailsTable,
             spaceParagraph,
-            new Table({
-              rows: [
-                // Header row with three columns: categoryName, members, and premium
-                new TableRow({
-                  children: [
-
-                    CommonCell('Categories', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-                    CommonCell('Members', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-                    CommonCell('Option 1', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 34, type: "pct" } })
-                  ],
-                }),
-                // Dynamically created rows based on category data
-                ...categoryMemberTableRows,
-                new TableRow({
-                  children: [
-                    CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-                    CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-                    CommonCell(`${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`, { fontSize: 9, bold: true, width: { size: 34, type: "pct" } })
-                  ],
-                }),
-              ],
-              layout: TableLayoutType.FIXED,
-              width: {
-                size: 100,
-                type: WidthType.PERCENTAGE,
-              },
-            })
+            categoriesDetailsTable
           ],
           headers: {
             default: createHeader(),
@@ -1390,7 +1327,6 @@ export class TestDataComponent {
             default: footer
           }
         },
-
         // 4th page
         {
           children: [
@@ -1412,13 +1348,11 @@ export class TestDataComponent {
         {
           children: ageBandTables.flat(),
         },
-
         {
           children: [
             pageTitle("Terms and Conditions", 57, "00587C"),
             ...termsConditions
           ],
-
         },
         {
           children: [
@@ -1436,7 +1370,6 @@ export class TestDataComponent {
               textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, 100, 100, AlignmentType.LEFT)
             ],
         },
-
         {
           children:
             [
@@ -1446,9 +1379,7 @@ export class TestDataComponent {
               textLine("Should any assistance be needed, please do not hesitate to contact us via:", 18, 100, 100, AlignmentType.LEFT),
               ...policyInsuranceRequirements2
             ],
-
         },
-
         {
           children: [await createImageFromBase64(pdfImages.pdfFooterImg, 450, 220)],
           headers: {
@@ -1458,9 +1389,7 @@ export class TestDataComponent {
           footers: {
             default: customFooter("Dubai Wharf Mall 1st Floor, Ofce DWR 22&23 Al Jaddaf Waterfront P.O. Box 30476, Dubai, UAE", "", "", 18, "#00587C"),
           },
-
         },
-
       ],
 
       styles: {
