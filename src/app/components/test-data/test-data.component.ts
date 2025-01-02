@@ -20,7 +20,7 @@ export class TestDataComponent {
 
   constructor(private http: HttpClient) { }
   totalCategoryCount: number = 0
-  quotesData:any=quoteData
+  quotesData: any = quoteData
 
   // categoey details table data 
   categoriesWithDetails(data: any[], quotes: any[], categoryKey = 'category') {
@@ -69,7 +69,7 @@ export class TestDataComponent {
   };
   extractedData = this.PremiumTableData(quoteData.quotes[0].data);
 
-// benifits table data 
+  // benifits table data 
   benefitsTableData = (data: any, benifitName: string) => {
     const organizedData: { [groupDetails: string]: any[] } = {};
     // Iterate through each category
@@ -106,7 +106,7 @@ export class TestDataComponent {
     });
   }
 
-// exclusion data 
+  // exclusion data 
   formatExclusionData(exclusionData: any) {
     return exclusionData.map((item: any) => {
       return {
@@ -123,6 +123,129 @@ export class TestDataComponent {
   }
 
   async generateDocument() {
+    function buildTableRows() {
+      const rows = [];
+
+      // Header row
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell("Age Band", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, rowSpan: 3 }),
+            CommonCell("Employees", { bold: true, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+            CommonCell("Dependents", { bold: true, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+            CommonCell("Total", { bold: true, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+          ],
+        })
+      );
+
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell("Member Count", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+            CommonCell("Member Count", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+            CommonCell("Member Count", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          ],
+        })
+      );
+
+      // Sub-header row
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+          ],
+        })
+      );
+
+      // Add data rows (example data)
+      const data = [
+        { age: "20-30", maleEmployeeCount: 10, femaleEmployeeCount: 15, malePremium: 100, femalePremium: 120 },
+        { age: "30-40", maleEmployeeCount: 8, femaleEmployeeCount: 12, malePremium: 150, femalePremium: 180 },
+      ];
+
+      data.forEach((row) => {
+        rows.push(
+          new TableRow({
+            children: [
+              CommonCell(row.age),
+              CommonCell(String(row.maleEmployeeCount)),
+              CommonCell(String(row.femaleEmployeeCount)),
+              CommonCell(String(row.malePremium)),
+              CommonCell(String(row.femalePremium)),
+            ],
+          })
+        );
+      });
+
+      return rows;
+    }
+
+
+    function buildTableRows2() {
+      const rows = [];
+
+      // Header row
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell("Age Band", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, rowSpan: 3 }),
+            CommonCell("Employees", { bold: true, colSpan: 3, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+            CommonCell("Dependents", { bold: true, colSpan: 3, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+            CommonCell("Total", { bold: true, colSpan: 6, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+          ],
+        })
+      );
+
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
+            CommonCell("Member Count", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
+            CommonCell(`Premium`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
+
+          ],
+        })
+      );
+
+      // Sub-header row
+      rows.push(
+        new TableRow({
+          children: [
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+            CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+          ],
+        })
+      );
+
+      
+      return rows;
+    }
+
 
     // mostly used reusable snippets 
     // for images
@@ -416,6 +539,55 @@ export class TestDataComponent {
     }
     const footer = await createFooter(pdfImages.footerImg);
 
+
+    // async function createFooter(imagePath: string): Promise<Footer> {
+    //   // Fetch the image using createImage function
+    //   const footerImage = await createImageFromBase64(imagePath, 220, 120);
+
+    //   return new Footer({
+    //     children: [
+    //       new Paragraph({
+    //         children: [
+    //           new TextRun({
+    //             text: '*This is a system-generated quote that does not require a signature\nThe Mediterranean & Gulf Insurance & Reinsurance Co. B.S.C\nC.R. No: 1204528 - Insurance Authority No. 91',
+    //             size: 14,
+    //             color: '#ababab',
+    //           }),
+    //         ],
+    //         alignment: AlignmentType.CENTER,  // Center the text horizontally
+    //         frame: {
+    //           type: "absolute",  // Absolute positioning
+    //           anchor: {
+    //             horizontal: "page",  // Align horizontally to the page
+    //             vertical: "page",    // Align vertically to the page
+    //           },
+    //           position: { x: 3000, y: 1500 },  // Adjust y value to move to bottom (fine-tune as needed)
+    //           width: 4500,  // Adjust width for text
+    //           height: 800,  // Adjust height for the paragraph
+    //         },
+    //       }),
+
+    //       new Paragraph({
+    //         children: [footerImage],
+    //         alignment: AlignmentType.CENTER,  // Center the text horizontally
+    //         frame: {
+    //           type: "absolute",  // Absolute positioning
+    //           anchor: {
+    //             horizontal: "page",  // Align horizontally to the page
+    //             vertical: "page",    // Align vertically to the page
+    //           },
+    //           position: { x: 8000, y: 15000 },  // Adjust y value to move to bottom (fine-tune as needed)
+    //           width: 4500,  // Adjust width for text
+    //           height: 800,  // Adjust height for the paragraph
+    //         },
+    //       }),
+    //     ],
+    //   });
+    // }
+
+    // const footer = await createFooter(pdfImages.footerImg);
+
+
     // Custome footer for other pages
     function customFooter(text1: string, text2: string, text3: string, size: number, color: string): Footer {
       return new Footer({
@@ -462,7 +634,7 @@ export class TestDataComponent {
           CommonCell(value || '', { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
         ],
       });
-    
+
     const basicTableRows = [
       new TableRow({
         children: [
@@ -472,7 +644,7 @@ export class TestDataComponent {
       }),
       ...basicTableData.map(({ label, value }) => createRow1(label, value)),
     ];
-    
+
     let basicDetailsTable = new Table({
       rows: basicTableRows,
       layout: TableLayoutType.FIXED,
@@ -481,7 +653,7 @@ export class TestDataComponent {
         type: WidthType.PERCENTAGE,
       },
     });
-    
+
     //****************************************************************** */
     // category member table 
 
@@ -493,9 +665,9 @@ export class TestDataComponent {
           CommonCell(option, { fontSize: 9, bold: false, width: { size: 34, type: "pct" } }),
         ],
       });
-    
+
     let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
-    
+
     const categoryMemberTableRows = [
       ...categoryData
         .sort((a, b) => {
@@ -514,8 +686,8 @@ export class TestDataComponent {
         ],
       }),
     ];
-    
-    let categoriesDetailsTable=new Table({
+
+    let categoriesDetailsTable = new Table({
       rows: [
         // Header row
         new TableRow({
@@ -603,7 +775,7 @@ export class TestDataComponent {
     // Category and Benifits table
 
     const createBenefitsTable = (organizedData: any) => {
-      console.log("benifits table",columnWidth);
+      console.log("benifits table", columnWidth);
       if (Object.keys(organizedData).length === 0) {
         return [];
       }
@@ -655,7 +827,7 @@ export class TestDataComponent {
               bold: true,
               color: "#AC0233",
               width: { size: 100, type: "pct" },
-              colSpan: 100/columnWidth
+              colSpan: 100 / columnWidth
             }),
           ],
         });
@@ -693,7 +865,7 @@ export class TestDataComponent {
           new Table({
             rows: [groupDetailRow, ...benefitRows],
             // layout: TableLayoutType.FIXED,
-            width: {size: 100,type: WidthType.PERCENTAGE},
+            width: { size: 100, type: WidthType.PERCENTAGE },
           })
         );
       });
@@ -770,7 +942,7 @@ export class TestDataComponent {
 
     //****************************************************************** */
     // Age band Tables 
- 
+
     const ageBandTables = ageBandAndMafInfo.map((category, index) => {
       const content = [];
 
@@ -941,7 +1113,9 @@ export class TestDataComponent {
 
     // age band table type 2
     function AgeBandTable2(category: any) {
-      let details = category.pdfAgeBandDetailsUnify;
+      console.log("ageband 2", category);
+      console.log(category.pdfAgeBandDetailsUnify);
+      let details = category?.pdfAgeBandDetailsUnify;
       const pageBreak = new Paragraph({
         children: [],
         pageBreakBefore: true,
@@ -980,11 +1154,11 @@ export class TestDataComponent {
 
           children: [
             CommonCell(row.age, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-            CommonCell(row.member_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), 
+            CommonCell(row.members_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
             CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
             CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
             CommonCell(row.maternity_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-            CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }), 
+            CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         });
       });
@@ -1037,6 +1211,7 @@ export class TestDataComponent {
 
     // age band table type 3
     function AgeBandTable3(category: any) {
+      console.log("ageband 3", category.pdfAgeBandDetailsUnify);
       let details = category.pdfAgeBandDetailsUnify;
       const pageBreak = new Paragraph({
         children: [],
@@ -1389,6 +1564,22 @@ export class TestDataComponent {
           footers: {
             default: customFooter("Dubai Wharf Mall 1st Floor, Ofce DWR 22&23 Al Jaddaf Waterfront P.O. Box 30476, Dubai, UAE", "", "", 18, "#00587C"),
           },
+        },
+        {
+          children: [
+            new Table({
+              rows: buildTableRows(),
+              width: { size: 100, type: WidthType.PERCENTAGE },
+            }),
+          ],
+        },
+        {
+          children: [
+            new Table({
+              rows: buildTableRows2(),
+              width: { size: 100, type: WidthType.PERCENTAGE },
+            }),
+          ],
         },
       ],
 
