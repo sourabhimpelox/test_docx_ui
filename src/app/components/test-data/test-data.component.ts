@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { saveAs } from "file-saver";
 
-import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType } from 'docx';
+import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType, Alignment, PageOrientation } from 'docx';
 
 import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2 } from './data';
 import { pdfImages } from './images';
+import { pdfImages as pdfImages1 } from "./nlgi-pdf-images"
 
 import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData, CellOptions } from './interfaces'
 
@@ -26,9 +27,10 @@ export class TestDataComponent implements OnInit {
   public columnWidth: any
   totalCategoryCount: number = 0
   public quoteGeneratedDate: any
-
+  todaydate: any
   async ngOnInit(): Promise<void> {
-
+    let currentDate = new Date();
+    this.todaydate = currentDate
     this.quoteGeneratedDate = this.transformedResultResponse?.companyDetails?.quoteGeneratedDate
     this.totalColumns =
       this.transformedResultResponse.quotes[0].data.length + 1
@@ -149,7 +151,7 @@ export class TestDataComponent implements OnInit {
 
   // Mostly used functionalities 
   // for images
-  async createImageFromBase64(base64Image: string, width: number, height: number): Promise<Paragraph> {
+  async createImageFromBase64(base64Image: string, width: number, height: number, align: any = AlignmentType.LEFT): Promise<Paragraph> {
     // Decode base64 string to binary data
     const base64Data = base64Image.split(",")[1]; // Remove the prefix (e.g., "data:image/png;base64,")
     const binaryString = atob(base64Data); // Decode base64 to binary
@@ -162,7 +164,7 @@ export class TestDataComponent implements OnInit {
 
     // Return a paragraph containing the image
     return new Paragraph({
-      alignment: AlignmentType.CENTER,
+      alignment: align,
       children: [
         new ImageRun({
           data: uint8Array, // Binary data for the image
@@ -177,12 +179,12 @@ export class TestDataComponent implements OnInit {
   }
 
   // title of each table 
-  tableTitle(titleText: string, size: number = 26, color: string = '#AC0233') {
+  tableTitle(titleText: string, size: number = 11, color: string = '#000000') {
     return new Paragraph({
       children: [
         new TextRun({
           text: titleText,
-          size,
+          size: size * 2,
           bold: true,
           color, font: "Calibri",
         }),
@@ -204,17 +206,19 @@ export class TestDataComponent implements OnInit {
   // to add any line 
   textLine(
     text: string,
-    size: number = 18,
+    size: number = 10,
+    bold: boolean = false,
     before: number = 100,
     after: number = 100,
-    alignment: any = AlignmentType.LEFT,// Default alignment to LEFT
-    color?: string
+    alignment: any = AlignmentType.LEFT,
+    color?: string,
   ): Paragraph {
     return new Paragraph({
       children: [
         new TextRun({
           text: text,
-          size,
+          size: 2 * size,
+          bold,
           color, font: "Calibri",
         }),
       ],
@@ -278,122 +282,74 @@ export class TestDataComponent implements OnInit {
   }
 
   // For Page Title
-  pageTitle(title: string, size: number = 57, color: string = "#00587C") {
+  pageTitle(title: string, size: number = 28, color: string = "#00587C", underline?: boolean, alignment: any = "left") {
     return new Paragraph({
       children: [
         new TextRun({
           text: title,
           bold: true,
-          size,
+          size: size * 2,
           color: color,
           font: "Calibri",
+          underline: underline ? { type: "single" } : undefined,
         }),
       ],
       heading: "Heading1",
       spacing: {
         after: 200,
       },
-      alignment: 'left'
+      alignment
     });
   }
 
-  // header content using canvas
-  createHeader = () => {
-    // Create a canvas programmatically for the green line image
-    const canvas = document.createElement("canvas");
-    canvas.width = 200;
-    canvas.height = 4;
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) {
-      throw new Error("Failed to get canvas context.");
-    }
-
-    ctx.fillStyle = "#00587C";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Convert canvas to base64
-    const base64Image = canvas.toDataURL("image/png");
-
-    // Decode base64 to binary data
-    const base64Data = base64Image.split(",")[1]; // Remove the "data:image/png;base64," prefix
-    const binaryString = atob(base64Data);
-    const binaryData = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      binaryData[i] = binaryString.charCodeAt(i);
-    }
-
-    // Create the header with the image and page numbers
-    return new Header({
-      children: [
-        new Paragraph({
-          children: [
-            new ImageRun({
-              data: binaryData, // Use binary data for the image
-              transformation: {
-                width: 110, // Image width
-                height: 13, // Image height
-              },
-              type: "png",
-            }),
-            new TextRun({
-              text: "  ", // Add a space after the image
-            }),
-            new TextRun({
-              children: [new SimpleField("PAGE")], // Wrap the field in a TextRun
-              size: 16, // Font size for the current page number
-            }),
-          ],
-          spacing: {
-            before: 0,
-            after: 0,
-          },
-          alignment: AlignmentType.LEFT, // Align image and text to the left
-        }),
-      ],
-    });
-  };
+  horizontalLine(size: number) {
+    return new Paragraph({
+      children: [], // No content in this paragraph
+      border: {
+        bottom: {
+          style: BorderStyle.THICK, // You can adjust the thickness
+          size, // Line thickness
+          color: '#000000', // Line color
+        },
+      },
+      spacing: { after: 10 }, // Space after the horizontal line
+    })
+  }
   //****************************************************************** */
 
-  // Common Footer
-  async commonFooter(imagePath: string): Promise<Footer> {
-    // Fetch the image using createImage function
-    const footerImage = await this.createImageFromBase64(imagePath, 220, 120);
+  commonHeader = async () => {
+    // Fetch the left and right image data using createImageFromBase64
+    const leftImage = await this.createImageFromBase64(pdfImages1.headerLogo, 80, 80, AlignmentType.LEFT); // Left image
+    const rightImage = await this.createImageFromBase64(pdfImages1.headerIcon, 150, 100, AlignmentType.RIGHT); // Right image
 
-    return new Footer({
+    // Return a header with a single paragraph
+    return new Header({
       children: [
         new Table({
           rows: [
             new TableRow({
               children: [
-                // Empty cell for spacing or alignment
                 new TableCell({
-                  children: [
-                    this.textLine('', 10, 0, 0, AlignmentType.CENTER),
-                  ],
+                  children: [leftImage], // Add the image
                   width: { size: 33, type: WidthType.PERCENTAGE },
-                  verticalAlign: VerticalAlign.BOTTOM,
+                  verticalAlign: VerticalAlign.CENTER,
                   margins: { top: 0, bottom: 0, left: 0, right: 0 },
                   borders: this.defaultBorders(0, 'none')
                 }),
                 // Centered text cell
                 new TableCell({
-                  children: [
-                    this.textLine('*This is a system-generated quote that does not require a signature', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
-                    this.textLine('The Mediterranean & Gulf Insurance & Reinsurance Co. B.S.C', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
-                    this.textLine('C.R. No: 1204528 - Insurance Authority No. 91', 10, 0, 0, AlignmentType.CENTER, '#ababab'),
-                  ],
-                  verticalAlign: VerticalAlign.BOTTOM,
+                  children: [this.textLine('', 0, false, 0, 0, AlignmentType.CENTER, '')],
+                  verticalAlign: VerticalAlign.CENTER,
                   width: { size: 34, type: WidthType.PERCENTAGE },
                   margins: { top: 0, bottom: 0, left: 0, right: 20 },
                   borders: this.defaultBorders(0, 'none')
                 }),
                 // Image cell
                 new TableCell({
-                  children: [footerImage], // Add the image
+                  children: [rightImage],
                   width: { size: 33, type: WidthType.PERCENTAGE },
-                  verticalAlign: VerticalAlign.BOTTOM,
-                  margins: { top: 0, bottom: 0, left: 20, right: 0 },
+                  verticalAlign: VerticalAlign.CENTER,
+                  margins: { top: 0, bottom: 0, left: 0, right: 0 },
                   borders: this.defaultBorders(0, 'none')
                 }),
               ],
@@ -405,47 +361,222 @@ export class TestDataComponent implements OnInit {
             type: WidthType.PERCENTAGE,
           },
         }),
+        this.spaceParagraph
+      ],
+
+    });
+  };
+
+  firstPageHeader = async () => {
+    const image = await this.createImageFromBase64(pdfImages1.logo, 500, 110, AlignmentType.CENTER); // Left image
+
+    return new Header({
+      children: [
+        new Paragraph({
+          alignment: AlignmentType.CENTER,  // Center the content
+          children: [image], // Add the image
+        }),
+        new Paragraph({
+          children: [],
+          spacing: { after: 30 },
+        }),
+      ],
+    });
+  };
+  //****************************************************************** */
+  // Common Footer
+  async commonFooter(): Promise<Footer> {
+    // Fetch the image and ensure it's centered
+    const imageParagraph = await this.createImageFromBase64(pdfImages1.footer, 420, 80, AlignmentType.CENTER);
+
+    return new Footer({
+      children: [
+        this.horizontalLine(8),
+        this.textLine(`CRN: ${CRN}`, 10, false, 0, 0, AlignmentType.CENTER),
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          children: [imageParagraph],
+        }),
       ],
     });
   }
 
-  // Custome footer for other pages
-  customFooter(text1: string, text2: string, text3: string, size: number, color: string): Footer {
+  // Common Footer
+  async firstPageFooter(): Promise<Footer> {
+    const footerImage1 = await this.createImageFromBase64(pdfImages1.footer, 420, 80, AlignmentType.CENTER);
+    const footerImage2 = await this.createImageFromBase64(pdfImages1.footerImage, 180, 80, AlignmentType.RIGHT);
+
     return new Footer({
       children: [
         new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({
-              text: text1,
-              font: "Calibri",
-              color,
-              size
-            }),
-          ],
+          children: [], // No content in this paragraph
+          border: {
+            bottom: {
+              style: BorderStyle.THICK, // You can adjust the thickness
+              size: 8, // Line thickness
+              color: '#000000', // Line color
+            },
+          },
+          spacing: { after: 10 }, // Space after the horizontal line
         }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({
-              text: text2,
-              size, color,
-              font: "Calibri",
 
+        new Table({
+          rows: [
+            new TableRow({
+              children: [
+                // Empty cell for spacing or alignment (matches PDF logic with left and right alignment)
+                new TableCell({
+                  children: [
+                    this.textLine("", 0, false,)
+                  ],
+                  width: { size: 25, type: WidthType.PERCENTAGE },
+                  verticalAlign: VerticalAlign.BOTTOM,
+                  margins: { top: 0, bottom: 0, left: 0, right: 0 },
+                  borders: this.defaultBorders(0, 'none'), // No border for this cell
+                }),
+
+                // First image cell (centered image, matching the first PDF image)
+                new TableCell({
+                  children: [this.textLine(`CRN: ${CRN}`, 10, false, 0, 0, AlignmentType.CENTER), footerImage1],
+                  width: { size: 50, type: WidthType.PERCENTAGE }, // 50% width
+                  verticalAlign: VerticalAlign.BOTTOM,
+                  margins: { top: 0, bottom: 0, left: 20, right: 0 },
+                  borders: this.defaultBorders(0, 'none'), // No border for this cell
+                }),
+
+                // Second image cell (right-aligned image, matching the second PDF image)
+                new TableCell({
+                  children: [footerImage2],
+                  width: { size: 25, type: WidthType.PERCENTAGE }, // 25% width
+                  verticalAlign: VerticalAlign.BOTTOM,
+                  margins: { top: 0, bottom: 0, left: 20, right: 0 },
+                  borders: this.defaultBorders(0, 'none'), // No border for this cell
+                }),
+              ],
             }),
           ],
+          layout: TableLayoutType.FIXED, // Fixed layout
+          width: { size: 100, type: WidthType.PERCENTAGE }, // Full width of the page
         }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
+      ],
+    });
+  }
+  //****************************************************************** */
+  firstPage(): (Paragraph | Table)[] {
+    const title = this.pageTitle("TOB for Group International Medical Insurance", 15, "#000000", true, "center");
+
+    // Line with left and right-aligned words (Ref and Date)
+    const refAndDateTable = this.refAndDate();
+
+    let greet = this.textLine('Valued Client,')
+
+    // Information blocks 
+    const infoBlock1 = this.createInfoBlock('Proposer name: ', `${this.transformedResultResponse.companyDetails.company_name.charAt(0).toUpperCase() + this.transformedResultResponse.companyDetails.company_name.slice(1)}`);
+    const infoBlock2 = this.createInfoBlock('Insurance Period: ', `${this.transformedResultResponse?.companyDetails?.policyEffectiveDate} to ${this.transformedResultResponse?.companyDetails?.policy_end_date}\n`);
+    const infoBlock3 = this.createInfoBlock("Cover: ", 'As per NLGIC standard Group Medical Expenses insurance policy wording, medical clauses, definitions, general provisions, and exclusions to cover the necessary, reasonable, and customary inpatient & outpatient medical expenses incurred by the insured members up to the benefits/limits mentioned in the attached TOB.');
+
+    const textLine1 = this.textLine('"Insured Persons: All actively at work, full time & permanent employees of the Proposer and their eligible Family members."')
+
+
+    const infoBlock4 = this.createInfoBlock('National Life and General Insurance Co SAOG (NLG) ', 'has been established since 1995. We are one of the major Health Insurance providers in the UAE market.\n')
+
+    const textLine2 = this.textLine('NLGIC has been recognized as a Leader in the Corporate Medical Insurance Industry in the UAE, Oman, and Kuwait markets. With our expertise in \n')
+
+    const texLine3 = this.textLine('Need-based underwriting and customized solutions, we have been successful in satisfying our clients. We always strive to work with the Customer First approach and believe that ‘Customer service is an Attitude and not a department.')
+
+    const textLine4 = this.textLine('We have state-of-the-art policy administration and claims management services supporting our client-centric approach. In addition to our in-\n')
+
+    const textLine5 = this.textLine('house network, we have also tied up with all the Major third-party administrators in UAE to cater to the varying needs of our clients. We are led by a well-experienced management team and have professionally qualified employees who are well trained to deliver the best to our Insured members.')
+
+    const textline6 = this.textLine('Hoping that our quotation will meet your expectations. Line with the above, we would like to enlist our unique deliverables in service standards that differentiate us from our competitors.')
+
+    const textLine7 = this.textLine('Please accept our best regards,')
+
+    const infoBlock5 = this.createInfoBlock('National Life and General Insurance SAOG, ', 'Your Trusted Insurance Partner')
+
+    const ul = [
+      'Real time WhatsApp Chat facility for policy holder’s support.',
+      'Dedicated SPOC for policies above 500 members.',
+      'Instantaneous Response to Emergencies.',
+      'Policy Setup and Activation within 3 working days.',
+      'Certificate issuance on the same day as requested.',
+      'Various modes available for claims submission including direct channel.',
+      'Electronic (Bank Transfer) Claims settlement within 7 working days.'
+    ].map(item => this.textLine(`• ${item}`, 10, false, 0, 0, AlignmentType.LEFT, "#000000"));
+
+    return [
+      title,
+      refAndDateTable, greet, infoBlock1, infoBlock2, infoBlock3, textLine1, this.horizontalLine(10), textLine2, texLine3, textLine4, textLine5,
+      infoBlock4, this.horizontalLine(10),
+      textline6,
+      ...ul,
+      textLine7,
+      infoBlock5
+
+    ];
+  }
+
+  createInfoBlock(title: string, description: string): Paragraph {
+    return new Paragraph({
+      children: [
+        // Title with bold style
+        new TextRun({
+          text: title,
+          size: 20, // Adjust size as needed
+          bold: true,
+          color: "#000000",
+          font: "Calibri",
+        }),
+
+        // Description right after the title (no line break in between)
+        new TextRun({
+          text: description,
+          size: 20,
+          bold: false,
+          color: "#000000",
+          font: "Calibri",
+        }),
+      ],
+      spacing: { before: 100, after: 100 }, // Adjust spacing as needed
+      alignment: AlignmentType.LEFT, // Alignment of the whole line
+    });
+  }
+
+
+  // Helper function to create a line with left and right words
+  refAndDate(): Table {
+    return new Table({
+      rows: [
+        new TableRow({
           children: [
-            new TextRun({
-              text: text3,
-              size, color,
-              font: "Calibri",
+            new TableCell({
+              children: [
+                this.textLine("Ref:", 10, true),
+                this.textLine(CRN, 10, true)
+              ],
+              width: { size: 25, type: WidthType.PERCENTAGE },
+              verticalAlign: VerticalAlign.BOTTOM,
+              margins: { top: 0, bottom: 0, left: 0, right: 0 },
+              borders: this.defaultBorders(0, 'none')
+            }),
+
+            new TableCell({
+              children: [
+                this.textLine(`Date: ${this.todaydate}`, 10, false, 0, 0, AlignmentType.RIGHT)
+              ],
+              width: { size: 25, type: WidthType.PERCENTAGE },
+              verticalAlign: VerticalAlign.BOTTOM,
+              margins: { top: 0, bottom: 0, left: 0, right: 0 },
+              borders: this.defaultBorders(0, 'none')
             }),
           ],
         }),
       ],
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
     });
   }
 
@@ -513,48 +644,6 @@ export class TestDataComponent implements OnInit {
       ],
     });
 
-  //  categoriesDetailTable(categoryData:any, quoteData:any) {
-  //    const categoryMemberTableRows = [
-  //      ...categoryData
-  //        .sort((a:any, b:any) => {
-  //          // Compare category names in alphabetical order
-  //          if (a.categoryName < b.categoryName) return -1;
-  //          if (a.categoryName > b.categoryName) return 1;
-  //          return 0;
-  //        })
-  //        .map(({ categoryName, members, option }) => this.createRow2(categoryName, members, option)),
-  //      // Add the "Total" row
-  //      new TableRow({
-  //        children: [
-  //          this.CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-  //          this.CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-  //          this.CommonCell(`${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`, { fontSize: 9, bold: true, width: { size: 34, type: "pct" } }),
-  //        ],
-  //      }),
-  //    ];
-
-  //    return new Table({
-  //      rows: [
-  //        // Header row
-  //        new TableRow({
-  //          children: [
-  //            this.CommonCell('Categories', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-  //            this.CommonCell('Members', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 33, type: "pct" } }),
-  //            this.CommonCell('Option 1', { color: "#AC0233", fillColor: "#d5d5d5", fontSize: 9, bold: true, width: { size: 34, type: "pct" } }),
-  //          ],
-  //        }),
-  //        // Dynamically created rows including the "Total" row
-  //        ...categoryMemberTableRows,
-  //      ],
-  //      layout: TableLayoutType.FIXED,
-  //      width: {
-  //        size: 100,
-  //        type: WidthType.PERCENTAGE,
-  //      },
-  //    });
-
-  //  }
-
   categoriesDetailTable(categoryData: { categoryName: string; members: number; option: string }[], quoteData: any) {
     const categoryMemberTableRows = [
       ...categoryData
@@ -609,17 +698,17 @@ export class TestDataComponent implements OnInit {
       rows: [
         new TableRow({
           children: [
-            this.CommonCell("Quote 1", { fontSize: 11, color: "#AC0233", bold: true, width: { size: 33, type: "pct" } }), // First column
+            this.CommonCell("Quote 1", { fontSize: 11, color: "#ffffff", fillColor: '#b5b5b5', bold: true, width: { size: 33, type: "pct" } }), // First column
             this.CommonCell(
               `${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote${quote.risk_type.toLowerCase() === "no" ? "" : ` & ${(quote.risk_type).toUpperCase()}`}`,
               {
                 fontSize: 11,
                 bold: true,
-                color: "#AC0233",
+                color: "#ffffff", fillColor: '#b5b5b5',
                 width: { size: 34, type: "pct" }
               }
             ),
-            this.CommonCell(`${quote.currency} ${this.convertNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#AC0233", width: { size: 33, type: "pct" } }), // Third column
+            this.CommonCell(`${quote.currency} ${this.convertNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#ffffff", fillColor: '#b5b5b5', width: { size: 33, type: "pct" } }), // Third column
           ],
         }),
       ],
@@ -810,15 +899,15 @@ export class TestDataComponent implements OnInit {
 
   createCategoryTable(categoryName: string, titleText: string, tableType: "memberCount" | "grossPremium" | "totalGrossPremium", details: any[]): Table {
     // Title for the section
-    const title = this.tableTitle(`${titleText} - ${categoryName}`, 26, "#AC0233");
+    const title = this.tableTitle(`${titleText} - ${categoryName}`, 11, "#000000");
 
     // Header Rows for the table
     const headers: TableRow[] = [
       new TableRow({
         children: [
           this.CommonCell("Age band", {
-            fillColor: "#B7B5CF",
-            color: "#365d7c",
+            fillColor: "#b5b5b5",
+            color: "#ffffff",
             bold: true,
             fontSize: 8,
             rowSpan: 3,
@@ -827,28 +916,28 @@ export class TestDataComponent implements OnInit {
           this.CommonCell(
             tableType === "memberCount" ? "Member Count" :
               tableType === "grossPremium" ? "Gross Premium" : "Total Gross Premium",
-            { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5, alignment: AlignmentType.CENTER }
+            { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 5, alignment: AlignmentType.CENTER }
           ),
         ],
       }),
       new TableRow({
         children: [
           this.CommonCell("Employees", {
-            fillColor: "#E7E5EF",
+            fillColor: "#eeeeee",
             bold: true,
             fontSize: 8,
             colSpan: 2,
             alignment: AlignmentType.CENTER
           }),
           this.CommonCell("Dependents", {
-            fillColor: "#E7E5EF",
+            fillColor: "#eeeeee",
             bold: true,
             fontSize: 8,
             colSpan: 2,
             alignment: AlignmentType.CENTER
           }),
           this.CommonCell("Maternity", {
-            fillColor: "#E7E5EF",
+            fillColor: "#eeeeee",
             bold: true,
             fontSize: 8,
             rowSpan: 2,
@@ -858,10 +947,10 @@ export class TestDataComponent implements OnInit {
       }),
       new TableRow({
         children: [
-          this.CommonCell("Male", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { fillColor: "#E7E5EF", fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -924,24 +1013,24 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dubai", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 5, width: { size: 16.67 * 5, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age bracket", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, rowSpan: 3, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dubai", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 5, width: { size: 16.67 * 5, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Member Count", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Gross Premium per member", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total Gross Premium", { fillColor: "#eeeeee", bold: true, fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Employees & Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity Eligible", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees & Dependents excl. Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity Premium Per Eligible Female", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees & Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Maternity Eligible", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees & Dependents excl. Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Maternity Premium Per Eligible Female", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -1020,29 +1109,29 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age bracket", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, rowSpan: 3, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Abhu Dhabi", { fillColor: "#B7B5CF", color: "#365d7c", bold: true, fontSize: 8, colSpan: 10, width: { size: 9.09 * 10, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age bracket", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, rowSpan: 3, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Abhu Dhabi", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 10, width: { size: 9.09 * 10, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Member Count", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Gross Premium per member", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total Gross Premium", { fillColor: "#E7E5EF", bold: true, fontSize: 8, colSpan: 4, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Member Count", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Gross Premium per member", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total Gross Premium", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 4, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { fillColor: "#E7E5EF", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -1136,35 +1225,35 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age Band", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, rowSpan: 3 }),
-          this.CommonCell("Employees", { bold: true, colSpan: 3, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { bold: true, colSpan: 3, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { bold: true, colSpan: 6, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age Band", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, rowSpan: 3 }),
+          this.CommonCell("Employees", { bold: true, color: "#ffffff", colSpan: 3, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { bold: true, color: "#ffffff", colSpan: 3, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total", { bold: true, color: "#ffffff", colSpan: 6, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell("Member Count", { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 3 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+          this.CommonCell("Member Count", { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
 
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -1212,9 +1301,9 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, alignment: AlignmentType.CENTER, colSpan: 7 }),
-        this.CommonCell(`Members ${member}`, { bold: true, alignment: AlignmentType.CENTER, colSpan: 3 }),
-        this.CommonCell(`Premium : ${premium}`, { bold: true, alignment: AlignmentType.CENTER, colSpan: 3 }),
+        this.CommonCell("Total", { bold: true,color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 7 }),
+        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
 
       ],
     });
@@ -1245,36 +1334,36 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age Band", { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, rowSpan: 3 }),
-          this.CommonCell("Employees", { bold: true, fontSize: 8, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { bold: true, fontSize: 8, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { bold: true, fontSize: 8, colSpan: 4, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age Band", { bold: true, fontSize: 8, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, rowSpan: 3 }),
+          this.CommonCell("Employees", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#B7B5CF", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: true, fontSize: 8, fillColor: "#E7E5EF", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -1316,9 +1405,9 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, alignment: AlignmentType.CENTER, colSpan: 9 }),
-        this.CommonCell(`Members ${member}`, { bold: true, alignment: AlignmentType.CENTER, colSpan: 2 }),
-        this.CommonCell(`Premium : ${premium}`, { bold: true, alignment: AlignmentType.CENTER, colSpan: 2 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 9 }),
+        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
 
       ],
     });
@@ -1413,6 +1502,108 @@ export class TestDataComponent implements OnInit {
   }
 
   // Benefits table
+  // createBenefitsTable(organizedData: any) {
+  //   if (Object.keys(organizedData).length === 0) {
+  //     return [];
+  //   }
+
+  //   const tables: any[] = [];
+
+  //   // Create the header row for categories only once, before the group detail rows
+  //   const headerRow = new TableRow({
+  //     children: [
+  //       this.CommonCell("Benefits", {
+  //         fontSize: 10,
+  //         color: "#ffffff",
+  //         fillColor: '#b5b5b5',
+  //         bold: true,
+  //         width: { size: this.columnWidth, type: "pct" },
+  //       }),
+
+  //       ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
+  //         .map((categoryName) =>
+  //           this.CommonCell(categoryName, {
+  //             fontSize: 10,
+  //             color: "#ffffff",
+  //             fillColor: '#b5b5b5',
+  //             bold: true,
+  //             width: { size: this.columnWidth, type: "pct" }
+  //           })
+  //         ),
+  //     ],
+  //   });
+
+  //   // Add headerRow once to the table
+  //   tables.push(new Table({
+  //     rows: [headerRow],
+  //     layout: TableLayoutType.FIXED,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //   }));
+
+  //   // Loop through each group detail (e.g., "Policy Details")
+  //   Object.keys(organizedData).forEach((groupDetail) => {
+  //     const benefitsForGroup = organizedData[groupDetail];
+
+
+  //     // Create group detail row with the group title, this will span all columns
+  //     const groupDetailRow = new TableRow({
+  //       children: [
+  //         this.CommonCell(groupDetail, {
+  //           fontSize: 10,
+  //           bold: true,
+  //           color: "#ffffff",
+  //           fillColor: '#b5b5b5',
+  //           width: { size: 100, type: "pct" },
+  //           colSpan: 100 / this.columnWidth,
+  //           alignment: AlignmentType.CENTER
+  //         }),
+  //       ],
+  //     });
+
+  //     // Create rows for each benefit
+  //     const benefitRows: any[] = [];
+  //     const benefitNames = Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.tob_header)));
+
+  //     benefitNames.forEach((tob_header) => {
+  //       const row = new TableRow({
+  //         children: [
+  //           this.CommonCell(String(tob_header), {
+  //             fontSize: 10,
+  //             bold: false,
+  //             width: { size: this.columnWidth, type: "pct" },
+  //           }),
+  //           ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
+  //             // Find the benefit for the current category and benefit name
+  //             const benefit = benefitsForGroup.find(
+  //               (b: any) => b.tob_header === tob_header && b.category_name === categoryName
+  //             );
+  //             return this.CommonCell(benefit && benefit.tob_value ? benefit.tob_value : "N/A", {
+  //               fontSize: 9,
+  //               bold: false,
+  //               width: { size: this.columnWidth, type: "pct" },
+  //             });
+  //           }),
+  //         ],
+  //       });
+  //       benefitRows.push(row);
+  //     });
+
+  //     // Add group detail row and its benefit rows
+  //     tables.push(
+  //       new Table({
+  //         rows: [groupDetailRow, ...benefitRows],
+  //         // layout: TableLayoutType.FIXED,
+  //         width: { size: 100, type: WidthType.PERCENTAGE },
+  //       })
+  //     );
+  //   });
+
+  //   return tables;
+  // };
+
   createBenefitsTable(organizedData: any) {
     if (Object.keys(organizedData).length === 0) {
       return [];
@@ -1425,18 +1616,19 @@ export class TestDataComponent implements OnInit {
       children: [
         this.CommonCell("Benefits", {
           fontSize: 10,
-          color: "#AC0233",
+          color: "#ffffff",
+          fillColor: "#b5b5b5",
           bold: true,
           width: { size: this.columnWidth, type: "pct" },
         }),
-
         ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
           .map((categoryName) =>
             this.CommonCell(categoryName, {
               fontSize: 10,
-              color: "#AC0233",
+              color: "#ffffff",
+              fillColor: "#b5b5b5",
               bold: true,
-              width: { size: this.columnWidth, type: "pct" }
+              width: { size: this.columnWidth, type: "pct" },
             })
           ),
       ],
@@ -1456,16 +1648,17 @@ export class TestDataComponent implements OnInit {
     Object.keys(organizedData).forEach((groupDetail) => {
       const benefitsForGroup = organizedData[groupDetail];
 
-
       // Create group detail row with the group title, this will span all columns
       const groupDetailRow = new TableRow({
         children: [
           this.CommonCell(groupDetail, {
             fontSize: 10,
             bold: true,
-            color: "#AC0233",
+            color: "#ffffff",
+            fillColor: "#b5b5b5",
             width: { size: 100, type: "pct" },
-            colSpan: 100 / this.columnWidth
+            colSpan: 100 / this.columnWidth,
+            alignment: AlignmentType.CENTER,
           }),
         ],
       });
@@ -1474,13 +1667,14 @@ export class TestDataComponent implements OnInit {
       const benefitRows: any[] = [];
       const benefitNames = Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.tob_header)));
 
-      benefitNames.forEach((tob_header) => {
+      benefitNames.forEach((tob_header, index) => {
         const row = new TableRow({
           children: [
             this.CommonCell(String(tob_header), {
               fontSize: 10,
               bold: false,
               width: { size: this.columnWidth, type: "pct" },
+              fillColor: index % 2 === 0 ? "#ffffff" : "#eeeeee", // Alternate colors
             }),
             ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
               // Find the benefit for the current category and benefit name
@@ -1491,6 +1685,7 @@ export class TestDataComponent implements OnInit {
                 fontSize: 9,
                 bold: false,
                 width: { size: this.columnWidth, type: "pct" },
+                fillColor: index % 2 === 0 ? "#ffffff" : "#eeeeee", // Alternate colors
               });
             }),
           ],
@@ -1502,14 +1697,15 @@ export class TestDataComponent implements OnInit {
       tables.push(
         new Table({
           rows: [groupDetailRow, ...benefitRows],
-          // layout: TableLayoutType.FIXED,
+          layout: TableLayoutType.FIXED,
           width: { size: 100, type: WidthType.PERCENTAGE },
         })
       );
     });
 
     return tables;
-  };
+  }
+
   //****************************************************************** */
 
   // category and Premium table 
@@ -1528,7 +1724,7 @@ export class TestDataComponent implements OnInit {
     // First row is the header row (Tob Header and categories)
     const headerRow = new TableRow({
       children: [
-        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" } }), // First column for "Tob Header"
+        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" }, }), // First column for "Tob Header"
         ...data.map(category => this.CommonCell(category.category_name, { fontSize: 10, color: fontColor, fillColor: bgColor, bold: true, width: { size: this.columnWidth, type: "pct" } })), // Columns for categories
       ],
     });
@@ -1536,43 +1732,55 @@ export class TestDataComponent implements OnInit {
     // Data rows: For each tob_header, create a row with values for each category
     const uniqueTobHeaders = new Map<string, string | number>(); // To store the latest values for each header
 
-// Iterate through all categories and their premium_details to capture the latest value for each tobHeader
-data.forEach(category => {
-  category.premium_details.forEach((detail: PremiumDetail) => {
-    uniqueTobHeaders.set(detail.tob_header, detail.tob_value);
-  });
-});
+    // Iterate through all categories and their premium_details to capture the latest value for each tobHeader
+    data.forEach(category => {
+      category.premium_details.forEach((detail: PremiumDetail) => {
+        uniqueTobHeaders.set(detail.tob_header, detail.tob_value);
+      });
+    });
 
-const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => {
-  const values = data.map(category => {
-    const premiumDetail = category.premium_details.find(
-      (detail: PremiumDetail) => detail.tob_header === tobHeader
-    );
+    const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => {
+      const values = data.map(category => {
+        const premiumDetail = category.premium_details.find(
+          (detail: PremiumDetail) => detail.tob_header === tobHeader
+        );
 
-    const tobValue = premiumDetail ? premiumDetail.tob_value : ''; // Get tob_value or empty string
+        const tobValue = premiumDetail ? premiumDetail.tob_value : ''; // Get tob_value or empty string
 
-    // Skip convertNumber if the tobHeader is "Member count"
-    return tobHeader === "Member count"
-      ? tobValue // Return raw value for "Member count"
-      : typeof tobValue === 'number'
-      ? this.convertNumber(tobValue) // Format number for other headers
-      : tobValue; // Return as-is for non-numeric values
-  });
+        // Skip convertNumber if the tobHeader is "Member count"
+        return tobHeader === "Member count"
+          ? tobValue // Return raw value for "Member count"
+          : typeof tobValue === 'number'
+            ? this.convertNumber(tobValue) // Format number for other headers
+            : tobValue; // Return as-is for non-numeric values
+      });
 
-  return this.createRow3(tobHeader, values);
-});
+      return this.createRow3(tobHeader, values);
+    });
 
 
     return [headerRow, ...dataRows];
   };
 
 
-  
-  
-  
-  async generateDocument(quoteData: any) {
+  createLandscapeSectionProperties() {
+    return {
+      properties: {
+        page: {
+          size: {
+            orientation: PageOrientation.LANDSCAPE, // Set landscape orientation
+          },
+        },
+      },
+    };
+  }
 
-    const footer = await this.commonFooter(pdfImages.footerImg);
+
+  async generateDocument(quoteData: any) {
+    const header = await this.commonHeader()
+    const firstPageHeader = await this.firstPageHeader()
+    const footer = await this.commonFooter();
+    const firstPageFooter = await this.firstPageFooter()
 
     let basicDetailsTable = this.basicTable(quoteData)
 
@@ -1586,8 +1794,8 @@ const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => 
     //****************************************************************** */
     // category and Premium table 
     let extractedData = this.PremiumTableData(quoteData.quotes[0].data);
-    const premiumTableRows1 = this.createPremiumTableRows(extractedData, "#AC0233", "#FFFFFF");
-    const premiumTableRows2 = this.createPremiumTableRows(extractedData, "#365d7c", "#B7B5CF");
+    const premiumTableRows1 = this.createPremiumTableRows(extractedData, "#FFFFFF", "#b5b5b5");
+
 
     //****************************************************************** */
     // Category and Benifits table
@@ -1645,40 +1853,26 @@ const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => 
 
     // Create the Word document
     const doc = new Document({
+
       sections: [
-        // 1st Page 
         {
-          children: [await this.createImageFromBase64(pdfImages.homeImg, 595, 800)],
-        },
-        // 2nd page 
-        {
-          children: [await this.createImageFromBase64(pdfImages.homeImg1, 595, 750)],
-          headers: {
-            default: this.createHeader(),
-          },
-          footers: {
-            default: this.customFooter("Confdential, unpublished property of MEDGULF.Do not duplicate or distribute.", "Use and distribution is limited solely to authorized personnel.", "", 13, "#ababab"),
-          }
-        },
-        // 3rd page 
-        {
+          ...this.createLandscapeSectionProperties(),
           children: [
-            basicDetailsTable,
-            this.spaceParagraph,
-            categoriesDetailsTable
+            ...this.firstPage()
           ],
           headers: {
-            default: this.createHeader(),
+            default: firstPageHeader,
           },
           footers: {
-            default: footer
+            default: firstPageFooter,
           }
         },
-        // 4th page
+
         {
+          ...this.createLandscapeSectionProperties(),
           children: [
             summaryTable,
-            this.tableTitle("Categories & Premium", 26, '#AC0233'),
+            this.tableTitle("Categories & Premium", 11, '#000000'),
             new Table({
               rows: premiumTableRows1,
               layout: TableLayoutType.FIXED,
@@ -1687,67 +1881,57 @@ const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => 
                 type: WidthType.PERCENTAGE,
               },
             }),
-            this.tableTitle("Categories & Benefits", 26, '#AC0233'),
+            this.tableTitle("Categories & Benefits", 11, '#000000'),
             ...mandatoryBenefitsTable,
             ...optionalBenefitsTable
           ]
         },
         {
+          ...this.createLandscapeSectionProperties(),
           children: [
             ...ageBandTables.flat(),
-            this.tableTitle("Premium Summary", 26, '#AC0233'),
-            new Table({
-              rows: premiumTableRows2,
-              layout: TableLayoutType.FIXED,
-              width: {
-                size: 100,
-                type: WidthType.PERCENTAGE,
-              },
-            }),
           ]
         },
         {
+          ...this.createLandscapeSectionProperties(),
           children: [
             this.pageTitle("Terms and Conditions", 57, "00587C"),
             ...this.termsConditions
           ],
         },
         {
+          ...this.createLandscapeSectionProperties(),
           children: [
             ...exclusion
           ],
         },
 
         {
+          ...this.createLandscapeSectionProperties(),
           children:
             [
               this.pageTitle("Acceptance of Proposal & Acknowledgment of Responsibilities", 57, "#00587C"),
-              this.textLine("I, the undersigned and duly authorized by my company hereby:", 18, 100, 100, AlignmentType.LEFT),
+              this.textLine("I, the undersigned and duly authorized by my company hereby:", 18, false, 100, 100, AlignmentType.LEFT),
               ...this.acceptance,
               this.spaceParagraph,
               ...this.nameAndSign,
-              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, 100, 100, AlignmentType.LEFT)
+              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, false, 100, 100, AlignmentType.LEFT)
             ],
         },
         {
+          ...this.createLandscapeSectionProperties(),
           children:
             [
               this.pageTitle("Policy Issuance Requirements", 57, "00587C"),
-              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, 100, 100, AlignmentType.LEFT),
+              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, false, 100, 100, AlignmentType.LEFT),
               ...policyInsuranceRequirements1,
-              this.textLine("Should any assistance be needed, please do not hesitate to contact us via:", 18, 100, 100, AlignmentType.LEFT),
+              this.textLine("Should any assistance be needed, please do not hesitate to contact us via:", 18, false, 100, 100, AlignmentType.LEFT),
               ...policyInsuranceRequirements2
             ],
         },
         {
+          ...this.createLandscapeSectionProperties(),
           children: [await this.createImageFromBase64(pdfImages.pdfFooterImg, 450, 220)],
-          headers: {
-            default: this.createHeader(),
-          },
-
-          footers: {
-            default: this.customFooter("Dubai Wharf Mall 1st Floor, Ofce DWR 22&23 Al Jaddaf Waterfront P.O. Box 30476, Dubai, UAE", "", "", 22, "#00587C"),
-          },
         },
       ],
 
