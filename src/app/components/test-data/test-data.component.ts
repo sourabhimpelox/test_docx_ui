@@ -4,7 +4,7 @@ import { saveAs } from "file-saver";
 
 import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType, Alignment, PageOrientation } from 'docx';
 
-import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2 } from './data';
+import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2, notesList, sanctionClauses, dubaiDocumentsPolicy, abuDhabiDocumentsPolicy, additionContent, deletionContent } from './data';
 import { pdfImages } from './images';
 import { pdfImages as pdfImages1 } from "./nlgi-pdf-images"
 
@@ -1301,7 +1301,7 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true,color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 7 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 7 }),
         this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
         this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
 
@@ -1501,109 +1501,6 @@ export class TestDataComponent implements OnInit {
     );
   }
 
-  // Benefits table
-  // createBenefitsTable(organizedData: any) {
-  //   if (Object.keys(organizedData).length === 0) {
-  //     return [];
-  //   }
-
-  //   const tables: any[] = [];
-
-  //   // Create the header row for categories only once, before the group detail rows
-  //   const headerRow = new TableRow({
-  //     children: [
-  //       this.CommonCell("Benefits", {
-  //         fontSize: 10,
-  //         color: "#ffffff",
-  //         fillColor: '#b5b5b5',
-  //         bold: true,
-  //         width: { size: this.columnWidth, type: "pct" },
-  //       }),
-
-  //       ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
-  //         .map((categoryName) =>
-  //           this.CommonCell(categoryName, {
-  //             fontSize: 10,
-  //             color: "#ffffff",
-  //             fillColor: '#b5b5b5',
-  //             bold: true,
-  //             width: { size: this.columnWidth, type: "pct" }
-  //           })
-  //         ),
-  //     ],
-  //   });
-
-  //   // Add headerRow once to the table
-  //   tables.push(new Table({
-  //     rows: [headerRow],
-  //     layout: TableLayoutType.FIXED,
-  //     width: {
-  //       size: 100,
-  //       type: WidthType.PERCENTAGE,
-  //     },
-  //   }));
-
-  //   // Loop through each group detail (e.g., "Policy Details")
-  //   Object.keys(organizedData).forEach((groupDetail) => {
-  //     const benefitsForGroup = organizedData[groupDetail];
-
-
-  //     // Create group detail row with the group title, this will span all columns
-  //     const groupDetailRow = new TableRow({
-  //       children: [
-  //         this.CommonCell(groupDetail, {
-  //           fontSize: 10,
-  //           bold: true,
-  //           color: "#ffffff",
-  //           fillColor: '#b5b5b5',
-  //           width: { size: 100, type: "pct" },
-  //           colSpan: 100 / this.columnWidth,
-  //           alignment: AlignmentType.CENTER
-  //         }),
-  //       ],
-  //     });
-
-  //     // Create rows for each benefit
-  //     const benefitRows: any[] = [];
-  //     const benefitNames = Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.tob_header)));
-
-  //     benefitNames.forEach((tob_header) => {
-  //       const row = new TableRow({
-  //         children: [
-  //           this.CommonCell(String(tob_header), {
-  //             fontSize: 10,
-  //             bold: false,
-  //             width: { size: this.columnWidth, type: "pct" },
-  //           }),
-  //           ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
-  //             // Find the benefit for the current category and benefit name
-  //             const benefit = benefitsForGroup.find(
-  //               (b: any) => b.tob_header === tob_header && b.category_name === categoryName
-  //             );
-  //             return this.CommonCell(benefit && benefit.tob_value ? benefit.tob_value : "N/A", {
-  //               fontSize: 9,
-  //               bold: false,
-  //               width: { size: this.columnWidth, type: "pct" },
-  //             });
-  //           }),
-  //         ],
-  //       });
-  //       benefitRows.push(row);
-  //     });
-
-  //     // Add group detail row and its benefit rows
-  //     tables.push(
-  //       new Table({
-  //         rows: [groupDetailRow, ...benefitRows],
-  //         // layout: TableLayoutType.FIXED,
-  //         width: { size: 100, type: WidthType.PERCENTAGE },
-  //       })
-  //     );
-  //   });
-
-  //   return tables;
-  // };
-
   createBenefitsTable(organizedData: any) {
     if (Object.keys(organizedData).length === 0) {
       return [];
@@ -1674,7 +1571,7 @@ export class TestDataComponent implements OnInit {
               fontSize: 10,
               bold: false,
               width: { size: this.columnWidth, type: "pct" },
-              fillColor: index % 2 === 0 ? "#ffffff" : "#eeeeee", // Alternate colors
+              fillColor: this.CommonCellBgColor(index)
             }),
             ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
               // Find the benefit for the current category and benefit name
@@ -1685,7 +1582,7 @@ export class TestDataComponent implements OnInit {
                 fontSize: 9,
                 bold: false,
                 width: { size: this.columnWidth, type: "pct" },
-                fillColor: index % 2 === 0 ? "#ffffff" : "#eeeeee", // Alternate colors
+                fillColor: this.CommonCellBgColor(index)
               });
             }),
           ],
@@ -1775,14 +1672,445 @@ export class TestDataComponent implements OnInit {
     };
   }
 
+  // additionAndDeletionClauseTable(): Table {
+  //   const rows: TableRow[] = [];
+
+  //   // Helper function to create section headers
+  //   const createSectionHeader = (headerText: string): TableRow => {
+  //     return new TableRow({
+  //       children: [
+  //         this.CommonCell(headerText, {
+  //           fontSize: 12,
+  //           bold: true,
+  //           color: "#ffffff",
+  //           fillColor: "#b5b5b5",
+  //           alignment: AlignmentType.CENTER,
+  //           colSpan: 1,
+  //         }),
+  //       ],
+  //     });
+  //   };
+
+  //   // Helper function to process content
+  //   const processContent = (contentArray: any[]) => {
+  //     contentArray.forEach((content, index) => {
+
+
+  //       if (typeof content === "string") {
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               this.CommonCell(content, {
+  //                 fontSize: 10,
+  //                 fillColor: this.CommonCellBgColor(index),
+  //                 alignment: AlignmentType.LEFT,
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       } else if (content.ul) {
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               new TableCell({
+  //                 children: [
+  //                   new Paragraph({
+  //                     children: content.ul.map(
+  //                       (item: any) =>
+  //                         new TextRun({
+  //                           text: `• ${item}`,
+  //                           size: 20,
+  //                         })
+  //                     ),
+  //                   }),
+  //                 ],
+  //                 shading: {
+  //                   fill: this.CommonCellBgColor(index), // Apply the background color
+  //                 },
+  //               }),
+  //             ],
+  //           })
+  //         );
+
+  //       } else if (content.boldText) {
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               this.CommonCell(content.boldText, {
+  //                 fontSize: 10,
+  //                 bold: false,
+  //                 fillColor: this.CommonCellBgColor(index),
+  //                 alignment: AlignmentType.LEFT,
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       }
+  //     });
+  //   };
+
+  //   // Add Addition Clause to the table
+  //   rows.push(createSectionHeader("Addition Clause"));
+  //   processContent(additionContent);
+
+  //   // Add Deletion Clause to the table
+  //   rows.push(createSectionHeader("Deletion Clause"));
+  //   processContent(deletionContent);
+
+  //   // Construct the table
+  //   return new Table({
+  //     rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
+  additionAndDeletionClauseTable(): Table {
+    const rows: TableRow[] = [];
+  
+    // Helper function to create section headers
+    const createSectionHeader = (headerText: string): TableRow => {
+      return new TableRow({
+        children: [
+          this.CommonCell(headerText, {
+            fontSize: 12,
+            bold: true,
+            color: "#ffffff",
+            fillColor: "#b5b5b5",
+            alignment: AlignmentType.CENTER,
+            colSpan: 1,
+          }),
+        ],
+      });
+    };
+  
+    // Helper function to process content
+    const processContent = (contentArray: any[]) => {
+      contentArray.forEach((content, index) => {
+        const cellBgColor = this.CommonCellBgColor(index);
+  
+        if (typeof content === "string") {
+          // Single text content
+          rows.push(
+            new TableRow({
+              children: [
+                this.CommonCell(content, {
+                  fontSize: 10,
+                  fillColor: cellBgColor,
+                  alignment: AlignmentType.LEFT,
+                }),
+              ],
+            })
+          );
+        } else if (content.ul) {
+          // Bullet list content
+          content.ul.map((item: string) => {
+            rows.push(
+              new TableRow({
+                children: [
+                  this.CommonCell(`• ${item}`, {
+                    fontSize: 10,
+                    fillColor: cellBgColor,
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+              })
+            );
+          });
+        } else if (content.boldText) {
+          // Bold text content
+          rows.push(
+            new TableRow({
+              children: [
+                this.CommonCell(content.boldText, {
+                  fontSize: 10,
+                  bold: true,
+                  fillColor: cellBgColor,
+                  alignment: AlignmentType.LEFT,
+                }),
+              ],
+            })
+          );
+        }
+      });
+    };
+  
+    // Add Addition Clause to the table
+    rows.push(createSectionHeader("Addition Clause"));
+    processContent(additionContent);
+  
+    // Add Deletion Clause to the table
+    rows.push(createSectionHeader("Deletion Clause"));
+    processContent(deletionContent);
+  
+    // Construct the table
+    return new Table({
+      rows,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+      layout: TableLayoutType.FIXED,
+    });
+  }
+  
+
+  renderNotes() {
+    const rows: TableRow[] = [];
+
+    // Helper function to create a section header
+    const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
+      return new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [new TextRun({ text: headerText, bold: true, color: "#ffffff" })],
+              }),
+            ],
+            shading: {
+              fill: backgroundColor,
+            },
+          }),
+        ],
+      });
+    };
+
+    // Add the main header
+    rows.push(createSectionHeader("Notes", "#b5b5b5"));
+
+
+    // Iterate over the list of notes and create rows with alternating colors
+    notesList.forEach((note, index) => {
+
+      if (typeof note === 'string') {
+        rows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [new Paragraph({ children: [new TextRun(note)] })],
+                shading: { fill: '#eeeeee' },
+              }),
+            ],
+          })
+        );
+      } else if (note.text) {
+        // Handle case where note is an object with a text array
+        const paragraphChildren = note.text.map((child) => {
+          if (typeof child === 'string') {
+            return new TextRun(child);  // Convert string to TextRun
+          } else if (child.text) {
+            return new TextRun({ text: child.text });
+          }
+          return new TextRun(child.text); // Handle any other structure
+        });
+
+        rows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [new Paragraph({ children: paragraphChildren })],
+                shading: { fill: '#eeeeee' },
+              }),
+            ],
+          })
+        );
+      }
+    });
+
+    // Create the table with the rows and return it
+    return new Table({
+      rows,
+      width: { size: 100, type: 'pct' },
+      layout: 'fixed',
+    });
+  }
+
+
+  renderSanctionsClause() {
+    const rows: TableRow[] = [];
+
+    // Adding the header row for Sanctions Clause
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [new TextRun({ text: 'Sanctions Clause', bold: true, color: "#ffffff" })],
+              }),
+            ],
+            shading: { fill: '#b5b5b5' },
+          }),
+        ],
+      })
+    );
+
+
+
+    // Adding clause rows
+    sanctionClauses.forEach((clause, index) => {
+      rows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun(clause)] })],
+              shading: { fill: this.CommonCellBgColor(index) },
+            }),
+          ],
+        })
+      );
+    });
+
+    return new Table({
+      rows: rows,
+      width: { size: 100, type: 'pct' },
+      layout: 'fixed',
+    });
+  }
+
+
+  renderDocIssuePolicy() {
+    const rows: TableRow[] = [];
+
+    // Header for the document
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({
+                    text: 'Required documents to issue the policy',
+                    bold: true,
+                    color: '#ffffff',
+                  }),
+                ],
+              }),
+            ],
+            shading: { fill: '#b5b5b5' },
+          }),
+        ],
+      })
+    );
+
+    // Clients based in Dubai and Northern Emirates
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.LEFT,
+                children: [
+                  new TextRun('Clients based in Dubai and Northern Emirates'),
+                ],
+              }),
+            ],
+            shading: { fill: '#eeeeee' },
+          }),
+        ],
+      })
+    );
+
+
+
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: dubaiDocumentsPolicy.map((doc) => {
+              return new Paragraph({
+                alignment: AlignmentType.LEFT,
+                children: [
+                  new TextRun({
+                    text: `• ${doc}`, // Disc bullet before each document
+                    font: 'Calibri', // You can specify a font if needed
+                  }),
+                ],
+              });
+            }),
+            shading: { fill: '#ffffff' },
+          }),
+        ],
+      })
+    );
+
+    // Clients based in Abu Dhabi
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.LEFT,
+                children: [
+                  new TextRun('Clients based in Abu Dhabi:'),
+                ],
+              }),
+            ],
+            shading: { fill: '#eeeeee' },
+          }),
+        ],
+      })
+    );
+
+
+
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: abuDhabiDocumentsPolicy.map((doc) => {
+              return new Paragraph({
+                alignment: AlignmentType.LEFT,
+                children: [
+                  new TextRun({
+                    text: `• ${doc}`, // Disc bullet before each document
+                    font: 'Arial', // You can specify a font if needed
+                  }),
+                ],
+              });
+            }),
+            shading: { fill: '#ffffff' },
+          }),
+        ],
+      })
+    );
+
+    return new Table({
+      rows: rows,
+      width: { size: 100, type: 'pct' },
+      layout: 'fixed',
+    });
+  }
+
+  CommonCellBgColor(index: number) {
+    return index % 2 === 0 ? '#eeeeee' : '#ffffff'
+  }
 
   async generateDocument(quoteData: any) {
     const header = await this.commonHeader()
     const firstPageHeader = await this.firstPageHeader()
+
     const footer = await this.commonFooter();
     const firstPageFooter = await this.firstPageFooter()
 
     let basicDetailsTable = this.basicTable(quoteData)
+
+    const combinedClauseTable = this.additionAndDeletionClauseTable();
+
+    const NotesTable = this.renderNotes()
+
+    let sanctionsClauseTable = this.renderSanctionsClause()
+
+    let renderDocIssuePolicyTable = this.renderDocIssuePolicy()
 
     // category member table 
     let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
@@ -1884,7 +2212,13 @@ export class TestDataComponent implements OnInit {
             this.tableTitle("Categories & Benefits", 11, '#000000'),
             ...mandatoryBenefitsTable,
             ...optionalBenefitsTable
-          ]
+          ],
+          headers: {
+            default: header,
+          },
+          footers: {
+            default: footer,
+          }
         },
         {
           ...this.createLandscapeSectionProperties(),
@@ -1895,8 +2229,15 @@ export class TestDataComponent implements OnInit {
         {
           ...this.createLandscapeSectionProperties(),
           children: [
-            this.pageTitle("Terms and Conditions", 57, "00587C"),
-            ...this.termsConditions
+            combinedClauseTable,
+          ],
+        },
+        {
+          ...this.createLandscapeSectionProperties(),
+          children: [
+            NotesTable,
+            sanctionsClauseTable,
+            renderDocIssuePolicyTable
           ],
         },
         {
@@ -1904,35 +2245,7 @@ export class TestDataComponent implements OnInit {
           children: [
             ...exclusion
           ],
-        },
-
-        {
-          ...this.createLandscapeSectionProperties(),
-          children:
-            [
-              this.pageTitle("Acceptance of Proposal & Acknowledgment of Responsibilities", 57, "#00587C"),
-              this.textLine("I, the undersigned and duly authorized by my company hereby:", 18, false, 100, 100, AlignmentType.LEFT),
-              ...this.acceptance,
-              this.spaceParagraph,
-              ...this.nameAndSign,
-              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, false, 100, 100, AlignmentType.LEFT)
-            ],
-        },
-        {
-          ...this.createLandscapeSectionProperties(),
-          children:
-            [
-              this.pageTitle("Policy Issuance Requirements", 57, "00587C"),
-              this.textLine("Upon your confirmation, MEDGULF requires up to 5 working days from receipt of regulatory approvals along with all the below listed requirements:", 18, false, 100, 100, AlignmentType.LEFT),
-              ...policyInsuranceRequirements1,
-              this.textLine("Should any assistance be needed, please do not hesitate to contact us via:", 18, false, 100, 100, AlignmentType.LEFT),
-              ...policyInsuranceRequirements2
-            ],
-        },
-        {
-          ...this.createLandscapeSectionProperties(),
-          children: [await this.createImageFromBase64(pdfImages.pdfFooterImg, 450, 220)],
-        },
+        }
       ],
 
       styles: {
