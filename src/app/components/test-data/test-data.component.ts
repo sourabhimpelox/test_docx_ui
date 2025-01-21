@@ -1672,104 +1672,9 @@ export class TestDataComponent implements OnInit {
     };
   }
 
-  // additionAndDeletionClauseTable(): Table {
-  //   const rows: TableRow[] = [];
-
-  //   // Helper function to create section headers
-  //   const createSectionHeader = (headerText: string): TableRow => {
-  //     return new TableRow({
-  //       children: [
-  //         this.CommonCell(headerText, {
-  //           fontSize: 12,
-  //           bold: true,
-  //           color: "#ffffff",
-  //           fillColor: "#b5b5b5",
-  //           alignment: AlignmentType.CENTER,
-  //           colSpan: 1,
-  //         }),
-  //       ],
-  //     });
-  //   };
-
-  //   // Helper function to process content
-  //   const processContent = (contentArray: any[]) => {
-  //     contentArray.forEach((content, index) => {
-
-
-  //       if (typeof content === "string") {
-  //         rows.push(
-  //           new TableRow({
-  //             children: [
-  //               this.CommonCell(content, {
-  //                 fontSize: 10,
-  //                 fillColor: this.CommonCellBgColor(index),
-  //                 alignment: AlignmentType.LEFT,
-  //               }),
-  //             ],
-  //           })
-  //         );
-  //       } else if (content.ul) {
-  //         rows.push(
-  //           new TableRow({
-  //             children: [
-  //               new TableCell({
-  //                 children: [
-  //                   new Paragraph({
-  //                     children: content.ul.map(
-  //                       (item: any) =>
-  //                         new TextRun({
-  //                           text: `• ${item}`,
-  //                           size: 20,
-  //                         })
-  //                     ),
-  //                   }),
-  //                 ],
-  //                 shading: {
-  //                   fill: this.CommonCellBgColor(index), // Apply the background color
-  //                 },
-  //               }),
-  //             ],
-  //           })
-  //         );
-
-  //       } else if (content.boldText) {
-  //         rows.push(
-  //           new TableRow({
-  //             children: [
-  //               this.CommonCell(content.boldText, {
-  //                 fontSize: 10,
-  //                 bold: false,
-  //                 fillColor: this.CommonCellBgColor(index),
-  //                 alignment: AlignmentType.LEFT,
-  //               }),
-  //             ],
-  //           })
-  //         );
-  //       }
-  //     });
-  //   };
-
-  //   // Add Addition Clause to the table
-  //   rows.push(createSectionHeader("Addition Clause"));
-  //   processContent(additionContent);
-
-  //   // Add Deletion Clause to the table
-  //   rows.push(createSectionHeader("Deletion Clause"));
-  //   processContent(deletionContent);
-
-  //   // Construct the table
-  //   return new Table({
-  //     rows,
-  //     width: {
-  //       size: 100,
-  //       type: WidthType.PERCENTAGE,
-  //     },
-  //     layout: TableLayoutType.FIXED,
-  //   });
-  // }
   additionAndDeletionClauseTable(): Table {
     const rows: TableRow[] = [];
-  
+
     // Helper function to create section headers
     const createSectionHeader = (headerText: string): TableRow => {
       return new TableRow({
@@ -1785,12 +1690,12 @@ export class TestDataComponent implements OnInit {
         ],
       });
     };
-  
+
     // Helper function to process content
     const processContent = (contentArray: any[]) => {
       contentArray.forEach((content, index) => {
         const cellBgColor = this.CommonCellBgColor(index);
-  
+
         if (typeof content === "string") {
           // Single text content
           rows.push(
@@ -1826,7 +1731,7 @@ export class TestDataComponent implements OnInit {
               children: [
                 this.CommonCell(content.boldText, {
                   fontSize: 10,
-                  bold: true,
+                  bold: false,
                   fillColor: cellBgColor,
                   alignment: AlignmentType.LEFT,
                 }),
@@ -1836,15 +1741,15 @@ export class TestDataComponent implements OnInit {
         }
       });
     };
-  
+
     // Add Addition Clause to the table
     rows.push(createSectionHeader("Addition Clause"));
     processContent(additionContent);
-  
+
     // Add Deletion Clause to the table
     rows.push(createSectionHeader("Deletion Clause"));
     processContent(deletionContent);
-  
+
     // Construct the table
     return new Table({
       rows,
@@ -1855,7 +1760,79 @@ export class TestDataComponent implements OnInit {
       layout: TableLayoutType.FIXED,
     });
   }
-  
+
+
+  // renderNotes() {
+  //   const rows: TableRow[] = [];
+
+  //   // Helper function to create a section header
+  //   const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
+  //     return new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: [
+  //             new Paragraph({
+  //               alignment: AlignmentType.CENTER,
+  //               children: [new TextRun({ text: headerText, bold: true, color: "#ffffff" })],
+  //             }),
+  //           ],
+  //           shading: {
+  //             fill: backgroundColor,
+  //           },
+  //         }),
+  //       ],
+  //     });
+  //   };
+
+  //   // Add the main header
+  //   rows.push(createSectionHeader("Notes", "#b5b5b5"));
+
+  //   // Iterate over the list of notes and create rows with alternating colors
+  //   notesList.forEach((note, index) => {
+
+  //     if (typeof note === 'string') {
+  //       rows.push(
+  //         new TableRow({
+  //           children: [
+  //             new TableCell({
+  //               children: [new Paragraph({ children: [new TextRun(note)] })],
+  //               shading: { fill: '#eeeeee' },
+  //             }),
+  //           ],
+  //         })
+  //       );
+  //     } else if (note.text) {
+  //       // Handle case where note is an object with a text array
+  //       const paragraphChildren = note.text.map((child) => {
+  //         if (typeof child === 'string') {
+  //           return new TextRun(child);  // Convert string to TextRun
+  //         } else if (child.text) {
+  //           return new TextRun({ text: child.text });
+  //         }
+  //         return new TextRun(child.text); // Handle any other structure
+  //       });
+
+  //       rows.push(
+  //         new TableRow({
+  //           children: [
+  //             new TableCell({
+  //               children: [new Paragraph({ children: paragraphChildren })],
+  //               shading: { fill: '#eeeeee' },
+  //             }),
+  //           ],
+  //         })
+  //       );
+  //     }
+  //   });
+
+  //   // Create the table with the rows and return it
+  //   return new Table({
+  //     rows,
+  //     width: { size: 100, type: 'pct' },
+  //     layout: 'fixed',
+  //   });
+  // }
+
 
   renderNotes() {
     const rows: TableRow[] = [];
@@ -1882,50 +1859,54 @@ export class TestDataComponent implements OnInit {
     // Add the main header
     rows.push(createSectionHeader("Notes", "#b5b5b5"));
 
-
-    // Iterate over the list of notes and create rows with alternating colors
-    notesList.forEach((note, index) => {
-
-      if (typeof note === 'string') {
-        rows.push(
-          new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph({ children: [new TextRun(note)] })],
-                shading: { fill: '#eeeeee' },
-              }),
-            ],
-          })
-        );
-      } else if (note.text) {
-        // Handle case where note is an object with a text array
-        const paragraphChildren = note.text.map((child) => {
-          if (typeof child === 'string') {
-            return new TextRun(child);  // Convert string to TextRun
-          } else if (child.text) {
-            return new TextRun({ text: child.text });
-          }
-          return new TextRun(child.text); // Handle any other structure
+    // Function to process nested or flat text with numbering
+    // Function to process nested or flat text with numbering
+    const processText = (text: any, index?: number): Paragraph => {
+      if (typeof text === 'string') {
+        return new Paragraph({
+          children: [new TextRun({ text: `${index}. ${text}`, break: 1 })],
         });
-
-        rows.push(
-          new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph({ children: paragraphChildren })],
-                shading: { fill: '#eeeeee' },
-              }),
-            ],
-          })
-        );
       }
-    });
+
+      if (Array.isArray(text)) {
+        return new Paragraph({
+          children: text.flatMap((item, ind) => {
+            if (typeof item === 'string') {
+              return [new TextRun({ text: `${ind===0 ?index:''}. ${item}`, break: 1 })];
+            } else if (item.text) {
+              return [new TextRun({ text: `${item.text}`, break: 1 })];
+            }
+            return []; // In case the item is not a valid string or object with text
+          }),
+        });
+      }
+
+      return new Paragraph({
+        children: [new TextRun({ text: 'Invalid data format', break: 1 })],
+      }); // Return a default message in case of invalid data
+    };
+
+
+    // Combine all notes into numbered paragraphs
+    const noteParagraphs = notesList.map((note, index) => processText(note.text, index + 1));
+
+    // Add all notes in a single row
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: noteParagraphs,
+            shading: { fill: "#eeeeee" },
+          }),
+        ],
+      })
+    );
 
     // Create the table with the rows and return it
     return new Table({
       rows,
-      width: { size: 100, type: 'pct' },
-      layout: 'fixed',
+      width: { size: 100, type: "pct" },
+      layout: "fixed",
     });
   }
 
@@ -1949,8 +1930,6 @@ export class TestDataComponent implements OnInit {
         ],
       })
     );
-
-
 
     // Adding clause rows
     sanctionClauses.forEach((clause, index) => {
