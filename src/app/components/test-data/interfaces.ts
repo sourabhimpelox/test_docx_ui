@@ -61,4 +61,5 @@ export interface CellOptions {
     size: number; // Width size in percentage or points
     type: "pct";
   };
+  borderColor?:string
 }

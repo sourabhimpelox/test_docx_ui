@@ -194,12 +194,12 @@ export class TestDataComponent implements OnInit {
     })
   }
   // borders for all tables 
-  defaultBorders(size: number = 10, border: any = "single") {
+  defaultBorders(size: number = 10, border: any = "single", color: string = "#000000") {
     return {
-      top: { size: size, color: "000000", space: 0, style: border },
-      bottom: { size: size, color: "000000", space: 0, style: border },
-      left: { size: size, color: "000000", space: 0, style: border },
-      right: { size: size, color: "000000", space: 0, style: border },
+      top: { size: size, color: color, space: 0, style: border },
+      bottom: { size: size, color: color, space: 0, style: border },
+      left: { size: size, color: color, space: 0, style: border },
+      right: { size: size, color: color, space: 0, style: border },
     };
   };
 
@@ -248,7 +248,8 @@ export class TestDataComponent implements OnInit {
       alignment = AlignmentType.LEFT,
       rowSpan,
       colSpan,
-      width, // Optional width
+      width,
+      borderColor
     } = options;
 
     return new TableCell({
@@ -276,7 +277,7 @@ export class TestDataComponent implements OnInit {
       },
       width,
       // verticalAlign: VerticalAlign.CENTER, 
-      borders: this.defaultBorders(10, 'single'), // Default borders
+      borders: this.defaultBorders(10, 'single', borderColor), // Default borders
       margins: { left: 20, top: 20 },
     });
   }
@@ -1686,6 +1687,7 @@ export class TestDataComponent implements OnInit {
             fillColor: "#b5b5b5",
             alignment: AlignmentType.CENTER,
             colSpan: 1,
+            borderColor: '#9e9e9e'
           }),
         ],
       });
@@ -1705,6 +1707,7 @@ export class TestDataComponent implements OnInit {
                   fontSize: 10,
                   fillColor: cellBgColor,
                   alignment: AlignmentType.LEFT,
+                  borderColor: '#9e9e9e'
                 }),
               ],
             })
@@ -1719,6 +1722,7 @@ export class TestDataComponent implements OnInit {
                     fontSize: 10,
                     fillColor: cellBgColor,
                     alignment: AlignmentType.LEFT,
+                    borderColor: '#9e9e9e'
                   }),
                 ],
               })
@@ -1734,6 +1738,7 @@ export class TestDataComponent implements OnInit {
                   bold: false,
                   fillColor: cellBgColor,
                   alignment: AlignmentType.LEFT,
+                  borderColor: '#9e9e9e'
                 }),
               ],
             })
@@ -1774,6 +1779,7 @@ export class TestDataComponent implements OnInit {
   //             new Paragraph({
   //               alignment: AlignmentType.CENTER,
   //               children: [new TextRun({ text: headerText, bold: true, color: "#ffffff" })],
+
   //             }),
   //           ],
   //           shading: {
@@ -1787,52 +1793,59 @@ export class TestDataComponent implements OnInit {
   //   // Add the main header
   //   rows.push(createSectionHeader("Notes", "#b5b5b5"));
 
-  //   // Iterate over the list of notes and create rows with alternating colors
-  //   notesList.forEach((note, index) => {
-
-  //     if (typeof note === 'string') {
-  //       rows.push(
-  //         new TableRow({
-  //           children: [
-  //             new TableCell({
-  //               children: [new Paragraph({ children: [new TextRun(note)] })],
-  //               shading: { fill: '#eeeeee' },
-  //             }),
-  //           ],
-  //         })
-  //       );
-  //     } else if (note.text) {
-  //       // Handle case where note is an object with a text array
-  //       const paragraphChildren = note.text.map((child) => {
-  //         if (typeof child === 'string') {
-  //           return new TextRun(child);  // Convert string to TextRun
-  //         } else if (child.text) {
-  //           return new TextRun({ text: child.text });
-  //         }
-  //         return new TextRun(child.text); // Handle any other structure
+  //   // Function to process nested or flat text with numbering
+  //   // Function to process nested or flat text with numbering
+  //   const processText = (text: any, index?: number): Paragraph => {
+  //     if (typeof text === 'string') {
+  //       return new Paragraph({
+  //         children: [new TextRun({ text: `${index}. ${text}`, break: 1 })],
   //       });
-
-  //       rows.push(
-  //         new TableRow({
-  //           children: [
-  //             new TableCell({
-  //               children: [new Paragraph({ children: paragraphChildren })],
-  //               shading: { fill: '#eeeeee' },
-  //             }),
-  //           ],
-  //         })
-  //       );
   //     }
-  //   });
+
+  //     if (Array.isArray(text)) {
+  //       return new Paragraph({
+  //         children: text.flatMap((item, ind) => {
+  //           if (typeof item === 'string') {
+  //             return [new TextRun({ text: `${ind === 0 ? index : ''}. ${item}`, break: 1 })];
+  //           } else if (item.text) {
+  //             return [new TextRun({ text: `${item.text}`, break: 1 })];
+  //           }
+  //           return []; // In case the item is not a valid string or object with text
+  //         }),
+  //       });
+  //     }
+
+  //     return new Paragraph({
+  //       children: [new TextRun({ text: 'Invalid data format', break: 1 })],
+  //     }); // Return a default message in case of invalid data
+  //   };
+
+
+  //   // Combine all notes into numbered paragraphs
+  //   const noteParagraphs = notesList.map((note, index) => processText(note.text, index + 1));
+
+  //   // Add all notes in a single row
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: noteParagraphs,
+  //           shading: { fill: "#eeeeee" },
+  //         }),
+  //       ],
+  //     })
+  //   );
 
   //   // Create the table with the rows and return it
   //   return new Table({
   //     rows,
-  //     width: { size: 100, type: 'pct' },
-  //     layout: 'fixed',
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
   //   });
   // }
-
 
   renderNotes() {
     const rows: TableRow[] = [];
@@ -1841,17 +1854,12 @@ export class TestDataComponent implements OnInit {
     const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
       return new TableRow({
         children: [
-          new TableCell({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.CENTER,
-                children: [new TextRun({ text: headerText, bold: true, color: "#ffffff" })],
-              }),
-            ],
-            shading: {
-              fill: backgroundColor,
-            },
-          }),
+          this.CommonCell(headerText,{
+            alignment: AlignmentType.CENTER,
+            color: "#ffffff",
+            fillColor:backgroundColor,
+            bold:true
+          })
         ],
       });
     };
@@ -1859,7 +1867,6 @@ export class TestDataComponent implements OnInit {
     // Add the main header
     rows.push(createSectionHeader("Notes", "#b5b5b5"));
 
-    // Function to process nested or flat text with numbering
     // Function to process nested or flat text with numbering
     const processText = (text: any, index?: number): Paragraph => {
       if (typeof text === 'string') {
@@ -1872,7 +1879,7 @@ export class TestDataComponent implements OnInit {
         return new Paragraph({
           children: text.flatMap((item, ind) => {
             if (typeof item === 'string') {
-              return [new TextRun({ text: `${ind===0 ?index:''}. ${item}`, break: 1 })];
+              return [new TextRun({ text: `${ind === 0 ? index : ''}. ${item}`, break: 1 })];
             } else if (item.text) {
               return [new TextRun({ text: `${item.text}`, break: 1 })];
             }
@@ -1905,11 +1912,56 @@ export class TestDataComponent implements OnInit {
     // Create the table with the rows and return it
     return new Table({
       rows,
-      width: { size: 100, type: "pct" },
-      layout: "fixed",
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+      layout: TableLayoutType.FIXED,
     });
   }
 
+  
+
+  // renderSanctionsClause() {
+  //   const rows: TableRow[] = [];
+
+  //   // Adding the header row for Sanctions Clause
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: [
+  //             new Paragraph({
+  //               alignment: AlignmentType.CENTER,
+  //               children: [new TextRun({ text: 'Sanctions Clause', bold: true, color: "#ffffff" })],
+  //             }),
+  //           ],
+  //           shading: { fill: '#b5b5b5' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Adding clause rows
+  //   sanctionClauses.forEach((clause, index) => {
+  //     rows.push(
+  //       new TableRow({
+  //         children: [
+  //           new TableCell({
+  //             children: [new Paragraph({ children: [new TextRun(clause)] })],
+  //             shading: { fill: this.CommonCellBgColor(index) },
+  //           }),
+  //         ],
+  //       })
+  //     );
+  //   });
+
+  //   return new Table({
+  //     rows: rows,
+  //     width: { size: 100, type: 'pct' },
+  //     layout: 'fixed',
+  //   });
+  // }
 
   renderSanctionsClause() {
     const rows: TableRow[] = [];
@@ -1918,15 +1970,7 @@ export class TestDataComponent implements OnInit {
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.CENTER,
-                children: [new TextRun({ text: 'Sanctions Clause', bold: true, color: "#ffffff" })],
-              }),
-            ],
-            shading: { fill: '#b5b5b5' },
-          }),
+          this.CommonCell('Sanctions Clause', { bold: true, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
         ],
       })
     );
@@ -1936,10 +1980,7 @@ export class TestDataComponent implements OnInit {
       rows.push(
         new TableRow({
           children: [
-            new TableCell({
-              children: [new Paragraph({ children: [new TextRun(clause)] })],
-              shading: { fill: this.CommonCellBgColor(index) },
-            }),
+            this.CommonCell(clause, { fillColor: this.CommonCellBgColor(index), borderColor: '#9e9e9e' }),
           ],
         })
       );
@@ -1947,128 +1988,213 @@ export class TestDataComponent implements OnInit {
 
     return new Table({
       rows: rows,
-      width: { size: 100, type: 'pct' },
-      layout: 'fixed',
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+      layout: TableLayoutType.FIXED,
     });
   }
 
 
+  // renderDocIssuePolicy() {
+  //   const rows: TableRow[] = [];
+  //   // Header for the document
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: [
+  //             new Paragraph({
+  //               alignment: AlignmentType.CENTER,
+  //               children: [
+  //                 new TextRun({
+  //                   text: 'Required documents to issue the policy',
+  //                   bold: true,
+  //                   color: '#ffffff',
+  //                 }),
+  //               ],
+  //             }),
+  //           ],
+  //           shading: { fill: '#b5b5b5' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Clients based in Dubai and Northern Emirates
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: [
+  //             new Paragraph({
+  //               alignment: AlignmentType.LEFT,
+  //               children: [
+  //                 new TextRun('Clients based in Dubai and Northern Emirates'),
+  //               ],
+  //             }),
+  //           ],
+  //           shading: { fill: '#eeeeee' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: dubaiDocumentsPolicy.map((doc) => {
+  //             return new Paragraph({
+  //               alignment: AlignmentType.LEFT,
+  //               children: [
+  //                 new TextRun({
+  //                   text: `• ${doc}`, // Disc bullet before each document
+  //                   font: 'Calibri', // You can specify a font if needed
+  //                 }),
+  //               ],
+  //             });
+  //           }),
+  //           shading: { fill: '#ffffff' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Clients based in Abu Dhabi
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: [
+  //             new Paragraph({
+  //               alignment: AlignmentType.LEFT,
+  //               children: [
+  //                 new TextRun('Clients based in Abu Dhabi:'),
+  //               ],
+  //             }),
+  //           ],
+  //           shading: { fill: '#eeeeee' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+
+
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: abuDhabiDocumentsPolicy.map((doc) => {
+  //             return new Paragraph({
+  //               alignment: AlignmentType.LEFT,
+  //               children: [
+  //                 new TextRun({
+  //                   text: `• ${doc}`, // Disc bullet before each document
+  //                   font: 'Arial', // You can specify a font if needed
+  //                 }),
+  //               ],
+  //             });
+  //           }),
+  //           shading: { fill: '#ffffff' },
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   return new Table({
+  //     rows: rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
+
   renderDocIssuePolicy() {
     const rows: TableRow[] = [];
-
+  
     // Header for the document
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.CENTER,
-                children: [
-                  new TextRun({
-                    text: 'Required documents to issue the policy',
-                    bold: true,
-                    color: '#ffffff',
-                  }),
-                ],
-              }),
-            ],
-            shading: { fill: '#b5b5b5' },
+          this.CommonCell('Required documents to issue the policy', {
+            bold: true,
+            color: '#ffffff',
+            alignment: AlignmentType.CENTER,
+            fillColor: '#b5b5b5',
           }),
         ],
       })
     );
-
+  
     // Clients based in Dubai and Northern Emirates
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.LEFT,
-                children: [
-                  new TextRun('Clients based in Dubai and Northern Emirates'),
-                ],
-              }),
-            ],
-            shading: { fill: '#eeeeee' },
+          this.CommonCell('Clients based in Dubai and Northern Emirates', {
+            alignment: AlignmentType.LEFT,
+            fillColor: '#eeeeee',
           }),
         ],
       })
     );
-
-
-
+  
+    // Documents for Dubai clients
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: dubaiDocumentsPolicy.map((doc) => {
-              return new Paragraph({
-                alignment: AlignmentType.LEFT,
-                children: [
-                  new TextRun({
-                    text: `• ${doc}`, // Disc bullet before each document
-                    font: 'Calibri', // You can specify a font if needed
-                  }),
-                ],
-              });
-            }),
-            shading: { fill: '#ffffff' },
-          }),
+          this.CommonCell(
+            dubaiDocumentsPolicy.map((doc) => `• ${doc}`).join('\n'),
+            {
+              alignment: AlignmentType.LEFT,
+              fillColor: '#ffffff',
+            }
+          ),
         ],
       })
     );
-
+  
     // Clients based in Abu Dhabi
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.LEFT,
-                children: [
-                  new TextRun('Clients based in Abu Dhabi:'),
-                ],
-              }),
-            ],
-            shading: { fill: '#eeeeee' },
+          this.CommonCell('Clients based in Abu Dhabi:', {
+            alignment: AlignmentType.LEFT,
+            fillColor: '#eeeeee',
           }),
         ],
       })
     );
-
-
-
+  
+    // Documents for Abu Dhabi clients
     rows.push(
       new TableRow({
         children: [
-          new TableCell({
-            children: abuDhabiDocumentsPolicy.map((doc) => {
-              return new Paragraph({
-                alignment: AlignmentType.LEFT,
-                children: [
-                  new TextRun({
-                    text: `• ${doc}`, // Disc bullet before each document
-                    font: 'Arial', // You can specify a font if needed
-                  }),
-                ],
-              });
-            }),
-            shading: { fill: '#ffffff' },
-          }),
+          this.CommonCell(
+            abuDhabiDocumentsPolicy.map((doc) => `• ${doc}`).join('\n'),
+            {
+              alignment: AlignmentType.LEFT,
+              fillColor: '#ffffff',
+            }
+          ),
         ],
       })
     );
-
+  
     return new Table({
       rows: rows,
-      width: { size: 100, type: 'pct' },
-      layout: 'fixed',
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+      layout: TableLayoutType.FIXED,
     });
   }
+  
 
   CommonCellBgColor(index: number) {
     return index % 2 === 0 ? '#eeeeee' : '#ffffff'
