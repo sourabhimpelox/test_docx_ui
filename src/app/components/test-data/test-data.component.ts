@@ -503,7 +503,7 @@ export class TestDataComponent implements OnInit {
       'Certificate issuance on the same day as requested.',
       'Various modes available for claims submission including direct channel.',
       'Electronic (Bank Transfer) Claims settlement within 7 working days.'
-    ].map(item => this.textLine(`• ${item}`, 10, false, 0, 0, AlignmentType.LEFT, "#000000"));
+    ].map(item => this.textLine(`•  ${item}`, 10, false, 0, 0, AlignmentType.LEFT, "#000000"));
 
     return [
       title,
@@ -743,7 +743,7 @@ export class TestDataComponent implements OnInit {
       new Paragraph({
         children: [
           new TextRun({
-            text: `• ${item.text}`,
+            text: `•  ${item.text}`,
             size: 20,
             font: "Calibri",
           }),
@@ -775,7 +775,7 @@ export class TestDataComponent implements OnInit {
       const paragraph = new Paragraph({
         children: [
           new TextRun({
-            text: `• ${item.text}`,
+            text: `•  ${item.text}`,
             size: 20,
             font: "Calibri",
           }),
@@ -790,7 +790,7 @@ export class TestDataComponent implements OnInit {
           return new Paragraph({
             children: [
               new TextRun({
-                text: `       • ${nestedItem.text}`,
+                text: `•  ${nestedItem.text}`,
                 size: 20,
                 font: "Calibri",
               }),
@@ -810,43 +810,60 @@ export class TestDataComponent implements OnInit {
 
   //****************************************************************** */
   // Exclusion section 
-  createExclusionsSection = (data: EmirateData[]): Paragraph[] => {
-    const paragraphs: Paragraph[] = [];
-
-    data.forEach((emirateData: EmirateData, index: number) => {
-      // Add a page break before each section (except the first one)
-      if (index > 0) {
-        paragraphs.push(
-          new Paragraph({
-            pageBreakBefore: true, // Starts a new page for this paragraph
-          })
-        );
-      }
-
-      // Add title for each section
-      paragraphs.push(this.pageTitle("General Exclusions", 57, "00587C"));
-
-      // Add Exclusions for each Emirate
-      emirateData.exclusions.forEach((exclusion: Exclusion) => {
-        // Add Heading for Exclusion
-        let bold = exclusion.title === "title";
+  createExclusionsSection(data: EmirateData[]): Table {
+    const rows: TableRow[] = [];
+  
+    // Helper function to create a section header
+    const createSectionHeader = (headerText: string): TableRow => {
+      return new TableRow({
+        children: [
+          this.CommonCell(headerText, {
+            alignment: AlignmentType.CENTER,
+            fillColor: "#b5b5b5", // Background color
+            bold: true,
+            fontSize: 12,
+            color: "#ffffff", // Text color
+            borderColor: "#9e9e9e", // Border color
+          }),
+        ],
+      });
+    };
+  
+    // Helper function to process exclusions with conditions
+    const processExclusions = (exclusions: Exclusion[]): Paragraph[] => {
+      const paragraphs: Paragraph[] = [];
+  
+      exclusions.forEach((exclusion) => {
+        // Determine if the heading should be bold
+        const isBold = exclusion.title === "title";
+  
+        // Add the heading for each exclusion
         paragraphs.push(
           new Paragraph({
             children: [
-              new TextRun({ text: exclusion.heading, bold: bold, size: 20, font: "Calibri", }),
+              new TextRun({
+                text: exclusion.heading,
+                bold: isBold, // Apply bold condition
+                size: 20,
+                font: "Calibri",
+              }),
             ],
             spacing: { before: 50 },
             indent: { left: 360 },
           })
         );
-
-        // Add Bullet Points for Exclusion (if any)
+  
+        // Add bullet points for each exclusion
         if (exclusion.bulletPoints.length > 0) {
-          exclusion.bulletPoints.forEach((bulletPoint: string) => {
+          exclusion.bulletPoints.forEach((bulletPoint) => {
             paragraphs.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `• ${bulletPoint}`, size: 20, font: "Calibri", }),
+                  new TextRun({
+                    text: `• ${bulletPoint}`,
+                    size: 20,
+                    font: "Calibri",
+                  }),
                 ],
                 spacing: { before: 50 },
                 indent: { left: 360 },
@@ -855,10 +872,43 @@ export class TestDataComponent implements OnInit {
           });
         }
       });
+  
+      return paragraphs;
+    };
+  
+    // Process each Emirate's exclusions and add them to the table
+    data.forEach((emirateData) => {
+      // Add a section header for General Exclusions
+      rows.push(createSectionHeader("General Exclusions"));
+  
+      // Process the exclusions for the Emirate
+      const exclusionParagraphs = processExclusions(emirateData.exclusions);
+  
+      // Add the exclusions to a single table cell
+      rows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              children: exclusionParagraphs,
+              shading: { fill: "#ffffff" },
+              borders: this.defaultBorders(10, "single", "#9e9e9e"),
+            }),
+          ],
+        })
+      );
     });
-
-    return paragraphs;
-  };
+  
+    // Construct the table
+    return new Table({
+      rows,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+      layout: TableLayoutType.FIXED,
+    });
+  }
+  
   //****************************************************************** */
 
   // All age band Tables 
@@ -1430,6 +1480,7 @@ export class TestDataComponent implements OnInit {
   //****************************************************************** */
   // maf risk table 
   mafRiskTable(category: any): any[] {
+    console.log(category.census);
 
     const rows: TableRow[] = [];
 
@@ -1443,13 +1494,14 @@ export class TestDataComponent implements OnInit {
       new TableRow({
         children: [
 
-          this.CommonCell("S.No", { fontSize: 10, bold: true, width: { size: 8, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employee Id", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employee Name", { fontSize: 10, bold: true, width: { size: 28, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Relations", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Age", { fontSize: 10, bold: true, width: { size: 8, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Category", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Member Type", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, fillColor: '#32CD32', alignment: AlignmentType.CENTER }),
+          this.CommonCell("S.No", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employee Id", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employee Name", { fontSize: 10, bold: true, width: { size: 25, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Relations", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Premium", { fontSize: 10, bold: true, width: { size: 15, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Category", { fontSize: 10, bold: true, width: { size: 12, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("Member Type", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
         ],
       })
     );
@@ -1459,12 +1511,13 @@ export class TestDataComponent implements OnInit {
       rows.push(
         new TableRow({
           children: [
-            this.CommonCell((index + 1).toString(), { fontSize: 10, bold: false, width: { size: 8, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(String(census.employee_id), { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.employee_name, { fontSize: 10, bold: false, width: { size: 28, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.relations, { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.age.toString(), { fontSize: 10, bold: false, width: { size: 8, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.category, { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell((index + 1).toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(String(census.employee_id), { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(census.employee_name, { fontSize: 10, bold: false, width: { size: 25, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(census.relations, { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(census.age.toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(`${this.transformedResultResponse.quotes[0].currency} ${this.convertNumber(census.updated_loaded_premium)}`, { fontSize: 10, bold: false, width: { size: 15, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(census.category.toUpperCase(), { fontSize: 10, bold: false, width: { size: 12, type: "pct" }, alignment: AlignmentType.CENTER }),
             this.CommonCell(census.member_type, { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         })
@@ -1489,18 +1542,38 @@ export class TestDataComponent implements OnInit {
   //****************************************************************** */
 
   // check for age band tables 
-  checkSingleFemalePremiumDisplay(arr: any) {
+  // checkSingleFemalePremiumDisplay(arr: any) {
+  //   if (arr.length === 0) return false; // Return false if the array is empty
+
+  //   const firstObject = arr[0];
+  //   console.log(firstObject);
+  //   const { Dependents, Employee } = firstObject.member || {};
+
+  //   // Check Dependents or Employee for singleFemalePremiumDisplay
+  //   return (
+  //     (Dependents?.singleFemalePremiumDisplay !== undefined) ||
+  //     (Employee?.singleFemalePremiumDisplay !== undefined)
+  //   );
+  // }
+
+  checkSingleFemalePremiumDisplay(arr: any): boolean {
     if (arr.length === 0) return false; // Return false if the array is empty
 
-    const firstObject = arr[0];
+    const firstObject = arr[0]; // Get the first object
     const { Dependents, Employee } = firstObject.member || {};
 
-    // Check Dependents or Employee for singleFemalePremiumDisplay
-    return (
-      (Dependents?.singleFemalePremiumDisplay !== undefined) ||
-      (Employee?.singleFemalePremiumDisplay !== undefined)
+    // Check if any Employee or Dependent has the 'singleFemalePremiumDisplay' property
+    const hasEmployeeSingleFemalePremiumDisplay = Employee?.some((emp: any) =>
+        emp.hasOwnProperty('singleFemalePremiumDisplay')
     );
-  }
+
+    const hasDependentsSingleFemalePremiumDisplay = Dependents?.some((dep: any) =>
+        dep.hasOwnProperty('singleFemalePremiumDisplay')
+    );
+
+    return !!(hasEmployeeSingleFemalePremiumDisplay || hasDependentsSingleFemalePremiumDisplay);
+}
+
 
   createBenefitsTable(organizedData: any) {
     if (Object.keys(organizedData).length === 0) {
@@ -1673,6 +1746,99 @@ export class TestDataComponent implements OnInit {
     };
   }
 
+  // additionAndDeletionClauseTable(): Table {
+  //   const rows: TableRow[] = [];
+
+  //   // Helper function to create section headers
+  //   const createSectionHeader = (headerText: string): TableRow => {
+  //     return new TableRow({
+  //       children: [
+  //         this.CommonCell(headerText, {
+  //           fontSize: 12,
+  //           bold: true,
+  //           color: "#ffffff",
+  //           fillColor: "#b5b5b5",
+  //           alignment: AlignmentType.CENTER,
+  //           colSpan: 1,
+  //           borderColor: '#9e9e9e'
+  //         }),
+  //       ],
+  //     });
+  //   };
+
+  //   // Helper function to process content
+  //   const processContent = (contentArray: any[]) => {
+  //     contentArray.forEach((content, index) => {
+  //       const cellBgColor = this.CommonCellBgColor(index);
+
+  //       if (typeof content === "string") {
+  //         // Single text content
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               this.CommonCell(content, {
+  //                 fontSize: 10,
+  //                 fillColor: cellBgColor,
+  //                 alignment: AlignmentType.LEFT,
+  //                 borderColor: '#9e9e9e'
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       } else if (content.ul) {
+  //         // Bullet list content
+  //         content.ul.map((item: string) => {
+  //           rows.push(
+  //             new TableRow({
+  //               children: [
+  //                 this.CommonCell(`•  ${item}`, {
+  //                   fontSize: 10,
+  //                   fillColor: cellBgColor,
+  //                   alignment: AlignmentType.LEFT,
+  //                   borderColor: '#9e9e9e'
+  //                 }),
+  //               ],
+  //             })
+  //           );
+  //         });
+  //       } else if (content.boldText) {
+  //         // Bold text content
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               this.CommonCell(content.boldText, {
+  //                 fontSize: 10,
+  //                 bold: false,
+  //                 fillColor: cellBgColor,
+  //                 alignment: AlignmentType.LEFT,
+  //                 borderColor: '#9e9e9e'
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       }
+  //     });
+  //   };
+
+  //   // Add Addition Clause to the table
+  //   rows.push(createSectionHeader("Addition Clause"));
+  //   processContent(additionContent);
+
+  //   // Add Deletion Clause to the table
+  //   rows.push(createSectionHeader("Deletion Clause"));
+  //   processContent(deletionContent);
+
+  //   // Construct the table
+  //   return new Table({
+  //     rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
+
   additionAndDeletionClauseTable(): Table {
     const rows: TableRow[] = [];
 
@@ -1693,7 +1859,7 @@ export class TestDataComponent implements OnInit {
       });
     };
 
-    // Helper function to process content
+    // Function to process content with createTextRun for boldText
     const processContent = (contentArray: any[]) => {
       contentArray.forEach((content, index) => {
         const cellBgColor = this.CommonCellBgColor(index);
@@ -1718,7 +1884,7 @@ export class TestDataComponent implements OnInit {
             rows.push(
               new TableRow({
                 children: [
-                  this.CommonCell(`• ${item}`, {
+                  this.CommonCell(`•  ${item}`, {
                     fontSize: 10,
                     fillColor: cellBgColor,
                     alignment: AlignmentType.LEFT,
@@ -1729,16 +1895,20 @@ export class TestDataComponent implements OnInit {
             );
           });
         } else if (content.boldText) {
-          // Bold text content
+          // Bold text content using createTextRun for each bold item
+          const boldTextParagraphs = content.boldText.map((boldItem: string) => {
+            return new Paragraph({
+              children: [this.createTextRun(boldItem, true)], // Create a bold TextRun
+            });
+          });
+          
           rows.push(
             new TableRow({
               children: [
-                this.CommonCell(content.boldText, {
-                  fontSize: 10,
-                  bold: false,
-                  fillColor: cellBgColor,
-                  alignment: AlignmentType.LEFT,
-                  borderColor: '#9e9e9e'
+                new TableCell({
+                  children: boldTextParagraphs, 
+                  shading: { fill: cellBgColor }, 
+                  borders: this.defaultBorders(10, 'single', '#9e9e9e')
                 }),
               ],
             })
@@ -1764,8 +1934,14 @@ export class TestDataComponent implements OnInit {
       },
       layout: TableLayoutType.FIXED,
     });
-  }
+}
 
+
+
+
+  createTextRun(text: string, italics?:boolean): TextRun {
+    return new TextRun({ text: `${text}`, size:2*9, italics });
+  };
 
   // renderNotes() {
   //   const rows: TableRow[] = [];
@@ -1774,17 +1950,11 @@ export class TestDataComponent implements OnInit {
   //   const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
   //     return new TableRow({
   //       children: [
-  //         new TableCell({
-  //           children: [
-  //             new Paragraph({
-  //               alignment: AlignmentType.CENTER,
-  //               children: [new TextRun({ text: headerText, bold: true, color: "#ffffff" })],
-
-  //             }),
-  //           ],
-  //           shading: {
-  //             fill: backgroundColor,
-  //           },
+  //         this.CommonCell(headerText, {
+  //           alignment: AlignmentType.CENTER,
+  //           color: "#ffffff",
+  //           fillColor: backgroundColor,
+  //           bold: true,
   //         }),
   //       ],
   //     });
@@ -1794,35 +1964,63 @@ export class TestDataComponent implements OnInit {
   //   rows.push(createSectionHeader("Notes", "#b5b5b5"));
 
   //   // Function to process nested or flat text with numbering
-  //   // Function to process nested or flat text with numbering
-  //   const processText = (text: any, index?: number): Paragraph => {
+  //   const processText = (text: any, index?: number): Paragraph[] => {
+  //     const paragraphs: Paragraph[] = [];
+  //     let formattedText:string | number
+  //     let formattedTextIndex:number | string
+  //     const indentation = '   '
+
   //     if (typeof text === 'string') {
-  //       return new Paragraph({
-  //         children: [new TextRun({ text: `${index}. ${text}`, break: 1 })],
-  //       });
+  //       // Prepare the text format with index
+  //       formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
+  //       formattedTextIndex = index !== undefined ? index +1 : ""
+  //       paragraphs.push(
+  //         new Paragraph({
+  //           children: [this.createTextRun(formattedText)], // Create a TextRun wrapped inside a Paragraph
+  //         })
+  //       );
+  //       return paragraphs;
   //     }
 
   //     if (Array.isArray(text)) {
-  //       return new Paragraph({
-  //         children: text.flatMap((item, ind) => {
-  //           if (typeof item === 'string') {
-  //             return [new TextRun({ text: `${ind === 0 ? index : ''}. ${item}`, break: 1 })];
-  //           } else if (item.text) {
-  //             return [new TextRun({ text: `${item.text}`, break: 1 })];
-  //           }
-  //           return []; // In case the item is not a valid string or object with text
-  //         }),
+  //       // Handle nested arrays and maintain indentation for each item
+  //       text.forEach((item, ind) => {
+  //         if (typeof item === 'string') {
+  //           formattedText = `${ind === 0 && index !== undefined ? `${index}. ` : ''}${item}`;
+  //           paragraphs.push(
+  //             new Paragraph({
+  //               children: [this.createTextRun(formattedText)], // Return each item as a Paragraph
+  //             })
+  //           );
+  //         } else if (item.text) {
+  //           // Handle nested objects with text property
+  //           formattedText = `${indentation}${item.text}`;
+  //           paragraphs.push(
+  //             new Paragraph({
+  //               children: [this.createTextRun(formattedText)], // Return item text as a Paragraph
+  //             })
+  //           );
+  //         }
   //       });
+  //       return paragraphs;
   //     }
 
-  //     return new Paragraph({
-  //       children: [new TextRun({ text: 'Invalid data format', break: 1 })],
-  //     }); // Return a default message in case of invalid data
+  //     // Handle invalid data format
+  //     const invalidText = 'Invalid data format'; // Default message for invalid data
+  //     paragraphs.push(
+  //       new Paragraph({
+  //         children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
+  //       })
+  //     );
+
+  //     return paragraphs;
   //   };
 
-
   //   // Combine all notes into numbered paragraphs
-  //   const noteParagraphs = notesList.map((note, index) => processText(note.text, index + 1));
+  //   const noteParagraphs = notesList.map((note, index) => {
+  //     // Handle the nested structure and pass the current index
+  //     return processText(note.text, index + 1);
+  //   }).flat(); // Flatten the result to avoid nested arrays of paragraphs
 
   //   // Add all notes in a single row
   //   rows.push(
@@ -1846,57 +2044,85 @@ export class TestDataComponent implements OnInit {
   //     layout: TableLayoutType.FIXED,
   //   });
   // }
-
   renderNotes() {
     const rows: TableRow[] = [];
-
+  
     // Helper function to create a section header
     const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
       return new TableRow({
         children: [
-          this.CommonCell(headerText,{
+          this.CommonCell(headerText, {
             alignment: AlignmentType.CENTER,
             color: "#ffffff",
-            fillColor:backgroundColor,
-            bold:true
-          })
+            fillColor: backgroundColor,
+            bold: true,
+            borderColor: '#9e9e9e',
+          }),
         ],
       });
     };
-
+  
     // Add the main header
     rows.push(createSectionHeader("Notes", "#b5b5b5"));
-
+  
     // Function to process nested or flat text with numbering
-    const processText = (text: any, index?: number): Paragraph => {
+    const processText = (text: any, index?: number): Paragraph[] => {
+      const paragraphs: Paragraph[] = [];
+      let formattedText: string | number;
+      const indentation = '    ';  // 4 spaces indentation
+    
       if (typeof text === 'string') {
-        return new Paragraph({
-          children: [new TextRun({ text: `${index}. ${text}`, break: 1 })],
-        });
+        // Prepare the text format with index
+        formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
+        paragraphs.push(
+          new Paragraph({
+            children: [this.createTextRun(formattedText)], // Create a TextRun wrapped inside a Paragraph
+          })
+        );
+        return paragraphs;
       }
-
+    
       if (Array.isArray(text)) {
-        return new Paragraph({
-          children: text.flatMap((item, ind) => {
-            if (typeof item === 'string') {
-              return [new TextRun({ text: `${ind === 0 ? index : ''}. ${item}`, break: 1 })];
-            } else if (item.text) {
-              return [new TextRun({ text: `${item.text}`, break: 1 })];
-            }
-            return []; // In case the item is not a valid string or object with text
-          }),
+        // Handle nested arrays and maintain indentation for each item
+        text.forEach((item, ind) => {
+          if (typeof item === 'string') {
+            formattedText = `${ind === 0 && index !== undefined ? `${index}. ` : ''}${item}`;
+            paragraphs.push(
+              new Paragraph({
+                children: [this.createTextRun(formattedText)], // Return each item as a Paragraph
+              })
+            );
+          } else if (item.text) {
+            // Handle nested objects with text property
+            formattedText = `${indentation}${item.text}`;
+            paragraphs.push(
+              new Paragraph({
+                children: [this.createTextRun(formattedText)], // Return item text as a Paragraph
+              })
+            );
+          }
         });
+        return paragraphs;
       }
-
-      return new Paragraph({
-        children: [new TextRun({ text: 'Invalid data format', break: 1 })],
-      }); // Return a default message in case of invalid data
+    
+      // Handle invalid data format
+      const invalidText = 'Invalid data format'; // Default message for invalid data
+      paragraphs.push(
+        new Paragraph({
+          children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
+        })
+      );
+    
+      return paragraphs;
     };
-
-
+    
+  
     // Combine all notes into numbered paragraphs
-    const noteParagraphs = notesList.map((note, index) => processText(note.text, index + 1));
-
+    const noteParagraphs = notesList.map((note, index) => {
+      // Handle the nested structure and pass the current index
+      return processText(note.text, index + 1);
+    }).flat(); // Flatten the result to avoid nested arrays of paragraphs
+  
     // Add all notes in a single row
     rows.push(
       new TableRow({
@@ -1904,11 +2130,12 @@ export class TestDataComponent implements OnInit {
           new TableCell({
             children: noteParagraphs,
             shading: { fill: "#eeeeee" },
+            borders: this.defaultBorders(10, 'single', '#9e9e9e'),
           }),
         ],
       })
     );
-
+  
     // Create the table with the rows and return it
     return new Table({
       rows,
@@ -1920,48 +2147,6 @@ export class TestDataComponent implements OnInit {
     });
   }
 
-  
-
-  // renderSanctionsClause() {
-  //   const rows: TableRow[] = [];
-
-  //   // Adding the header row for Sanctions Clause
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: [
-  //             new Paragraph({
-  //               alignment: AlignmentType.CENTER,
-  //               children: [new TextRun({ text: 'Sanctions Clause', bold: true, color: "#ffffff" })],
-  //             }),
-  //           ],
-  //           shading: { fill: '#b5b5b5' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   // Adding clause rows
-  //   sanctionClauses.forEach((clause, index) => {
-  //     rows.push(
-  //       new TableRow({
-  //         children: [
-  //           new TableCell({
-  //             children: [new Paragraph({ children: [new TextRun(clause)] })],
-  //             shading: { fill: this.CommonCellBgColor(index) },
-  //           }),
-  //         ],
-  //       })
-  //     );
-  //   });
-
-  //   return new Table({
-  //     rows: rows,
-  //     width: { size: 100, type: 'pct' },
-  //     layout: 'fixed',
-  //   });
-  // }
 
   renderSanctionsClause() {
     const rows: TableRow[] = [];
@@ -1997,126 +2182,9 @@ export class TestDataComponent implements OnInit {
   }
 
 
-  // renderDocIssuePolicy() {
-  //   const rows: TableRow[] = [];
-  //   // Header for the document
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: [
-  //             new Paragraph({
-  //               alignment: AlignmentType.CENTER,
-  //               children: [
-  //                 new TextRun({
-  //                   text: 'Required documents to issue the policy',
-  //                   bold: true,
-  //                   color: '#ffffff',
-  //                 }),
-  //               ],
-  //             }),
-  //           ],
-  //           shading: { fill: '#b5b5b5' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   // Clients based in Dubai and Northern Emirates
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: [
-  //             new Paragraph({
-  //               alignment: AlignmentType.LEFT,
-  //               children: [
-  //                 new TextRun('Clients based in Dubai and Northern Emirates'),
-  //               ],
-  //             }),
-  //           ],
-  //           shading: { fill: '#eeeeee' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: dubaiDocumentsPolicy.map((doc) => {
-  //             return new Paragraph({
-  //               alignment: AlignmentType.LEFT,
-  //               children: [
-  //                 new TextRun({
-  //                   text: `• ${doc}`, // Disc bullet before each document
-  //                   font: 'Calibri', // You can specify a font if needed
-  //                 }),
-  //               ],
-  //             });
-  //           }),
-  //           shading: { fill: '#ffffff' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   // Clients based in Abu Dhabi
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: [
-  //             new Paragraph({
-  //               alignment: AlignmentType.LEFT,
-  //               children: [
-  //                 new TextRun('Clients based in Abu Dhabi:'),
-  //               ],
-  //             }),
-  //           ],
-  //           shading: { fill: '#eeeeee' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-
-
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: abuDhabiDocumentsPolicy.map((doc) => {
-  //             return new Paragraph({
-  //               alignment: AlignmentType.LEFT,
-  //               children: [
-  //                 new TextRun({
-  //                   text: `• ${doc}`, // Disc bullet before each document
-  //                   font: 'Arial', // You can specify a font if needed
-  //                 }),
-  //               ],
-  //             });
-  //           }),
-  //           shading: { fill: '#ffffff' },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   return new Table({
-  //     rows: rows,
-  //     width: {
-  //       size: 100,
-  //       type: WidthType.PERCENTAGE,
-  //     },
-  //     layout: TableLayoutType.FIXED,
-  //   });
-  // }
-
   renderDocIssuePolicy() {
     const rows: TableRow[] = [];
-  
+
     // Header for the document
     rows.push(
       new TableRow({
@@ -2126,11 +2194,12 @@ export class TestDataComponent implements OnInit {
             color: '#ffffff',
             alignment: AlignmentType.CENTER,
             fillColor: '#b5b5b5',
+             borderColor: '#9e9e9e'
           }),
         ],
       })
     );
-  
+
     // Clients based in Dubai and Northern Emirates
     rows.push(
       new TableRow({
@@ -2138,26 +2207,29 @@ export class TestDataComponent implements OnInit {
           this.CommonCell('Clients based in Dubai and Northern Emirates', {
             alignment: AlignmentType.LEFT,
             fillColor: '#eeeeee',
+             borderColor: '#9e9e9e'
           }),
         ],
       })
     );
-  
+
     // Documents for Dubai clients
     rows.push(
       new TableRow({
         children: [
-          this.CommonCell(
-            dubaiDocumentsPolicy.map((doc) => `• ${doc}`).join('\n'),
-            {
-              alignment: AlignmentType.LEFT,
-              fillColor: '#ffffff',
-            }
-          ),
+          new TableCell({
+            children: dubaiDocumentsPolicy.map((doc) =>
+              new Paragraph({
+              children: [this.createTextRun(`•  ${doc}`)], // Create TextRun for each document text
+              })
+            ),
+            shading: { fill: "#ffffff" },
+            borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+          }),
         ],
       })
     );
-  
+
     // Clients based in Abu Dhabi
     rows.push(
       new TableRow({
@@ -2165,26 +2237,31 @@ export class TestDataComponent implements OnInit {
           this.CommonCell('Clients based in Abu Dhabi:', {
             alignment: AlignmentType.LEFT,
             fillColor: '#eeeeee',
+             borderColor: '#9e9e9e'
           }),
         ],
       })
     );
-  
+
     // Documents for Abu Dhabi clients
     rows.push(
       new TableRow({
         children: [
-          this.CommonCell(
-            abuDhabiDocumentsPolicy.map((doc) => `• ${doc}`).join('\n'),
-            {
-              alignment: AlignmentType.LEFT,
-              fillColor: '#ffffff',
-            }
-          ),
+          new TableCell({
+            children: abuDhabiDocumentsPolicy.map((doc) =>
+              new Paragraph({
+              children: [this.createTextRun(`•  ${doc}`)],
+              
+              })
+            ),
+            shading: { fill: "#ffffff" },
+            borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+            
+          }),
         ],
       })
     );
-  
+
     return new Table({
       rows: rows,
       width: {
@@ -2194,7 +2271,7 @@ export class TestDataComponent implements OnInit {
       layout: TableLayoutType.FIXED,
     });
   }
-  
+
 
   CommonCellBgColor(index: number) {
     return index % 2 === 0 ? '#eeeeee' : '#ffffff'
@@ -2217,6 +2294,7 @@ export class TestDataComponent implements OnInit {
 
     let renderDocIssuePolicyTable = this.renderDocIssuePolicy()
 
+   
     // category member table 
     let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
     let categoriesDetailsTable = this.categoriesDetailTable(categoryData, quoteData)
@@ -2254,33 +2332,22 @@ export class TestDataComponent implements OnInit {
       }
 
       let isSingleFemalePremiumDisplayExist = this.checkSingleFemalePremiumDisplay(category.ageValues)
-      let isMaternityFemalePremiumDisplayExist = this.checkSingleFemalePremiumDisplay(category.ageValues)
-
+      console.log(category.ageValues);
+      console.log("isSingleFemalePremiumDisplayExist",isSingleFemalePremiumDisplayExist);
       if (isSingleFemalePremiumDisplayExist) {
+     console.log(true);
         ageBandTable = this.AgeBandTable4(category, category.premium, category.totalMemberCount)
       } else {
+        console.log(false);
         ageBandTable = this.AgeBandTable5(category, category.premium, category.totalMemberCount)
-      }
-
-      if (isMaternityFemalePremiumDisplayExist) {
-        if (category.emirate.trim().toLowerCase() === "dubai" && category.tpa.trim().toLowerCase() === "nextcare") {
-          ageBandTable = this.AgeBandTable2(category)
-        } else if (category.emirate.trim().toLowerCase() === "abu dhabi" && category.tpa.trim().toLowerCase() === "nextcare") {
-          ageBandTable = this.AgeBandTable3(category)
-        } else {
-          ageBandTable = this.AgeBandTable1(category);
-        }
       }
       content.push(...ageBandTable);
       return content;
     });
 
     let exclusionData = this.formatExclusionData(quoteData.exclusion)
-    let exclusion = this.createExclusionsSection(exclusionData)
+    let exclusionTable = this.createExclusionsSection(exclusionData)
 
-    //****************************************************************** */
-    const policyInsuranceRequirements1 = this.policyInsuranceRequirementList(policyInsuranceRequirement1);
-    const policyInsuranceRequirements2 = this.policyInsuranceRequirementList(policyInsuranceRequirement2);
     //****************************************************************** */
 
 
@@ -2340,17 +2407,19 @@ export class TestDataComponent implements OnInit {
         {
           ...this.createLandscapeSectionProperties(),
           children: [
+            exclusionTable
+          ],
+        },
+ 
+        {
+          ...this.createLandscapeSectionProperties(),
+          children: [
             NotesTable,
             sanctionsClauseTable,
             renderDocIssuePolicyTable
           ],
         },
-        {
-          ...this.createLandscapeSectionProperties(),
-          children: [
-            ...exclusion
-          ],
-        }
+   
       ],
 
       styles: {
