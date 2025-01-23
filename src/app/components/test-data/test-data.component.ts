@@ -124,7 +124,7 @@ export class TestDataComponent implements OnInit {
         emirate: category.data.emirates.emirates_name,
         tpa: category.data.tpa.tpa_name,
         ageValues: category.data.age_values,
-        premium: `${category.currency} ${category.data.totalPremium}`,
+        premium: `${this.transformedResultResponse.quotes[0]?.currency} ${category.data.totalPremium}`,
         totalMemberCount: category.data.totalMemberCount
       }
     });
@@ -283,7 +283,7 @@ export class TestDataComponent implements OnInit {
   }
 
   // For Page Title
-  pageTitle(title: string, size: number = 28, color: string = "#00587C", underline?: boolean, alignment: any = "left") {
+  pageTitle(title: string, size: number = 13, color: string = "#00587C", underline?: boolean, alignment: any = "left") {
     return new Paragraph({
       children: [
         new TextRun({
@@ -507,8 +507,8 @@ export class TestDataComponent implements OnInit {
 
     return [
       title,
-      refAndDateTable, greet, infoBlock1, infoBlock2, infoBlock3, textLine1, this.horizontalLine(10), textLine2, texLine3, textLine4, textLine5,
-      infoBlock4, this.horizontalLine(10),
+      refAndDateTable, greet, infoBlock1, infoBlock2, infoBlock3, textLine1, this.horizontalLine(10), infoBlock4, textLine2, texLine3, textLine4, textLine5,
+      this.horizontalLine(10),
       textline6,
       ...ul,
       textLine7,
@@ -699,17 +699,18 @@ export class TestDataComponent implements OnInit {
       rows: [
         new TableRow({
           children: [
-            this.CommonCell("Quote 1", { fontSize: 11, color: "#ffffff", fillColor: '#b5b5b5', bold: true, width: { size: 33, type: "pct" } }), // First column
+            this.CommonCell("Quote 1", { fontSize: 11, color: "#ffffff", fillColor: '#b5b5b5', bold: true, width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER }), // First column
             this.CommonCell(
-              `${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote${quote.risk_type.toLowerCase() === "no" ? "" : ` & ${(quote.risk_type).toUpperCase()}`}`,
+              `${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote`,
               {
                 fontSize: 11,
                 bold: true,
                 color: "#ffffff", fillColor: '#b5b5b5',
-                width: { size: 34, type: "pct" }
+                width: { size: 34, type: "pct" },
+                alignment: AlignmentType.CENTER
               }
             ),
-            this.CommonCell(`${quote.currency} ${this.convertNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#ffffff", fillColor: '#b5b5b5', width: { size: 33, type: "pct" } }), // Third column
+            this.CommonCell(`${quote.currency} ${this.convertNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#ffffff", fillColor: '#b5b5b5', width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER }),
           ],
         }),
       ],
@@ -812,7 +813,7 @@ export class TestDataComponent implements OnInit {
   // Exclusion section 
   createExclusionsSection(data: EmirateData[]): Table {
     const rows: TableRow[] = [];
-  
+
     // Helper function to create a section header
     const createSectionHeader = (headerText: string): TableRow => {
       return new TableRow({
@@ -828,15 +829,15 @@ export class TestDataComponent implements OnInit {
         ],
       });
     };
-  
+
     // Helper function to process exclusions with conditions
     const processExclusions = (exclusions: Exclusion[]): Paragraph[] => {
       const paragraphs: Paragraph[] = [];
-  
+
       exclusions.forEach((exclusion) => {
         // Determine if the heading should be bold
         const isBold = exclusion.title === "title";
-  
+
         // Add the heading for each exclusion
         paragraphs.push(
           new Paragraph({
@@ -852,7 +853,7 @@ export class TestDataComponent implements OnInit {
             indent: { left: 360 },
           })
         );
-  
+
         // Add bullet points for each exclusion
         if (exclusion.bulletPoints.length > 0) {
           exclusion.bulletPoints.forEach((bulletPoint) => {
@@ -872,18 +873,32 @@ export class TestDataComponent implements OnInit {
           });
         }
       });
-  
+
       return paragraphs;
     };
-  
+
     // Process each Emirate's exclusions and add them to the table
     data.forEach((emirateData) => {
       // Add a section header for General Exclusions
-      rows.push(createSectionHeader("General Exclusions"));
-  
+      rows.push(createSectionHeader('DHA & DOH Exclusions'));
+
+      rows.push(
+        new TableRow({
+          children: [
+            this.CommonCell('DXB Excluded (non-basic) healthcare services (DHA)', {
+              alignment: AlignmentType.LEFT,
+              fillColor: "#e0e0e0",
+              bold: true,
+              fontSize: 10,
+              color: "#000000",
+              borderColor: "#9e9e9e",
+            }),
+          ],
+        })
+      );
       // Process the exclusions for the Emirate
       const exclusionParagraphs = processExclusions(emirateData.exclusions);
-  
+
       // Add the exclusions to a single table cell
       rows.push(
         new TableRow({
@@ -897,7 +912,7 @@ export class TestDataComponent implements OnInit {
         })
       );
     });
-  
+
     // Construct the table
     return new Table({
       rows,
@@ -908,403 +923,49 @@ export class TestDataComponent implements OnInit {
       layout: TableLayoutType.FIXED,
     });
   }
-  
+
   //****************************************************************** */
 
   // All age band Tables 
-
-  // age band table type 1
-  AgeBandTable1(category: any) {
-
-    const pageBreak = new Paragraph({
-      children: [],
-      pageBreakBefore: true,
-    });
-
-    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 26, '#AC0233');
-
-    // Create reusable tables
-    const memberCountTable = this.createCategoryTable(
-      category.category_name,
-      "Member Count",
-      "memberCount",
-      category.pdfAgeBandDetails
-    );
-
-    const grossPremiumTable = this.createCategoryTable(
-      category.category_name,
-      "Gross Premium",
-      "grossPremium",
-      category.pdfAgeBandDetails
-    );
-
-    const totalGrossPremiumTable = this.createCategoryTable(
-      category.category_name,
-      "Total Gross Premium",
-      "totalGrossPremium",
-      category.pdfAgeBandDetails
-    );
-
-    return [pageBreak, title, memberCountTable, grossPremiumTable, totalGrossPremiumTable];
-  }
-
-  createCategoryTable(categoryName: string, titleText: string, tableType: "memberCount" | "grossPremium" | "totalGrossPremium", details: any[]): Table {
-    // Title for the section
-    const title = this.tableTitle(`${titleText} - ${categoryName}`, 11, "#000000");
-
-    // Header Rows for the table
-    const headers: TableRow[] = [
-      new TableRow({
-        children: [
-          this.CommonCell("Age band", {
-            fillColor: "#b5b5b5",
-            color: "#ffffff",
-            bold: true,
-            fontSize: 8,
-            rowSpan: 3,
-            alignment: AlignmentType.CENTER
-          }),
-          this.CommonCell(
-            tableType === "memberCount" ? "Member Count" :
-              tableType === "grossPremium" ? "Gross Premium" : "Total Gross Premium",
-            { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 5, alignment: AlignmentType.CENTER }
-          ),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Employees", {
-            fillColor: "#eeeeee",
-            bold: true,
-            fontSize: 8,
-            colSpan: 2,
-            alignment: AlignmentType.CENTER
-          }),
-          this.CommonCell("Dependents", {
-            fillColor: "#eeeeee",
-            bold: true,
-            fontSize: 8,
-            colSpan: 2,
-            alignment: AlignmentType.CENTER
-          }),
-          this.CommonCell("Maternity", {
-            fillColor: "#eeeeee",
-            bold: true,
-            fontSize: 8,
-            rowSpan: 2,
-            alignment: AlignmentType.CENTER
-          }),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Male", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { fillColor: "#eeeeee", fontSize: 8, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-    ];
-
-    // Add data rows based on the details provided
-    const dataRows: TableRow[] = details.map((row: any) => {
-      const type = tableType === "memberCount" ? "Count" :
-        tableType === "grossPremium" ? "GrossPremium" : "TotalGrossPremium";
-
-      return new TableRow({
-        children: [
-          this.CommonCell(row.age, { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(type === "Count" ? row.Employee[`male${type}`] : row.Employee[`male${type}`].toFixed(2), { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(type === "Count" ? row.Employee[`female${type}`] : row.Employee[`female${type}`].toFixed(2), { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(type === "Count" ? row.Dependents[`male${type}`] : row.Dependents[`male${type}`].toFixed(2), { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(type === "Count" ? row.Dependents[`female${type}`] : row.Dependents[`female${type}`].toFixed(2), { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(type === "Count" ? row[`maternity${type}`] : row[`maternity${type}`].toFixed(2), { fontSize: 8, alignment: AlignmentType.CENTER }),
-        ],
-      });
-    });
-
-    // Add an empty row at the end
-    if (tableType === "memberCount" || tableType === "grossPremium") {
-      dataRows.push(
-        new TableRow({
-          children: [this.CommonCell("", { colSpan: 6, fontSize: 8, alignment: AlignmentType.CENTER })],
-        })
-      );
-    }
-
-    // Create the table
-    const table = new Table({
-      rows: [...headers, ...dataRows],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-      borders: {
-        top: { style: BorderStyle.SINGLE, size: 1 },
-        bottom: { style: BorderStyle.SINGLE, size: 1 },
-        left: { style: BorderStyle.SINGLE, size: 1 },
-        right: { style: BorderStyle.SINGLE, size: 1 },
-      },
-    });
-
-    return table;
-  }
-
-  // age band table type 2
-  AgeBandTable2(category: any) {
-    let details = category.pdfAgeBandDetailsUnify;
-    const pageBreak = new Paragraph({
-      children: [],
-      pageBreakBefore: true,
-    });
-
-    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 26, '#AC0233');
-
-    const headers = [
-      new TableRow({
-        children: [
-          this.CommonCell("Age bracket", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, rowSpan: 3, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dubai", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 5, width: { size: 16.67 * 5, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Member Count", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Gross Premium per member", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 2, width: { size: 16.67 * 2, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total Gross Premium", { fillColor: "#eeeeee", bold: true, fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Employees & Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity Eligible", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees & Dependents excl. Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity Premium Per Eligible Female", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-    ];
-
-    // Add data rows based on the details provided
-    const dataRows: TableRow[] = details.map((row: any) => {
-      return new TableRow({
-
-        children: [
-          this.CommonCell(row.age, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.members_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.maternity_count, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.members_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.maternity_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.total_gross_premium, { fontSize: 8, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      });
-    });
-
-    // Total row
-    let totalMembersCount = 0;
-    let totalMaternityCount = 0;
-    let weightedSumGrossPremium = 0;
-    let totalMaternityGrossPremium = 0;
-    let totalGrossPremium = 0;
-
-    details.forEach((row: any) => {
-      totalMembersCount += row.members_count || 0;
-      totalMaternityCount += row.maternity_count || 0;
-      weightedSumGrossPremium += (row.members_count || 0) * (row.members_gross_premium || 0);
-      totalMaternityGrossPremium += (row.maternity_count || 0) * (row.maternity_gross_premium || 0);
-      totalGrossPremium += row.total_gross_premium || 0;
-    });
-
-    const totalMembersGrossPremium = totalMembersCount > 0
-      ? (weightedSumGrossPremium / totalMembersCount).toFixed(2)
-      : '0';
-    const maternityGrossPremiumPerMember = totalMaternityCount > 0
-      ? (totalMaternityGrossPremium / totalMaternityCount).toFixed(2)
-      : '0';
-
-    const totalRow = new TableRow({
-      children: [
-        this.CommonCell("Total", { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(String(totalMembersCount), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(String(totalMaternityCount), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(totalMembersGrossPremium, { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(maternityGrossPremiumPerMember, { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(totalGrossPremium.toFixed(2), { fontSize: 8, bold: true, width: { size: 16.67, type: "pct" }, alignment: AlignmentType.CENTER }),
-      ],
-    });
-
-    // Create the table for Member Count
-    const memberCountTable = new Table({
-      rows: [...headers, ...dataRows, totalRow],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      }
-    });
-
-    return [pageBreak, title, memberCountTable];
-  }
-
-  // age band table type 3
-  AgeBandTable3(category: any) {
-    let details = category.pdfAgeBandDetailsUnify;
-    const pageBreak = new Paragraph({
-      children: [],
-      pageBreakBefore: true,
-    });
-
-    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 26, '#AC0233');
-
-    const headers = [
-      new TableRow({
-        children: [
-          this.CommonCell("Age bracket", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, rowSpan: 3, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Abhu Dhabi", { fillColor: "#b5b5b5", color: "#ffffff", bold: true, fontSize: 8, colSpan: 10, width: { size: 9.09 * 10, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Member Count", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Gross Premium per member", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 3, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total Gross Premium", { fillColor: "#eeeeee", bold: true, fontSize: 8, colSpan: 4, width: { size: 9.09 * 3, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-      new TableRow({
-        children: [
-          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employees", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Maternity", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { fillColor: "#eeeeee", fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      }),
-    ];
-
-    // Add data rows based on the details provided
-    // Add data rows based on the details provided
-    const dataRows: TableRow[] = details.map((row: any) => {
-      return new TableRow({
-
-        children: [
-          this.CommonCell(row.age || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.employee_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.dependent_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.maternity_count || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.employee_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.dependent_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row.maternity_gross_premium || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell((row.employee_gross_premium * row.employee_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell((row.dependent_gross_premium * row.dependent_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell((row.maternity_gross_premium * row.maternity_count).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-          this.CommonCell(((row.employee_gross_premium * row.employee_count) + (row.dependent_gross_premium * row.dependent_count) + (row.maternity_gross_premium * row.maternity_count)).toFixed(2) || '0', { fontSize: 8, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        ],
-      });
-    });
-
-    // total row 
-    let totalEmployeesCount = 0;
-    let totalDependentsCount = 0;
-    let totalMaternityCount = 0;
-    let employeeGrossPremiumPerMember = 0;
-    let dependentGrossPremiumPerMember = 0;
-    let maternityGrossPremiumPerMember = 0;
-    let employeeTotalGrossPremium = 0;
-    let dependentTotalGrossPremium = 0;
-    let maternityTotalGrossPremium = 0;
-    let totalGrossPremium = 0;
-    details.forEach((row: any) => {
-      totalEmployeesCount += row.employee_count || 0;
-      totalDependentsCount += row.dependent_count || 0;
-      totalMaternityCount += row.maternity_count || 0;
-      employeeTotalGrossPremium += (row.employee_count * row.employee_gross_premium) || 0;
-      dependentTotalGrossPremium += (row.dependent_count * row.dependent_gross_premium) || 0;
-      maternityTotalGrossPremium += (row.maternity_count * row.maternity_gross_premium) || 0;
-      totalGrossPremium += ((row.employee_count * row.employee_gross_premium) + (row.dependent_count * row.dependent_gross_premium) + (row.maternity_count * row.maternity_gross_premium)) || 0;
-    });
-    employeeGrossPremiumPerMember = employeeTotalGrossPremium / totalEmployeesCount;
-    dependentGrossPremiumPerMember = dependentTotalGrossPremium / totalDependentsCount;
-    maternityGrossPremiumPerMember = maternityTotalGrossPremium / totalMaternityCount;
-
-
-    const totalRow = new TableRow({
-      children: [
-        this.CommonCell("Total", { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(String(totalEmployeesCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(String(totalDependentsCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(String(totalMaternityCount) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(employeeGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(dependentGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(maternityGrossPremiumPerMember.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(employeeTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(dependentTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(maternityTotalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-        this.CommonCell(totalGrossPremium.toFixed(2) || '0', { fontSize: 8, bold: true, width: { size: 9.09, type: "pct" }, alignment: AlignmentType.CENTER }),
-      ],
-    });
-
-
-    // Create the table for Member Count
-    const memberCountTable2 = new Table({
-      rows: [...headers, ...dataRows, totalRow],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    });
-
-    return [pageBreak, title, memberCountTable2];
-  }
-
   // age band table type 4
   AgeBandTable4(category: any, premium: any, member: any) {
     let details = category.ageValues
+    console.log("AgeBandTable4 details",details);
     const pageBreak = new Paragraph({
       children: [],
       pageBreakBefore: true,
     });
 
-    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 26, '#AC0233');
+    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 10, '#000000');
 
     const headers = [
       new TableRow({
         children: [
           this.CommonCell("Age Band", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, rowSpan: 3 }),
-          this.CommonCell("Employees", { bold: true, color: "#ffffff", colSpan: 3, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { bold: true, color: "#ffffff", colSpan: 3, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { bold: true, color: "#ffffff", colSpan: 6, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Employees", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Dependents", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Total", { bold: true, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell("Member Count", { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
 
         ],
       }),
       new TableRow({
         children: [
           this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
           this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
           this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
           this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Single Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Married Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
         ],
       }),
     ];
@@ -1313,16 +974,17 @@ export class TestDataComponent implements OnInit {
 
     // Add data rows based on the details provided
     // Add data rows based on the details provided
+    console.log("de---", details);
     const dataRows: TableRow[] = details.map((row: any) => {
       let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.convertNumber(row?.member?.Employee?.malePremiumDisplay) : "";
 
-      let singleFemaleEmployeePremium = row?.member?.Employee?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.singleFemalePremiumDisplay) : "";
+      // let singleFemaleEmployeePremium = row?.member?.Employee?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.singleFemalePremiumDisplay) : "";
 
       let marriedFemaleEmployeePremium = row?.member?.Employee?.marriedFemalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.marriedFemalePremiumDisplay) : "";
 
-      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.malePremiumDisplay) : "";
+      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.malePremiumDisplay) : "-";
 
-      let singleFemaleDependentsPremium = row?.member?.Dependents?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.singleFemalePremiumDisplay) : "";
+      // let singleFemaleDependentsPremium = row?.member?.Dependents?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.singleFemalePremiumDisplay) : "";
 
       let marriedFemaleDependentsPremium = row?.member?.Dependents?.marriedFemalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.marriedFemalePremiumDisplay) : "";
 
@@ -1331,30 +993,28 @@ export class TestDataComponent implements OnInit {
       let totalSingleFemale = row?.member?.totalSingleFemale ? this.convertNumber(row?.member?.totalSingleFemale) : "";
 
       let totalMarriedFemale = row?.member?.totalMarriedFemale ? this.convertNumber(row?.member?.totalMarriedFemale) : "";
+
       return new TableRow({
         children: [
           this.CommonCell(row.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(singleFemaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(marriedFemaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(singleFemaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(marriedFemaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.singleFemaleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.marriedFemaleMembeCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell(row?.member?.singleFemaleMemberCount + row?.member?.marriedFemaleMembeCount|| '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalSingleFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalMarriedFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell(totalSingleFemale + totalMarriedFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
+         
         ],
       });
     });
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 7 }),
-        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
-        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 3 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 5 }),
+        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
 
       ],
     });
@@ -1373,14 +1033,15 @@ export class TestDataComponent implements OnInit {
   }
 
   // age band table type 5
-  AgeBandTable5(category: any, premium: any, member: any) {
+  AgeBandTable3(category: any, premium: any, member: any) {
     let details = category.ageValues
+    console.log("AgeBandTable3 details",details);
     const pageBreak = new Paragraph({
       children: [],
       pageBreakBefore: true,
     });
 
-    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 26, '#AC0233');
+    const title = this.pageTitle(`Age Band - ${category.emirate} - ${category.category_name}`, 10, '#000000');
 
     const headers = [
       new TableRow({
@@ -1436,7 +1097,7 @@ export class TestDataComponent implements OnInit {
 
       return new TableRow({
         children: [
-          this.CommonCell(row.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell(row?.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(row?.member?.Employee?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(row?.member?.Employee?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
           this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
@@ -1524,7 +1185,7 @@ export class TestDataComponent implements OnInit {
       );
     });
 
-    let title = this.pageTitle(`MAF Required Members - ${category.category_name}`, 24, '#AC0233')
+    let title = this.pageTitle(`MAF Required Members - ${category.category_name}`, 10, '#000000')
 
     // Create Table
     const table = new Table({
@@ -1542,37 +1203,23 @@ export class TestDataComponent implements OnInit {
   //****************************************************************** */
 
   // check for age band tables 
-  // checkSingleFemalePremiumDisplay(arr: any) {
-  //   if (arr.length === 0) return false; // Return false if the array is empty
 
-  //   const firstObject = arr[0];
-  //   console.log(firstObject);
-  //   const { Dependents, Employee } = firstObject.member || {};
 
-  //   // Check Dependents or Employee for singleFemalePremiumDisplay
-  //   return (
-  //     (Dependents?.singleFemalePremiumDisplay !== undefined) ||
-  //     (Employee?.singleFemalePremiumDisplay !== undefined)
-  //   );
-  // }
+    checkSingleFemalePremiumDisplay(arr: any[]): boolean {
+    if ( arr.length === 0) {
+      return false;
+    }
+  
+    const firstObject = arr[0];
+    // Safely access the properties using optional chaining
+    const singleFemalePremiumDisplay = 
+      firstObject?.member?.Dependents?.singleFemalePremiumDisplay ||
+      firstObject?.member?.Employee?.singleFemalePremiumDisplay;
+  
+    return Boolean(singleFemalePremiumDisplay); 
+  }
 
-  checkSingleFemalePremiumDisplay(arr: any): boolean {
-    if (arr.length === 0) return false; // Return false if the array is empty
 
-    const firstObject = arr[0]; // Get the first object
-    const { Dependents, Employee } = firstObject.member || {};
-
-    // Check if any Employee or Dependent has the 'singleFemalePremiumDisplay' property
-    const hasEmployeeSingleFemalePremiumDisplay = Employee?.some((emp: any) =>
-        emp.hasOwnProperty('singleFemalePremiumDisplay')
-    );
-
-    const hasDependentsSingleFemalePremiumDisplay = Dependents?.some((dep: any) =>
-        dep.hasOwnProperty('singleFemalePremiumDisplay')
-    );
-
-    return !!(hasEmployeeSingleFemalePremiumDisplay || hasDependentsSingleFemalePremiumDisplay);
-}
 
 
   createBenefitsTable(organizedData: any) {
@@ -1591,6 +1238,7 @@ export class TestDataComponent implements OnInit {
           fillColor: "#b5b5b5",
           bold: true,
           width: { size: this.columnWidth, type: "pct" },
+          alignment: AlignmentType.CENTER
         }),
         ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
           .map((categoryName) =>
@@ -1600,6 +1248,7 @@ export class TestDataComponent implements OnInit {
               fillColor: "#b5b5b5",
               bold: true,
               width: { size: this.columnWidth, type: "pct" },
+              alignment: AlignmentType.CENTER
             })
           ),
       ],
@@ -1695,8 +1344,8 @@ export class TestDataComponent implements OnInit {
     // First row is the header row (Tob Header and categories)
     const headerRow = new TableRow({
       children: [
-        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" }, }), // First column for "Tob Header"
-        ...data.map(category => this.CommonCell(category.category_name, { fontSize: 10, color: fontColor, fillColor: bgColor, bold: true, width: { size: this.columnWidth, type: "pct" } })), // Columns for categories
+        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER }), // First column for "Tob Header"
+        ...data.map(category => this.CommonCell(category.category_name, { fontSize: 10, color: fontColor, fillColor: bgColor, bold: true, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER })), // Columns for categories
       ],
     });
 
@@ -1746,98 +1395,6 @@ export class TestDataComponent implements OnInit {
     };
   }
 
-  // additionAndDeletionClauseTable(): Table {
-  //   const rows: TableRow[] = [];
-
-  //   // Helper function to create section headers
-  //   const createSectionHeader = (headerText: string): TableRow => {
-  //     return new TableRow({
-  //       children: [
-  //         this.CommonCell(headerText, {
-  //           fontSize: 12,
-  //           bold: true,
-  //           color: "#ffffff",
-  //           fillColor: "#b5b5b5",
-  //           alignment: AlignmentType.CENTER,
-  //           colSpan: 1,
-  //           borderColor: '#9e9e9e'
-  //         }),
-  //       ],
-  //     });
-  //   };
-
-  //   // Helper function to process content
-  //   const processContent = (contentArray: any[]) => {
-  //     contentArray.forEach((content, index) => {
-  //       const cellBgColor = this.CommonCellBgColor(index);
-
-  //       if (typeof content === "string") {
-  //         // Single text content
-  //         rows.push(
-  //           new TableRow({
-  //             children: [
-  //               this.CommonCell(content, {
-  //                 fontSize: 10,
-  //                 fillColor: cellBgColor,
-  //                 alignment: AlignmentType.LEFT,
-  //                 borderColor: '#9e9e9e'
-  //               }),
-  //             ],
-  //           })
-  //         );
-  //       } else if (content.ul) {
-  //         // Bullet list content
-  //         content.ul.map((item: string) => {
-  //           rows.push(
-  //             new TableRow({
-  //               children: [
-  //                 this.CommonCell(`•  ${item}`, {
-  //                   fontSize: 10,
-  //                   fillColor: cellBgColor,
-  //                   alignment: AlignmentType.LEFT,
-  //                   borderColor: '#9e9e9e'
-  //                 }),
-  //               ],
-  //             })
-  //           );
-  //         });
-  //       } else if (content.boldText) {
-  //         // Bold text content
-  //         rows.push(
-  //           new TableRow({
-  //             children: [
-  //               this.CommonCell(content.boldText, {
-  //                 fontSize: 10,
-  //                 bold: false,
-  //                 fillColor: cellBgColor,
-  //                 alignment: AlignmentType.LEFT,
-  //                 borderColor: '#9e9e9e'
-  //               }),
-  //             ],
-  //           })
-  //         );
-  //       }
-  //     });
-  //   };
-
-  //   // Add Addition Clause to the table
-  //   rows.push(createSectionHeader("Addition Clause"));
-  //   processContent(additionContent);
-
-  //   // Add Deletion Clause to the table
-  //   rows.push(createSectionHeader("Deletion Clause"));
-  //   processContent(deletionContent);
-
-  //   // Construct the table
-  //   return new Table({
-  //     rows,
-  //     width: {
-  //       size: 100,
-  //       type: WidthType.PERCENTAGE,
-  //     },
-  //     layout: TableLayoutType.FIXED,
-  //   });
-  // }
 
   additionAndDeletionClauseTable(): Table {
     const rows: TableRow[] = [];
@@ -1898,16 +1455,16 @@ export class TestDataComponent implements OnInit {
           // Bold text content using createTextRun for each bold item
           const boldTextParagraphs = content.boldText.map((boldItem: string) => {
             return new Paragraph({
-              children: [this.createTextRun(boldItem, true)], // Create a bold TextRun
+              children: [this.createTextRun(`${boldItem}`, true)], // Create a bold TextRun
             });
           });
-          
+
           rows.push(
             new TableRow({
               children: [
                 new TableCell({
-                  children: boldTextParagraphs, 
-                  shading: { fill: cellBgColor }, 
+                  children: boldTextParagraphs,
+                  shading: { fill: cellBgColor },
                   borders: this.defaultBorders(10, 'single', '#9e9e9e')
                 }),
               ],
@@ -1934,119 +1491,19 @@ export class TestDataComponent implements OnInit {
       },
       layout: TableLayoutType.FIXED,
     });
-}
+  }
 
 
 
 
-  createTextRun(text: string, italics?:boolean): TextRun {
-    return new TextRun({ text: `${text}`, size:2*9, italics });
+  createTextRun(text: string, italics?: boolean): TextRun {
+    return new TextRun({ text: `${text}`, size: 2 * 9, italics });
   };
 
-  // renderNotes() {
-  //   const rows: TableRow[] = [];
 
-  //   // Helper function to create a section header
-  //   const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
-  //     return new TableRow({
-  //       children: [
-  //         this.CommonCell(headerText, {
-  //           alignment: AlignmentType.CENTER,
-  //           color: "#ffffff",
-  //           fillColor: backgroundColor,
-  //           bold: true,
-  //         }),
-  //       ],
-  //     });
-  //   };
-
-  //   // Add the main header
-  //   rows.push(createSectionHeader("Notes", "#b5b5b5"));
-
-  //   // Function to process nested or flat text with numbering
-  //   const processText = (text: any, index?: number): Paragraph[] => {
-  //     const paragraphs: Paragraph[] = [];
-  //     let formattedText:string | number
-  //     let formattedTextIndex:number | string
-  //     const indentation = '   '
-
-  //     if (typeof text === 'string') {
-  //       // Prepare the text format with index
-  //       formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
-  //       formattedTextIndex = index !== undefined ? index +1 : ""
-  //       paragraphs.push(
-  //         new Paragraph({
-  //           children: [this.createTextRun(formattedText)], // Create a TextRun wrapped inside a Paragraph
-  //         })
-  //       );
-  //       return paragraphs;
-  //     }
-
-  //     if (Array.isArray(text)) {
-  //       // Handle nested arrays and maintain indentation for each item
-  //       text.forEach((item, ind) => {
-  //         if (typeof item === 'string') {
-  //           formattedText = `${ind === 0 && index !== undefined ? `${index}. ` : ''}${item}`;
-  //           paragraphs.push(
-  //             new Paragraph({
-  //               children: [this.createTextRun(formattedText)], // Return each item as a Paragraph
-  //             })
-  //           );
-  //         } else if (item.text) {
-  //           // Handle nested objects with text property
-  //           formattedText = `${indentation}${item.text}`;
-  //           paragraphs.push(
-  //             new Paragraph({
-  //               children: [this.createTextRun(formattedText)], // Return item text as a Paragraph
-  //             })
-  //           );
-  //         }
-  //       });
-  //       return paragraphs;
-  //     }
-
-  //     // Handle invalid data format
-  //     const invalidText = 'Invalid data format'; // Default message for invalid data
-  //     paragraphs.push(
-  //       new Paragraph({
-  //         children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
-  //       })
-  //     );
-
-  //     return paragraphs;
-  //   };
-
-  //   // Combine all notes into numbered paragraphs
-  //   const noteParagraphs = notesList.map((note, index) => {
-  //     // Handle the nested structure and pass the current index
-  //     return processText(note.text, index + 1);
-  //   }).flat(); // Flatten the result to avoid nested arrays of paragraphs
-
-  //   // Add all notes in a single row
-  //   rows.push(
-  //     new TableRow({
-  //       children: [
-  //         new TableCell({
-  //           children: noteParagraphs,
-  //           shading: { fill: "#eeeeee" },
-  //         }),
-  //       ],
-  //     })
-  //   );
-
-  //   // Create the table with the rows and return it
-  //   return new Table({
-  //     rows,
-  //     width: {
-  //       size: 100,
-  //       type: WidthType.PERCENTAGE,
-  //     },
-  //     layout: TableLayoutType.FIXED,
-  //   });
-  // }
   renderNotes() {
     const rows: TableRow[] = [];
-  
+
     // Helper function to create a section header
     const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
       return new TableRow({
@@ -2061,16 +1518,16 @@ export class TestDataComponent implements OnInit {
         ],
       });
     };
-  
+
     // Add the main header
     rows.push(createSectionHeader("Notes", "#b5b5b5"));
-  
+
     // Function to process nested or flat text with numbering
     const processText = (text: any, index?: number): Paragraph[] => {
       const paragraphs: Paragraph[] = [];
       let formattedText: string | number;
       const indentation = '    ';  // 4 spaces indentation
-    
+
       if (typeof text === 'string') {
         // Prepare the text format with index
         formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
@@ -2081,7 +1538,7 @@ export class TestDataComponent implements OnInit {
         );
         return paragraphs;
       }
-    
+
       if (Array.isArray(text)) {
         // Handle nested arrays and maintain indentation for each item
         text.forEach((item, ind) => {
@@ -2104,7 +1561,7 @@ export class TestDataComponent implements OnInit {
         });
         return paragraphs;
       }
-    
+
       // Handle invalid data format
       const invalidText = 'Invalid data format'; // Default message for invalid data
       paragraphs.push(
@@ -2112,17 +1569,17 @@ export class TestDataComponent implements OnInit {
           children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
         })
       );
-    
+
       return paragraphs;
     };
-    
-  
+
+
     // Combine all notes into numbered paragraphs
     const noteParagraphs = notesList.map((note, index) => {
       // Handle the nested structure and pass the current index
       return processText(note.text, index + 1);
     }).flat(); // Flatten the result to avoid nested arrays of paragraphs
-  
+
     // Add all notes in a single row
     rows.push(
       new TableRow({
@@ -2135,7 +1592,7 @@ export class TestDataComponent implements OnInit {
         ],
       })
     );
-  
+
     // Create the table with the rows and return it
     return new Table({
       rows,
@@ -2194,7 +1651,7 @@ export class TestDataComponent implements OnInit {
             color: '#ffffff',
             alignment: AlignmentType.CENTER,
             fillColor: '#b5b5b5',
-             borderColor: '#9e9e9e'
+            borderColor: '#9e9e9e'
           }),
         ],
       })
@@ -2207,7 +1664,7 @@ export class TestDataComponent implements OnInit {
           this.CommonCell('Clients based in Dubai and Northern Emirates', {
             alignment: AlignmentType.LEFT,
             fillColor: '#eeeeee',
-             borderColor: '#9e9e9e'
+            borderColor: '#9e9e9e'
           }),
         ],
       })
@@ -2220,7 +1677,7 @@ export class TestDataComponent implements OnInit {
           new TableCell({
             children: dubaiDocumentsPolicy.map((doc) =>
               new Paragraph({
-              children: [this.createTextRun(`•  ${doc}`)], // Create TextRun for each document text
+                children: [this.createTextRun(` •  ${doc}`)], // Create TextRun for each document text
               })
             ),
             shading: { fill: "#ffffff" },
@@ -2237,7 +1694,7 @@ export class TestDataComponent implements OnInit {
           this.CommonCell('Clients based in Abu Dhabi:', {
             alignment: AlignmentType.LEFT,
             fillColor: '#eeeeee',
-             borderColor: '#9e9e9e'
+            borderColor: '#9e9e9e'
           }),
         ],
       })
@@ -2250,13 +1707,13 @@ export class TestDataComponent implements OnInit {
           new TableCell({
             children: abuDhabiDocumentsPolicy.map((doc) =>
               new Paragraph({
-              children: [this.createTextRun(`•  ${doc}`)],
-              
+                children: [this.createTextRun(` •  ${doc}`)],
+
               })
             ),
             shading: { fill: "#ffffff" },
             borders: this.defaultBorders(10, 'single', '#9e9e9e'),
-            
+
           }),
         ],
       })
@@ -2294,7 +1751,7 @@ export class TestDataComponent implements OnInit {
 
     let renderDocIssuePolicyTable = this.renderDocIssuePolicy()
 
-   
+
     // category member table 
     let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
     let categoriesDetailsTable = this.categoriesDetailTable(categoryData, quoteData)
@@ -2320,6 +1777,8 @@ export class TestDataComponent implements OnInit {
     //****************************************************************** */
     // Age band and Maf Tables 
     const ageBandAndMafInfo = this.ageBandAndMafData(quoteData.quotes[0].data);
+
+    console.log("age--->",ageBandAndMafInfo);
     // Age band Tables 
     const ageBandTables = ageBandAndMafInfo.map((category, index) => {
       let ageBandTable
@@ -2332,15 +1791,17 @@ export class TestDataComponent implements OnInit {
       }
 
       let isSingleFemalePremiumDisplayExist = this.checkSingleFemalePremiumDisplay(category.ageValues)
-      console.log(category.ageValues);
-      console.log("isSingleFemalePremiumDisplayExist",isSingleFemalePremiumDisplayExist);
-      if (isSingleFemalePremiumDisplayExist) {
-     console.log(true);
-        ageBandTable = this.AgeBandTable4(category, category.premium, category.totalMemberCount)
-      } else {
-        console.log(false);
-        ageBandTable = this.AgeBandTable5(category, category.premium, category.totalMemberCount)
-      }
+
+
+        if (isSingleFemalePremiumDisplayExist) {
+       console.log(true);
+          ageBandTable = this.AgeBandTable4(category, category.premium, category.totalMemberCount)
+        } else {
+          console.log(false);
+          ageBandTable = this.AgeBandTable3(category, category.premium, category.totalMemberCount)
+        }
+
+
       content.push(...ageBandTable);
       return content;
     });
@@ -2410,7 +1871,7 @@ export class TestDataComponent implements OnInit {
             exclusionTable
           ],
         },
- 
+
         {
           ...this.createLandscapeSectionProperties(),
           children: [
@@ -2419,7 +1880,7 @@ export class TestDataComponent implements OnInit {
             renderDocIssuePolicyTable
           ],
         },
-   
+
       ],
 
       styles: {
