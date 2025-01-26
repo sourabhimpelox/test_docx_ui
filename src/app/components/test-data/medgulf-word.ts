@@ -107,7 +107,7 @@ export class TestDataComponent {
   }
 
   // exclusion data 
-  formatExclusionData(exclusionData: any) {
+  formatExclusionData(exclusionData?: any) {
     return exclusionData.map((item: any) => {
       return {
         emirates: item.emirates,
@@ -1394,7 +1394,7 @@ export class TestDataComponent {
       return paragraphs;
     };
 
-    let exclusionData = this.formatExclusionData(quoteData.exclusion)
+    let exclusionData =this.formatExclusionData(quoteData?.exclusion)
     let exclusion = createExclusionsSection(exclusionData)
 
 

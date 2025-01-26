@@ -1,6 +1,3 @@
-
-import { Document, Packer, Paragraph, LevelFormat, AlignmentType, convertInchesToTwip } from 'docx';
-// nlgi 
 export let quoteData = {
     "companyDetails": {
         "company_id": 172,
@@ -8786,804 +8783,688 @@ export let quoteData = {
             "category": "category a"
         }
     ],
+        "exclusion": [
+            {
+                "emirates": "Dubai",
+                "exclusion": [
+                    {
+                        "heading": "1.     Healthcare Services which are not medically necessary",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "3.\tCare for the sake of travelling.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "4.\tCustodial care including",
+                        "bulletPoints": [
+                            "(1) non-medical treatment services;",
+                            "(2) Health-related services which do not seek to improve or which do not result in a change in the medical condition of the patient."
+                        ],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "5.\tServices that do not require continuous administration by specialized medical personnel.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "6.\tPersonal comfort and convenience items (television, barber or beauty service, guest service and similar incidental services and supplies).",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "7.\tAll cosmetic healthcare services and services associated with replacement of an existing breast implant. Cosmetic operations which are related to an Injury, sickness or congenital anomaly when the primary purpose is to improve physiological functioning of the involved part of the body and breast reconstruction following a mastectomy for cancer are covered.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "8.\tSurgical and non-surgical treatment for obesity (including morbid obesity), and any other weight control programs, services, or supplies.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "9.\tMedical services utilized for the sake of research, medically non-approved experiments, investigations, and pharmacological weight reduction regimens.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "10.\tHealthcare Services that are not performed by Authorized Healthcare Service Providers.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "11.\tHealthcare services and associated expenses for the treatment of alopecia, baldness, hair falling, dandruff or wigs.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "12.\tHealth services and supplies for smoking cessation programs and the treatment of nicotine addiction.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "13.\tTreatment and services for contraception",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "14.\tTreatment and services for sex transformation, sterilization or intended to correct a state of sterility or infertility or sexual dysfunction. Sterilization is allowed only if medically indicated and if allowed under the Law.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "15.\tExternal prosthetic devices and medical equipment.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "16.\tTreatments and services arising as a result of professional sports activities, including but not limited to, any form of aerial flight, any kind of power-vehicle race, water sports, horse riding activities, mountaineering activities, violent sports such as judo, boxing, and wrestling, bungee jumping and any other professional sports activities.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "17.\tGrowth hormone therapy unless medically necessary.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "18.\tCosts associated with hearing tests, prosthetic devices or hearing and vision aids.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "19.\tMental Health diseases, both outpatient and in-patient treatments, unless it is an emergency condition.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "20.\tPatient treatment supplies (including for example: elastic stockings, ace bandages, gauze, syringes, diabetic test strips, and like products; nonprescription drugs and treatments,) excluding supplies required as a result of Healthcare Services rendered during a Medical Emergency.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "21.\tAllergy testing and desensitization (except testing for allergy towards medications and supplies used in treatment); any physical, psychiatric or psychological examinations or investigations during these examinations.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "22.\tServices rendered by any medical provider who is a relative of the patient for example the Insured person himself or first-degree relatives.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "23.\tEnteral feedings (via a tube) and other nutritional and electrolyte supplements, unless medically necessary during in-patient treatment.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "24.\tHealthcare services for adjustment of spinal subluxation.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "25.\tHealthcare services and treatments by acupuncture; acupressure, hypnotism, massage therapy, aromatherapy, ozone therapy, and all forms of treatment by alternative medicine.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "26.\tAll healthcare services & treatments for in-vitro fertilization (IVF), embryo transfer; ovum and sperms transfer.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "27.\tElective diagnostic services and medical treatment for correction of vision",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "28.\tNasal septum deviation and nasal concha resection.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "29.\tAll chronic conditions requiring haemodialysis or peritoneal dialysis, and related investigations, treatments or procedures.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "30.\tHealthcare services, investigations and treatments related to viral hepatitis and associated complications, except for the treatment and services related to Hepatitis B and C.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "31.\tAny services related to birth defects, congenital diseases and deformities unless if left untreated will develop into an emergency.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "32.\tHealthcare services for senile dementia and Alzheimer’s disease.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "33.\tAir or terrestrial medical evacuation and unauthorized transportation services.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "34.\tInpatient treatment received without prior approval from the insurance company including cases of medical emergency that were not notified within 24 hours from the date of admission where possible.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "35.\tAny inpatient treatment, investigations or other procedures, which can be carried out on outpatient basis without jeopardizing the Insured Person’s health.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "36.\tAny investigations or health services conducted for non-medical purposes such as investigations related to employment, travel, licensing or insurance purposes.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "37.\tAll supplies which are not considered as medical treatments including but not limited to: mouthwash, toothpaste, lozenges, antiseptics,food supplements, skin care products, shampoos and multivitamins (unless prescribed as replacement therapy for known vitamin deficiency conditions); and all equipment not primarily intended to improve a medical condition or injury, including but not limited to: air conditioners or air purifying systems, arch supports, exercise equipment and sanitary supplies.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "38.\tMore than one consultation or follow up with a medical specialist in a single day unless referred by the treating physician.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "39.\tHealth services and associated expenses for organ and tissue transplants, irrespective of whether the Insured Person is a donor or a recipient. This exclusion also applies to follow-up treatments and complications unless if left untreated will develop into an emergency.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "40.\tAny expenses related to immunomodulators and immunotherapy unless medically necessary.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "41.\tAny expenses related to the treatment of sleep related disorders.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "42.\tServices and educational programs for people of determination, this also includes disability types such as but not limited to mental, intellectual, developmental, physical and/or psychological disabilities.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "Healthcare services outside the scope of health insurance (In Emergency cases as defined by PD 02-2017, the following must be covered until stabilization at minimum)",
+                        "bulletPoints": [],
+                        "title": "title"
+                    },
+                    {
+                        "heading": "1.\tInjuries or illnesses suffered by the Insured Person as a result of military operations of whatever type.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "2.\tInjuries or illnesses suffered by the Insured Person as a result of wars or acts of terror of whatever type.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "3.\tHealthcare services for injuries and accidents arising from nuclear or chemical contamination.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "4.\tInjuries resulting from natural disasters, including but not limited to: earthquakes, tornados and any other type of natural disaster.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "5.\tInjuries resulting from criminal acts or resisting authority by the Insured Person.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "6.\tInjuries resulting from a road traffic accident.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "7.\tHealthcare services for work related illnesses and injuries as per Federal Law No. 8 of 1980 concerning the Regulation of Work Relations, its amendments, and applicable laws in this respect.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "8.\tAll cases resulting from the use of alcoholic drinks, controlled substances and drugs and hallucinating substances.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "9.\tAny investigation or treatment not prescribed by a doctor.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "10.\tInjuries resulting from attempted suicide or self-inflicted injuries.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "11.\tDiagnosis and treatment services for complications of exempted illnesses.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "12.\tAll healthcare services for internationally and/or locally recognized epidemics.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "13.\tHealthcare services for patients suffering from (and related to the diagnosis and treatment of) HIV – AIDS and its complications and all types of hepatitis except virus A, B and C hepatitis.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "Excluded Healthcare Services Offered Under the Enhanced Health Insurance Policy (DOH)",
+                        "bulletPoints": [],
+                        "title": "title"
+                    },
+                    {
+                        "heading": "1.\tHealthcare Services, which are not medically necessary",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "3.\tDomiciliary care; private nursing care; care for the sake of travelling.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "4.\tCustodial care includes (1) Non medical treatment services; or (2) Health related services which do not seek to improve or which do not result in a change in the medical condition of the patient.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "5.\tServices which do not require continuous administration by specialized medical personnel.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "6.\tPersonal comfort and convenience items (television, barber or beauty service, guest service and similar incidental services and supplies).",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "7.\tHealthcare Services and associated expenses for replacement of an existing breast implant. Cosmetic operations which improve physical appearance and which are related to an Injury, sickness or congenital anomaly when the primary purpose is to improve physiological functioning of the involved part of the body. Breast reconstruction following a mastectomy for cancer is covered.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "8.\tSurgical and non-surgical treatment for obesity (including morbid obesity), and any other weight control programs, services, or supplies.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "9.\tMedically non-approved experimental, research, investigational healthcare services, treatments, devices and pharmacological regimens.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "10.\tHealthcare Services that are not performed by Authorised Healthcare Service Providers, apart from Healthcare Services rendered in a Medical Emergency.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "11.\tHealthcare services, treatments & associated expenses for alopecia, baldness, hair falling, dandruff or wigs.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "12.\tSupplies, Treatment and services for smoking cessation programs and the treatment of nicotine addiction.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "13.\tNon-medically necessary Amniocentesis.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "14.\tTreatment, services and surgeries for sex transformation, sterility and sterilization",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "15.\tTreatment and services for contraception",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "16.\tTreatment and services related to fertility / sterility (treatment including varicocele / polycystic ovary / ovarian cyst / hormonal disturbances / sexual dysfunction).",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "17.\tProsthetic devices and consumed medical equipments, unless approved by the insurance company",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "18.\tTreatments and services arising as a result of hazardous activities, including but not limited to, any form of aerial flight, any kind of power-vehicle race, water sports, horse riding activities, mountaineering activities, violent sports such as judo, boxing, and wrestling, bungee jumping and any professional sports activities",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "19.\tGrowth hormone therapy",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "20.\tCosts associated with hearing tests, vision corrections, prosthetic devices or hearing and vision aids.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "21.\tMental Health diseases, in-patient and out-patient treatments, unless the condition is a transient mental disorder or an acute reaction to stress.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "22.\tPatient treatment supplies (including elastic stockings, ace bandages, gauze, syringes, diabetic test strips, and like products; non-prescription drugs and treatments, excluding such supplies required as a result of Healthcare Services rendered during a Medical Emergency).",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "23.\tPreventive services, including vaccinations, immunizations, allergy testing and desensitization; any physical, psychiatric or psychological examinations or testing during these examinations.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "24.\tServices rendered by any medical provider relevant of a patient for example the Insured person and the Insured member.s family, including spouse, brother, sister, parent or child.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "25.\tEnteral feedings (via a tube) and other nutritional and electrolyte supplements, unless medically necessary during treatment.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "26.\tHealthcare services for adjustment of spinal subluxation, diagnosis and treatment by manipulation of the skeletal structure, by any means, except treatment of fractures and dislocations of the extremities.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "27.\tHealthcare services and treatments) by acupuncture; acupressure, hypnotism, rolfing, massage therapy, aromatherapy, homeopathic treatments, and all forms of treatment by alternative medicine.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "28.\tAll Healthcare services & Treatments for in-vitro fertilization (IVF), embryo transport; ovum and male sperms transport",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "29.\tElective diagnostic services and medical treatment for correction of vision.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "30.\tNasal septum deviation and nasal concha resection.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "31.\tAll chronic conditions requiring hemodialysis or peritoneal dialysis, and related test/treatment or procedure.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "32.\tTreatments and services related to viral hepatitis and associated complications, except for treatment and services related to Hepatitis A.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "33.\tBirth defects, Congenital diseases for newborn &/or Deformities unless life-threatening.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "34.\tHealthcare services for Senile dementia and Alzheimer.s disease.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "35.\tAir or Terrestrial Medical evacuation except for Emergency cases or unauthorised transportation services.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "36.\tCircumcision healthcare services.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "37.\tInpatient treatment received without prior approval from the insurance company including cases of Medical Emergency which were not notified within 24 hours from the date of admission.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "38.\tAny inpatient treatment, tests and other procedures, which can be carried out on outpatient basis without jeopardizing the Insured Person.s health.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "39.\tAny test or treatment, for purpose other than medical such as tests related for employment, travel, licensing or insurance purposes.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "40.\tAll supplies which are not considered as medical treatments including but not limited to: mouthwash, toothpaste, lozenges, antiseptics, milk formulas, food supplements, skin care products, shampoos and multivitamins (unless prescribed as replacement therapy for known vitamin deficiency conditions) and all equipment not primarily intended to improve a medical condition or injury, including but not limited to air conditioners or air purifying systems, arch supports, convenience items / options, exercise equipment and sanitary supplies.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "41.\tMore than one consultation or follow up with a medical specialist in a single day unless referred by a physician.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "42.\tHealth services and associated expenses for organ and tissue transplants, irrespective of whether the Insured Person is a donor or recipient.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "43.\tServices and educational program for handicaps.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "Healthcare Services outside the Scope of Health Insurance",
+                        "bulletPoints": [],
+                        "title": "title"
+                    },
+                    {
+                        "heading": "1. Injuries or illnesses suffered by the Insured Person as a result of military operations of whatever type.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "2. Injuries or illnesses suffered by the Insured Person as a result of wars or acts of terror of whatever type.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "3. Healthcare services for injuries and accidents arising from nuclear or chemical contamination.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "4. Injuries resulting from natural disasters (including but not limited to) earthquakes, tornados and any other type of natural disaster.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "5. Injuries resulting from criminal acts or resisting authority by the Insured Person.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "6. Healthcare services for patients suffering from AIDS and its complications.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "7. Healthcare services for work illnesses and injuries as per Federal Law No. 8 of 1980 concerning the Regulation of Work Relations, as amended, and applicable laws in this respect.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "8. All cases resulting from the use of alcohol, drugs and hallucinatory substances.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "9. Any test or treatment not prescribed by a doctor.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "10. Injuries resulting from attempted suicide or self-inflicted injuries.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "11. Diagnosis and treatment services for complications of exempted illnesses.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "12. All healthcare services for internationally and locally recognised epidemics.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    },
+                    {
+                        "heading": "13. Venereal sexually transmitted diseases. A list with respect thereto will be set out by the General Authority of Health Services.",
+                        "bulletPoints": [],
+                        "title": "other"
+                    }
+                ]
+            }
+        ]
     // "exclusion": []
-    "exclusion": [
-        {
-            "emirates": "Dubai",
-            "exclusion": [
-                {
-                    "heading": "1.     Healthcare Services which are not medically necessary",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "3.\tCare for the sake of travelling.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "4.\tCustodial care including",
-                    "bulletPoints": [
-                        "(1) non-medical treatment services;",
-                        "(2) Health-related services which do not seek to improve or which do not result in a change in the medical condition of the patient."
-                    ],
-                    "title": "other"
-                },
-                {
-                    "heading": "5.\tServices that do not require continuous administration by specialized medical personnel.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "6.\tPersonal comfort and convenience items (television, barber or beauty service, guest service and similar incidental services and supplies).",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "7.\tAll cosmetic healthcare services and services associated with replacement of an existing breast implant. Cosmetic operations which are related to an Injury, sickness or congenital anomaly when the primary purpose is to improve physiological functioning of the involved part of the body and breast reconstruction following a mastectomy for cancer are covered.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "8.\tSurgical and non-surgical treatment for obesity (including morbid obesity), and any other weight control programs, services, or supplies.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "9.\tMedical services utilized for the sake of research, medically non-approved experiments, investigations, and pharmacological weight reduction regimens.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "10.\tHealthcare Services that are not performed by Authorized Healthcare Service Providers.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "11.\tHealthcare services and associated expenses for the treatment of alopecia, baldness, hair falling, dandruff or wigs.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "12.\tHealth services and supplies for smoking cessation programs and the treatment of nicotine addiction.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "13.\tTreatment and services for contraception",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "14.\tTreatment and services for sex transformation, sterilization or intended to correct a state of sterility or infertility or sexual dysfunction. Sterilization is allowed only if medically indicated and if allowed under the Law.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "15.\tExternal prosthetic devices and medical equipment.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "16.\tTreatments and services arising as a result of professional sports activities, including but not limited to, any form of aerial flight, any kind of power-vehicle race, water sports, horse riding activities, mountaineering activities, violent sports such as judo, boxing, and wrestling, bungee jumping and any other professional sports activities.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "17.\tGrowth hormone therapy unless medically necessary.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "18.\tCosts associated with hearing tests, prosthetic devices or hearing and vision aids.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "19.\tMental Health diseases, both outpatient and in-patient treatments, unless it is an emergency condition.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "20.\tPatient treatment supplies (including for example: elastic stockings, ace bandages, gauze, syringes, diabetic test strips, and like products; nonprescription drugs and treatments,) excluding supplies required as a result of Healthcare Services rendered during a Medical Emergency.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "21.\tAllergy testing and desensitization (except testing for allergy towards medications and supplies used in treatment); any physical, psychiatric or psychological examinations or investigations during these examinations.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "22.\tServices rendered by any medical provider who is a relative of the patient for example the Insured person himself or first-degree relatives.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "23.\tEnteral feedings (via a tube) and other nutritional and electrolyte supplements, unless medically necessary during in-patient treatment.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "24.\tHealthcare services for adjustment of spinal subluxation.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "25.\tHealthcare services and treatments by acupuncture; acupressure, hypnotism, massage therapy, aromatherapy, ozone therapy, and all forms of treatment by alternative medicine.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "26.\tAll healthcare services & treatments for in-vitro fertilization (IVF), embryo transfer; ovum and sperms transfer.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "27.\tElective diagnostic services and medical treatment for correction of vision",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "28.\tNasal septum deviation and nasal concha resection.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "29.\tAll chronic conditions requiring haemodialysis or peritoneal dialysis, and related investigations, treatments or procedures.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "30.\tHealthcare services, investigations and treatments related to viral hepatitis and associated complications, except for the treatment and services related to Hepatitis B and C.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "31.\tAny services related to birth defects, congenital diseases and deformities unless if left untreated will develop into an emergency.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "32.\tHealthcare services for senile dementia and Alzheimer’s disease.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "33.\tAir or terrestrial medical evacuation and unauthorized transportation services.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "34.\tInpatient treatment received without prior approval from the insurance company including cases of medical emergency that were not notified within 24 hours from the date of admission where possible.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "35.\tAny inpatient treatment, investigations or other procedures, which can be carried out on outpatient basis without jeopardizing the Insured Person’s health.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "36.\tAny investigations or health services conducted for non-medical purposes such as investigations related to employment, travel, licensing or insurance purposes.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "37.\tAll supplies which are not considered as medical treatments including but not limited to: mouthwash, toothpaste, lozenges, antiseptics,food supplements, skin care products, shampoos and multivitamins (unless prescribed as replacement therapy for known vitamin deficiency conditions); and all equipment not primarily intended to improve a medical condition or injury, including but not limited to: air conditioners or air purifying systems, arch supports, exercise equipment and sanitary supplies.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "38.\tMore than one consultation or follow up with a medical specialist in a single day unless referred by the treating physician.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "39.\tHealth services and associated expenses for organ and tissue transplants, irrespective of whether the Insured Person is a donor or a recipient. This exclusion also applies to follow-up treatments and complications unless if left untreated will develop into an emergency.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "40.\tAny expenses related to immunomodulators and immunotherapy unless medically necessary.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "41.\tAny expenses related to the treatment of sleep related disorders.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "42.\tServices and educational programs for people of determination, this also includes disability types such as but not limited to mental, intellectual, developmental, physical and/or psychological disabilities.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "Healthcare services outside the scope of health insurance (In Emergency cases as defined by PD 02-2017, the following must be covered until stabilization at minimum)",
-                    "bulletPoints": [],
-                    "title": "title"
-                },
-                {
-                    "heading": "1.\tInjuries or illnesses suffered by the Insured Person as a result of military operations of whatever type.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "2.\tInjuries or illnesses suffered by the Insured Person as a result of wars or acts of terror of whatever type.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "3.\tHealthcare services for injuries and accidents arising from nuclear or chemical contamination.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "4.\tInjuries resulting from natural disasters, including but not limited to: earthquakes, tornados and any other type of natural disaster.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "5.\tInjuries resulting from criminal acts or resisting authority by the Insured Person.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "6.\tInjuries resulting from a road traffic accident.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "7.\tHealthcare services for work related illnesses and injuries as per Federal Law No. 8 of 1980 concerning the Regulation of Work Relations, its amendments, and applicable laws in this respect.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "8.\tAll cases resulting from the use of alcoholic drinks, controlled substances and drugs and hallucinating substances.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "9.\tAny investigation or treatment not prescribed by a doctor.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "10.\tInjuries resulting from attempted suicide or self-inflicted injuries.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "11.\tDiagnosis and treatment services for complications of exempted illnesses.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "12.\tAll healthcare services for internationally and/or locally recognized epidemics.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "13.\tHealthcare services for patients suffering from (and related to the diagnosis and treatment of) HIV – AIDS and its complications and all types of hepatitis except virus A, B and C hepatitis.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "Excluded Healthcare Services Offered Under the Enhanced Health Insurance Policy (DOH)",
-                    "bulletPoints": [],
-                    "title": "title"
-                },
-                {
-                    "heading": "1.\tHealthcare Services, which are not medically necessary",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "2.\tAll expenses relating to dental treatment, dental prostheses, and orthodontic treatments.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "3.\tDomiciliary care; private nursing care; care for the sake of travelling.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "4.\tCustodial care includes (1) Non medical treatment services; or (2) Health related services which do not seek to improve or which do not result in a change in the medical condition of the patient.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "5.\tServices which do not require continuous administration by specialized medical personnel.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "6.\tPersonal comfort and convenience items (television, barber or beauty service, guest service and similar incidental services and supplies).",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "7.\tHealthcare Services and associated expenses for replacement of an existing breast implant. Cosmetic operations which improve physical appearance and which are related to an Injury, sickness or congenital anomaly when the primary purpose is to improve physiological functioning of the involved part of the body. Breast reconstruction following a mastectomy for cancer is covered.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "8.\tSurgical and non-surgical treatment for obesity (including morbid obesity), and any other weight control programs, services, or supplies.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "9.\tMedically non-approved experimental, research, investigational healthcare services, treatments, devices and pharmacological regimens.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "10.\tHealthcare Services that are not performed by Authorised Healthcare Service Providers, apart from Healthcare Services rendered in a Medical Emergency.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "11.\tHealthcare services, treatments & associated expenses for alopecia, baldness, hair falling, dandruff or wigs.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "12.\tSupplies, Treatment and services for smoking cessation programs and the treatment of nicotine addiction.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "13.\tNon-medically necessary Amniocentesis.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "14.\tTreatment, services and surgeries for sex transformation, sterility and sterilization",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "15.\tTreatment and services for contraception",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "16.\tTreatment and services related to fertility / sterility (treatment including varicocele / polycystic ovary / ovarian cyst / hormonal disturbances / sexual dysfunction).",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "17.\tProsthetic devices and consumed medical equipments, unless approved by the insurance company",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "18.\tTreatments and services arising as a result of hazardous activities, including but not limited to, any form of aerial flight, any kind of power-vehicle race, water sports, horse riding activities, mountaineering activities, violent sports such as judo, boxing, and wrestling, bungee jumping and any professional sports activities",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "19.\tGrowth hormone therapy",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "20.\tCosts associated with hearing tests, vision corrections, prosthetic devices or hearing and vision aids.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "21.\tMental Health diseases, in-patient and out-patient treatments, unless the condition is a transient mental disorder or an acute reaction to stress.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "22.\tPatient treatment supplies (including elastic stockings, ace bandages, gauze, syringes, diabetic test strips, and like products; non-prescription drugs and treatments, excluding such supplies required as a result of Healthcare Services rendered during a Medical Emergency).",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "23.\tPreventive services, including vaccinations, immunizations, allergy testing and desensitization; any physical, psychiatric or psychological examinations or testing during these examinations.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "24.\tServices rendered by any medical provider relevant of a patient for example the Insured person and the Insured member.s family, including spouse, brother, sister, parent or child.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "25.\tEnteral feedings (via a tube) and other nutritional and electrolyte supplements, unless medically necessary during treatment.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "26.\tHealthcare services for adjustment of spinal subluxation, diagnosis and treatment by manipulation of the skeletal structure, by any means, except treatment of fractures and dislocations of the extremities.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "27.\tHealthcare services and treatments) by acupuncture; acupressure, hypnotism, rolfing, massage therapy, aromatherapy, homeopathic treatments, and all forms of treatment by alternative medicine.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "28.\tAll Healthcare services & Treatments for in-vitro fertilization (IVF), embryo transport; ovum and male sperms transport",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "29.\tElective diagnostic services and medical treatment for correction of vision.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "30.\tNasal septum deviation and nasal concha resection.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "31.\tAll chronic conditions requiring hemodialysis or peritoneal dialysis, and related test/treatment or procedure.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "32.\tTreatments and services related to viral hepatitis and associated complications, except for treatment and services related to Hepatitis A.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "33.\tBirth defects, Congenital diseases for newborn &/or Deformities unless life-threatening.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "34.\tHealthcare services for Senile dementia and Alzheimer.s disease.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "35.\tAir or Terrestrial Medical evacuation except for Emergency cases or unauthorised transportation services.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "36.\tCircumcision healthcare services.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "37.\tInpatient treatment received without prior approval from the insurance company including cases of Medical Emergency which were not notified within 24 hours from the date of admission.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "38.\tAny inpatient treatment, tests and other procedures, which can be carried out on outpatient basis without jeopardizing the Insured Person.s health.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "39.\tAny test or treatment, for purpose other than medical such as tests related for employment, travel, licensing or insurance purposes.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "40.\tAll supplies which are not considered as medical treatments including but not limited to: mouthwash, toothpaste, lozenges, antiseptics, milk formulas, food supplements, skin care products, shampoos and multivitamins (unless prescribed as replacement therapy for known vitamin deficiency conditions) and all equipment not primarily intended to improve a medical condition or injury, including but not limited to air conditioners or air purifying systems, arch supports, convenience items / options, exercise equipment and sanitary supplies.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "41.\tMore than one consultation or follow up with a medical specialist in a single day unless referred by a physician.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "42.\tHealth services and associated expenses for organ and tissue transplants, irrespective of whether the Insured Person is a donor or recipient.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "43.\tServices and educational program for handicaps.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "Healthcare Services outside the Scope of Health Insurance",
-                    "bulletPoints": [],
-                    "title": "title"
-                },
-                {
-                    "heading": "1. Injuries or illnesses suffered by the Insured Person as a result of military operations of whatever type.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "2. Injuries or illnesses suffered by the Insured Person as a result of wars or acts of terror of whatever type.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "3. Healthcare services for injuries and accidents arising from nuclear or chemical contamination.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "4. Injuries resulting from natural disasters (including but not limited to) earthquakes, tornados and any other type of natural disaster.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "5. Injuries resulting from criminal acts or resisting authority by the Insured Person.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "6. Healthcare services for patients suffering from AIDS and its complications.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "7. Healthcare services for work illnesses and injuries as per Federal Law No. 8 of 1980 concerning the Regulation of Work Relations, as amended, and applicable laws in this respect.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "8. All cases resulting from the use of alcohol, drugs and hallucinatory substances.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "9. Any test or treatment not prescribed by a doctor.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "10. Injuries resulting from attempted suicide or self-inflicted injuries.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "11. Diagnosis and treatment services for complications of exempted illnesses.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "12. All healthcare services for internationally and locally recognised epidemics.",
-                    "bulletPoints": [],
-                    "title": "other"
-                },
-                {
-                    "heading": "13. Venereal sexually transmitted diseases. A list with respect thereto will be set out by the General Authority of Health Services.",
-                    "bulletPoints": [],
-                    "title": "other"
-                }
-            ]
-        }
-    ]
-
 }
-
-
-
-
 export let CRN: string = quoteData.companyDetails.client_reference_number
 let quoteGeneratedDate: string = quoteData.companyDetails.quoteGeneratedDate
 
 
 
-// for nlgi
-
-// Addition Clause content
-export let additionContent = [
-    "The insured may add Primary insured and/or their Dependents to the Policy subject to:",
-    { ul: [{ level: 0, type: 'bullet', text: "Compliance to regulatory requirements if any and their timelines." }] },
-    { ul: [{ level: 0, type: 'bullet', text: "Submission of completed addition request form/template, issued by Insurer or other mode acceptable to the insurer." }] },
-    { ul: [{ level: 0, type: 'bullet', text: "Submission of other documents (e.g., Health declaration, Passport copy, Visa copy, etc.), wherever applicable, as informed/requested by the Insurer." }] },
-    { ul: [{ level: 0, type: 'bullet', text: "The addition shall be effected from the date of the receipt of the request for addition." }] },
-    { ul: [{ level: 0, type: 'bullet', text: "The premium payable for additions shall be on a prorated basis, unless otherwise specified." }] },
+export let basicTableData = [
+    { label: 'Client / Policy Holder Name', value: quoteData.companyDetails.company_name },
+    { label: 'Scheme Start Date/Renewal Date', value: quoteData.censusDetails.policy_start_date },
+    { label: 'Scope of Coverage', value: 'As Per the Schedule of Benefits attached' },
+    { label: 'Premium payment warranty', value: '100% of inception premium is due and payable in advance or at the day of inception cover' },
+    { label: 'TPA name for Direct Billing', value: quoteData.quotes[0]?.data[0]?.data?.tpa?.tpa_name },
+    { label: 'Proposal Number', value: `${CRN}/${quoteData.companyDetails?.version}` },
+    { label: 'Quote Generated Date', value: quoteGeneratedDate },
+    { label: 'Quote validity', value: '30 days from the quote generated date' },
+    { label: 'Other provision and & conditions', value: 'Please refer to the Policy Wording document for definitions and the exclusion list' },
 ];
 
-// Deletion Clause content
-export let deletionContent = [
-    "The insured may at any time, upon completing and sending the insurer the relevant request form, delete Primary insured and their Dependents from the Policy subject to:",
-    { ul: [{ level: 0, type: 'bullet', text: "Submission of completed deletion request form, issued by Insurer or other mode acceptable to the insurer" }] },
-    "The deletion shall be effective from the date of the receipt of the request for deletion.",
+
+export let termsAndConditions = [
+    { text: 'Premium Payment Mode: In Advance.' },
     {
-        ul: [{
-            level: 0, type: 'bullet', text:
-                "The Premium refund relating to any approved deletion shall be calculated in accordance with the following Conditions:",
-        }],
+        text: 'All employees to be covered should be actively at work at the time of enrollment to the policy and holding valid Dubai residence visa. The offer provided is on compulsory basis for all employees.',
+    },
+    { text: 'Member Addition, Deletion & refunds if applicable will be calculated on prorata basis.' },
+    {
+        text: 'Policyholder shall update insurance immediately with any change of member status (addition, deletion & upgrade). Requests for back-dated additions/deletions shall not be honored by Insurance.',
+    },
+    { text: 'This offer valid for 30 days from the date of issuance.' },
+    {
+        text: 'Cover is subject to the Company being informed and advised of any chronic or major illness or any diagnosed to develop into major conditions at the inception of the policy as well as on the addition of any member.',
     },
     {
-        boldText:
-            ["a) No refund will be payable for deleted Insured members who have registered any Claim under the policy.\n",
-                "b) Insured members, who did not report any Claim prior to their deletion date, will be refunded on a pro-rata basis."],
+        text: 'This offer shall be null & void in the event of misrepresentation, mis-description or non-disclosure of any materials facts pertaining to the proposal. Nondisclosure shall include non-intimation of any circumstances which may affect the insurance cover or our pricing.',
     },
-    "In addition, the insured will be the sole and fully liable party towards the Provider and/or Insurer in respect of any expenses incurred by the deleted Insured member from his deletion date.",
     {
-        ul: [{
-            level: 0, type: 'bullet', text:
-                "Covered benefits arising from Accident or Illness occurring during the Policy period for your Insured member shall cease immediately upon his deletion from the Policy.",
-        }],
+        text: 'Referral procedure: In respect of Essential Benefit Plan members, no costs incurred for advice, consultations or treatments provided by specialists or consultants without the insured first consulting a General Practitioner (or equivalent as designated by DHA) who is licensed by DHA or another competent UAE authority will be payable by the insurer. The GP must make his referral together with reasons via the DHA e-Referrals system for the claim to be considered by the Insurer.',
     },
+    {
+        text: 'It is agreed and understood that providing the complete information as per the health authority requirements is the responsibility of the policyholder and insurance will only provide the member card (if equivalent) & certificate of insurance after receiving the mentioned information.',
+    },
+    {
+        text: 'The benefits offered in this quotation do not comply with the Health Authority Abu Dhabi regulation for compulsory insurance.',
+    },
+    { text: 'This offer shall be null & void if the Policyholder was previously insured by Insurance under any scheme.' },
+    {
+        text: 'Pre-Existing and Chronic Conditions covered up to indemnity limit subject to 6 months waiting period for first scheme membership.',
+    },
+    { text: 'For this plan, there shall be no separate Health Card. Emirates ID shall be used as Health Card.' },
+    {
+        text: 'VAT(A): - Value Added Tax means any value added tax or similar tax payable to any authority in respect of transactions and includes, but without limitation, any other form of taxation that may be applicable to this contract.',
+    },
+    {
+        text: 'VAT (A1): All amounts expressed to be payable under this Insurance contract by the Insured to Insurance Company (MEDGULF) which (in whole or in part) constitute the consideration for any insurance services for VAT purposes are deemed to be exclusive of any VAT which is chargeable on that Insurance services, and accordingly if VAT is or becomes chargeable on any services made by MEDGULF to Insured customer under this contract.',
+    },
+    {
+        text: 'VAT (A2): MEDGULF is required to account to the relevant tax authority for VAT on that services, that insured customer must pay to MEDGULF (in addition to and at the same time as paying any other consideration for such services or at the point the VAT becomes due to be paid by MEDGULF if earlier) an amount equal to the amount of that VAT (and MEDGULF must promptly provide an appropriate VAT invoice to that Insured customer where so required to by law).',
+    },
+    { text: 'All quotations are subject to final approval from the MEDGULF Underwriting Team.' },
 ];
 
-export let firstPageUnList = [
-    { level: 0, type: 'bullet', text: 'Real time WhatsApp Chat facility for policy holder’s support.' },
-    { level: 0, type: 'bullet', text: 'Dedicated SPOC for policies above 500 members.' },
-    { level: 0, type: 'bullet', text: 'Instantaneous Response to Emergencies.' },
-    { level: 0, type: 'bullet', text: 'Policy Setup and Activation within 3 working days.' },
-    { level: 0, type: 'bullet', text: 'Certificate issuance on the same day as requested.' },
-    { level: 0, type: 'bullet', text: 'Various modes available for claims submission including direct channel.' },
-    { level: 0, type: 'bullet', text: 'Electronic (Bank Transfer) Claims settlement within 7 working days.' }
+export let acceptanceAndAcknowledgment = [
+    { text: 'Confirm knowledge and understanding of my responsibility, according to the Emirate of Dubai Health Insurance Law (No 11 of 2013) and all its subsequent circulars.' },
+    { text: 'Confirm that failure to meet such responsibility will expose the company to violations, and at no point will MEDGULF be held liable for any breach from our side.' },
+    { text: 'Confirm that all the information provided is true and accurate to the best of my knowledge.' },
+    { text: 'Confirm that this policy will incept once the premium is paid as per agreed terms and upon providing MEDGULF with all requirements.' },
+    { text: 'Confirm having read, understood, and agreed on all the mentioned terms and conditions.' },
+    { text: 'Confirm my acceptance of the submitted terms, based on the information provided in this proposal.' },
+];
+
+export let NameAndSignature = [
+    { text: 'Name:' },
+    { text: 'Signature:' },
+    { text: 'Email:' },
+    { text: 'Contact Number:' },
+    { text: 'Date:' },
+    { text: 'Stamp:' },
 ]
-// Add the ordered list of notes with alternating background colors
-export let notesList = [
-    { level: 0, type: 'number', text: 'Please note that in case benefits fall below the minimum required by the regulations in UAE or the benefit which is not provided in this TOB and is  required by regulator, then the cover under the policy will automatically increase/include the benefit to the same level as requested by the regulator.' },
-    { level: 0, type: 'number', text: 'The quote assumes coverage is compulsory for all employees, residing in UAE on valid Residence Visa. There is no voluntary option exercised by any employee.' },
-    { level: 0, type: 'number', text: 'If dependents are to be covered. it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa' },
-    { level: 0, type: 'number', text: 'Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal with individual underwriting. There is no voluntary option exercised by any dependents.' },
-    { level: 0, type: 'number', text: 'The Quotation / TOB confirmed by client herewith is subject to the Insurer being informed and advised of any chronic or major illness or any current condition which may develop into major or Critical conditions at the inception of the policy as well as on the addition of any member. Failure to disclose such material facts will prejudice the insured’s position from the Company acceptance of any claims relating to such condition and/ or considering the claim/or policy as void at discretion of NLGIC.' },
-    { level: 0, type: 'number', text: 'As per regulatory requirement, we need to upload data in the DOH system within 24 hours from inception/effective date. Therefore, backdating of any policy or endorsements is not allowed. To comply with the regulatory requirements, census list data of the members should be in line with the MOI record as the same will be fetched in DOH system.' },
-    { level: 0, type: 'number', text: 'If dependents are to be covered, it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa. Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal. There is no voluntary option exercised by any dependents.' },
-    { level: 0, type: 'number', text: 'Coverage is subject to annual maximum limit and sub limits per person. Maximum age at entry shall be 65 years of age, cover for members above 65 years of age is subject to medical underwriting and benefits shall be based on the assessment of Medical Application Form and valid employment visa.' },
-    { level: 0, type: 'number', text: 'For non-emergency inpatient treatments, at the discretion of the insurer and subject to pre-authorization.' },
-    { level: 0, type: 'number', text: 'Treatment for emergency conditions shall not require pre-authorization, but such cases are to be notified to the company within 48 hours of the emergency treatment.' },
-    { level: 0, type: 'number', text: 'Terms and conditions are as per company’s policy wording.' },
-    { level: 0, type: 'number', text: 'National Life & General Insurance Company or its TPA reserves the right to include/exclude/upgrade banding/degrade banding of any network clinic/hospital at any time from the designated provider network list.' },
-
-    { level: 0, type: 'number', text: 'Direct billing shall be provided only at the listed hospital network and the reimbursement at non-designated network providers shall be restricted to reasonable and customary charges of applicable network.' },
-    { level: 0, type: 'number', text: 'The Benefits and Network applicable to the policy, which are negotiated and confirmed before communication of the policy shall not be modified/altered under any circumstances during the policy period.' },
-    { level: 0, type: 'number', text: 'VAT (Value Added Tax) computed on Gross Premium at the rate stipulated as per the applicable VAT laws and regulations applicable at the time of inception of the policy shall be fully borne by the Insured. The VAT amount as per the tax invoice issued becomes payable and shall be collected in full immediately, irrespective of the agreed payment terms for the underlying premium.' },
-    { level: 0, type: 'number', text: 'All ongoing major health condition needs to be declared including maternity during all types of endorsements.' },
+export let policyInsuranceRequirement1 = [
+    { text: "Signed & Stamped Proposal Form by Authorized Signatory." },
+    { text: "BOR." },
+    { text: "Establishment card." },
+    { text: "TRN certificate." },
+    { text: "Valid Trade License Copy & Relationship letter in case of having sister companies." },
     {
-        level: 0, type: 'number', text: 'For All Card Upgrade requests, the following conditions need to be fulfilled:\n ',
-        nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Promotion of the Member (and eligible for a higher category post promotion).\n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  Member is employed with the Company for a minimum of 1 (one) Year.\n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Member submits Health Declaration form.\n', }
-        ]
+        text: "Updated members list in excel sheet format including mandatory data required by Dubai Health Authority: First Name, Second Name, Family Name, Contact Number (Recommended), Date of Birth, Gender, Relation, Nationality, Passport Number, Marital Status, Emirate (Emirate from which the visa is issued), Residential Location, Work Location, Salary Bracket (Less than AED 4,000 / Between AED 4,001 & AED 12,000 / Above AED 12,000), Commission, Emirates ID Number, UID Number, Entity type, Establishment ID, Entity Contact Number, Entity  Email ID and including:",
+        ul: [
+            { text: "Marking of newcomers to Emirate of Dubai." },
+            { text: "Marking of Members who did not have a DHA compliant plan." },
+        ],
     },
-    { level: 0, type: 'number', text: 'Quoted terms are subject to National Life and General Insurance Company SAOG being informed of any major chronic and pre-existing condition or major illness or any condition diagnosed to develop into major condition at inception of the policy and at addition of a member subsequent to inception of the policy. Failure to disclose such material facts may result in claim denial or render the contract null and void ab-initio.' },
-    { level: 0, type: 'number', text: "It is the duty of the Master policy holder and the Insured member, on behalf of self and their dependents, to inform insurance company about any existing illness or any diagnosis which would develop into major conditions. This is applicable for all types of enrolments including at inception of the policy as well as during midterm addition /Category changes. Failure to disclose such material facts will prejudice the insured's position from the Company's acceptance of any claims relating to such conditions." },
-    { level: 0, type: 'number', text: 'As per Dubai Health Authority (DHA) circular SN 04/2019, all member records need to be validated through Dubai Health Care Post Office (DHPO) e-Claims link before issuing the policy. DHA will validate member details with General Directorate of Residency and Foreigners Affairs (GDRFA) Dubai records using Date of Birth, Nationality, Gender and Reference ID (Visa File number for expats, Passport number for diplomats and GCC Nationals, Emirates ID for UAE Nationals and Birth certificate for new born (born in UAE)). This change is applicable for all transactions processed after 1st October 2019.' },
-    { level: 0, type: 'number', text: 'Additions will be processed from reported date only. Backdating effective date is not allowed. (DHA circular Reference 5 of 2017 (GC 05/2017), All the late enrolment will require individual medical underwriting. All additions of members during the policy will have to declare all pre-existing conditions in relation to above listed conditions. Visa and passport copy is mandatory for all the additions. Member with known medical history to be notified during the addition stage, such member will be added subject to underwriting.' },
-    { level: 0, type: 'number', text: 'The policyholder must report one of the following dates for the Deletion of members as a deletion effective date, based on whichever occurs first - 30 days from visa cancellation date, exit date from UAE or visa transfer date. Backdated deletion is not allowed.' },
-    {
-        level: 0, type: 'number', text:
-            'For HAAD compliant policies: For the sake of “Continuity of Cover” New and Renewal confirmations can be backdated to the anniversary date if: \n ',
-        nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a) The date of confirmation falls within the 30 days grace period provided by HAAD and \n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b) The policy start date does not fall before NLGIC initial quotation date.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  For all new business HAAD COC must specify last date of cover with the previous insurer.\n' }]
-
-    },
-    { level: 0, type: 'number', text: 'The brokers, involved in Abu Dhabi territory-based groups, should be registered and approved from Health Authority of Abu Dhabi (HAAD).' },
-    { level: 0, type: 'number', text: 'In an event, where the total number of members deleted during the policy period is more than 20% of the total number of members at inception and mid-term additions put together, the Insurer reserve the right to revise the deletion clause to "NIL refund" for future deletions' },
-    {
-        level: 0, type: 'number',
-        text: 'NLGIC have the right to cancel the policy with immediate effect if; \n ',
-        nestedList: [
-
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Misrepresentation of information\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  None disclosure of material facts.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Premium in not paid as per the premium payment agreed terms or issued \n', style: 'listMargin' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'd)  CDC/PDC Cheques are not honoured\n' },
-        ]
-    },
-    {
-        level: 0, type: 'number', text: 'Errors & Omissions excepted (E & OE): \n ',
-        nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'e) You will be informed immediately if such a situation arises.\n', },
-        ]
-    },
-    {
-        level: 0, type: 'number', text: 'Exclusions applicable to Death & Repatriation benefit: Death and Repat benefit will not be payable in the event of :- ', nestedList: [
-
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Death due to suicide\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  Death due to HIV-AIDS\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Death occurring whilst the member was under the influence of intoxication liquor/drugs\n', },
-        ]
-    },
-    { level: 0, type: 'number', text: 'Death occurring due to internal breach of law by insured or an assault provoked by him/her' },
-]
-
-// sanction clauses 
-export let sanctionClauses = [
-    '1. Notwithstanding any other provision to the contrary, any coverage under this Agreement or any provision of this agreement shall be void if, and insofar as:',
-    '1.1 such coverage of provision would breach any economic sanctions laws, regulations, or government orders, administrated or enforced from time to time by the United States/United Nations and /or the European Union or Member States either thereof and having jurisdiction regarding sanction regulations over insurance Company (“Sanctions Rules”); or',
-    '11.2 any action taken or intended to take in the relation to the proceeds of such coverage would breach Sanctions rules (including, without limitation, using, lending, contributing or otherwise making available to provide services, funds, assets, insurance coverage or other economic resources, directly or indirectly, to any person or entity which is designated or otherwise subject to sanctions under Sanctions Rules).'
-
+    { text: "Passport Size Photographs linked to each member." },
+    { text: "Continuity Certificate (If Applicable) /Fines Receipt." },
+    { text: "Visa copies, passport copies & EID copies for each and every member (Applicable to SME only)." },
+    { text: "Valid Emirates ID copy of authorized signatory." },
+    { text: "Name and contact details of the designated contact person." },
+    { text: "KYC (Know Your Customer) Form with all supporting documents." },
+    { text: "Bank Account details should be issued on the bank letterhead." },
+    { text: "Payment receipt as per agreed terms (VAT and Basmah to be added upfront)." },
+    { text: "Passport & ID copies of the authorized personnel mentioned on the TL and the UBO (Ultimate Beneficiary Owner) if required." },
 ];
-
-
-// List of documents for Dubai
-export let dubaiDocumentsPolicy = [
-    { level: 0, type: 'bullet', text: 'Signed & Stamped quotation by Authorized Signatory.' },
-    { level: 0, type: 'bullet', text: 'AML/KYC (Know Your Customer) Form with all supporting documents.' },
-    { level: 0, type: 'bullet', text: 'Valid Trade License Copy & Relationship letter in case of having sister companies.' },
-    { level: 0, type: 'bullet', text: 'Payment receipt as per agreed terms.' },
-    { level: 0, type: 'bullet', text: 'VAT Certificates.' },
-    { level: 0, type: 'bullet', text: 'Updated members list in excel sheet format including mandatory data required by DHA.' },
+export let policyInsuranceRequirement2 = [
+    { text: "800 (MEDGULF) – 800 (6334853)" },
 ];
-
-// List of documents for Abu Dhabi 
-export let abuDhabiDocumentsPolicy = [
-    { level: 0, type: 'bullet', text: 'Signed & Stamped quotation by Authorized Signatory.' },
-    { level: 0, type: 'bullet', text: 'AML/KYC (Know Your Customer) Form with all supporting documents.' },
-    { level: 0, type: 'bullet', text: 'Valid Trade License Copy & Relationship letter in case of having sister companies.' },
-    { level: 0, type: 'bullet', text: 'MOL list' },
-    { level: 0, type: 'bullet', text: 'Payment receipt as per agreed terms.' },
-    { level: 0, type: 'bullet', text: 'COC (Certificate of Continuity) for clients/members transferring from other insurers in the UAE' },
-    { level: 0, type: 'bullet', text: 'Entry permit if the member is a newcomer to UAE.' },
-    { level: 0, type: 'bullet', text: 'Updated members list in excel sheet format including mandatory data required by HAAD.' },
-];
-
-
-export let NUMBERING_CONFIG = {
-    dynamicNumbering: [
-        {
-            level: 0,
-            format: LevelFormat.DECIMAL,
-            text: '%1.',
-            alignment: AlignmentType.START,
-            style: {
-                paragraph: {
-                    indent: { left: convertInchesToTwip(0.5), hanging: convertInchesToTwip(0.25) },
-                },
-            },
-        },
-        {
-            level: 1,
-            format: LevelFormat.LOWER_LETTER,
-            text: '%2.',
-            alignment: AlignmentType.START,
-            style: {
-                paragraph: {
-                    indent: { left: convertInchesToTwip(1), hanging: convertInchesToTwip(0.25) },
-                },
-            },
-        },
-    ],
-    dynamicBullets: [
-        {
-            level: 0,
-            format: LevelFormat.BULLET,
-            text: '\u2022',
-            alignment: AlignmentType.LEFT,
-            style: {
-                paragraph: {
-                    indent: { left: convertInchesToTwip(0.5), hanging: convertInchesToTwip(0.25) },
-                },
-            },
-        },
-        {
-            level: 1,
-            format: LevelFormat.BULLET,
-            text: '\u25E6',
-            alignment: AlignmentType.LEFT,
-            style: {
-                paragraph: {
-                    indent: { left: convertInchesToTwip(1), hanging: convertInchesToTwip(0.25) },
-                },
-            },
-        },
-    ],
-};
-
-
-
-
-
-

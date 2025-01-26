@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { saveAs } from "file-saver";
 
-import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType, Alignment, PageOrientation } from 'docx';
+import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType, Alignment, PageOrientation, LevelFormat, PageSize } from 'docx';
 
-import { CRN, quoteData, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2, notesList, sanctionClauses, dubaiDocumentsPolicy, abuDhabiDocumentsPolicy, additionContent, deletionContent } from './data';
+import { CRN, quoteData, notesList, sanctionClauses, dubaiDocumentsPolicy, abuDhabiDocumentsPolicy, additionContent, deletionContent, NUMBERING_CONFIG, firstPageUnList } from './data';
 import { pdfImages } from './images';
 import { pdfImages as pdfImages1 } from "./nlgi-pdf-images"
 
-import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData, CellOptions } from './interfaces'
+import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAgeBandDetail, agebandData, CellOptions, TextLineOptions, BenefitData, CategoryData, ListItem } from './interfaces'
+import * as moment from 'moment';
 
 
 @Component({
@@ -16,6 +17,7 @@ import { PremiumDetail, Category, CensusCategory, Exclusion, EmirateData, PdfAge
   templateUrl: './test-data.component.html',
   styleUrls: ['./test-data.component.css']
 })
+
 
 export class TestDataComponent implements OnInit {
 
@@ -27,22 +29,30 @@ export class TestDataComponent implements OnInit {
   public columnWidth: any
   totalCategoryCount: number = 0
   public quoteGeneratedDate: any
+  public currency: any
   todaydate: any
   async ngOnInit(): Promise<void> {
     let currentDate = new Date();
     this.todaydate = currentDate
     this.quoteGeneratedDate = this.transformedResultResponse?.companyDetails?.quoteGeneratedDate
-    this.totalColumns =
-      this.transformedResultResponse.quotes[0].data.length + 1
+    this.totalColumns = this.transformedResultResponse.quotes[0].data.length + 1
     this.columnWidth = 100 / this.totalColumns
+    this.currency = this.transformedResultResponse.quotes[0]?.currency
+
   }
   // categoey details table data 
 
-  convertNumber(value: any) {
+  formatNumber(value: any) {
     return value.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })
+  }
+  formatDate(date: any) {
+    if (!date) {
+      return "Invalid Date";
+    }
+    return date;
   }
   categoriesWithDetails(data: any[], quotes: any[], categoryKey = 'category') {
     const categoryCounts: Record<string, number> = data.reduce((acc: Record<string, number>, item: any) => {
@@ -91,7 +101,8 @@ export class TestDataComponent implements OnInit {
   };
   //****************************************************************** */
   // benifits table data 
-  benefitsTableData = (data: any, benifitName: string) => {
+  benefitsTableData1 = (data: any, benifitName: string) => {
+    console.log(data);
     const organizedData: { [groupDetails: string]: any[] } = {};
     // Iterate through each category
     data.forEach((category: any) => {
@@ -112,8 +123,79 @@ export class TestDataComponent implements OnInit {
     });
     return organizedData;
   };
+
+
+  benefitsTableData(
+    data: CategoryData[],
+    benefitName: string
+  ): { [groupDetails: string]: any[] } {
+    const output: { [groupDetails: string]: any[] } = {};
+
+    // Create a list to hold the benefits with an added 'index' for sorting later
+    let allBenefits: { index: number, category_name: string, group_details: string, tob_header: string, tob_value: string }[] = [];
+
+    // Iterate through each category
+    data.forEach((category) => {
+      const categoryName = category.category_name;
+
+      // Process each benefit in the current category
+      if (category.data[benefitName]) {
+        category.data[benefitName].forEach(({ group_details, tob_header, tob_value }: BenefitData, index: number) => {
+          // Add the benefit to the allBenefits array
+          allBenefits.push({
+            index,
+            category_name: categoryName,
+            group_details,
+            tob_header,
+            tob_value,
+          });
+        });
+      }
+    });
+
+    // Apply sorting by category_name and index
+    allBenefits.sort((a, b) => {
+      // First, sort by category_name
+      if (a.category_name < b.category_name) return -1;
+      if (a.category_name > b.category_name) return 1;
+
+      // Then, sort by index
+      return b.index - b.index;
+    });
+
+    // Remove duplicates based on category_name and tob_header across all categories
+    const seen: Set<string> = new Set();
+    const uniqueBenefits = [];
+
+    allBenefits.forEach((benefit) => {
+      const uniqueKey = `${benefit.category_name}-${benefit.tob_header}`;
+      if (!seen.has(uniqueKey)) {
+        seen.add(uniqueKey);
+        uniqueBenefits.push(benefit);
+      }
+    });
+
+    // Populate the output by group_details
+    uniqueBenefits.forEach(({ group_details, category_name, tob_header, tob_value }) => {
+      if (!output[group_details]) {
+        output[group_details] = [];
+      }
+
+      output[group_details].push({
+        category_name,
+        tob_header,
+        tob_value,
+      });
+    });
+    console.log(output);
+    return output;
+  }
+
   //****************************************************************** */
   // age band table data 
+
+
+
   ageBandAndMafData(data: any[]) {
     return data.map(category => {
       return {
@@ -124,7 +206,7 @@ export class TestDataComponent implements OnInit {
         emirate: category.data.emirates.emirates_name,
         tpa: category.data.tpa.tpa_name,
         ageValues: category.data.age_values,
-        premium: `${this.transformedResultResponse.quotes[0]?.currency} ${category.data.totalPremium}`,
+        premium: `${this.currency} ${category.data.totalPremium}`,
         totalMemberCount: category.data.totalMemberCount
       }
     });
@@ -147,6 +229,8 @@ export class TestDataComponent implements OnInit {
     });
   }
 
+
+
   //****************************************************************** */
 
   // Mostly used functionalities 
@@ -165,6 +249,7 @@ export class TestDataComponent implements OnInit {
     // Return a paragraph containing the image
     return new Paragraph({
       alignment: align,
+      spacing: { after: 0, before: 0 },
       children: [
         new ImageRun({
           data: uint8Array, // Binary data for the image
@@ -204,29 +289,31 @@ export class TestDataComponent implements OnInit {
   };
 
   // to add any line 
-  textLine(
-    text: string,
-    size: number = 10,
-    bold: boolean = false,
-    before: number = 100,
-    after: number = 100,
-    alignment: any = AlignmentType.LEFT,
-    color?: string,
-  ): Paragraph {
+  textLine({
+    text,
+    size = 10,
+    bold = false,
+    before = 100,
+    after = 100,
+    alignment = AlignmentType.LEFT,
+    color,
+    leftIndent = 0, // Default no indent
+  }: TextLineOptions): Paragraph {
     return new Paragraph({
       children: [
         new TextRun({
           text: text,
           size: 2 * size,
           bold,
-          color, font: "Calibri",
+          color, // Optional color
+          font: "Calibri",
         }),
       ],
       spacing: { before, after },
-      alignment, // Apply the alignment dynamically
+      alignment,
+      indent: { left: leftIndent }, // Use the provided left indentation
     });
   }
-
   // it gives space between two items 
   spaceParagraph = new Paragraph({
     children: [
@@ -239,7 +326,110 @@ export class TestDataComponent implements OnInit {
   });
 
   // common cell for every table 
-  CommonCell(text: string, options: CellOptions = {}) {
+  // CommonCell(text: any, options: CellOptions = {}) {
+  //   const {
+  //     bold = false,
+  //     fontSize = 9,
+  //     fillColor = "#FFFFFF",
+  //     color = "#000000",
+  //     alignment = AlignmentType.LEFT,
+  //     rowSpan,
+  //     colSpan,
+  //     width,
+  //     borderColor
+  //   } = options;
+
+  //   return new TableCell({
+  //     children: [
+  //       new Paragraph({
+  //         children: [
+  //           new TextRun({
+  //             text: text,
+  //             bold,
+  //             size: fontSize * 2,
+  //             color, font: "Calibri",
+
+  //           }),
+  //         ],
+  //         alignment,
+  //         indent: {
+  //           left: 50,
+  //         },
+  //       }),
+  //     ],
+  //     rowSpan,
+  //     columnSpan: colSpan,
+  //     shading: {
+  //       fill: fillColor,
+  //     },
+  //     width,
+  //     // verticalAlign: VerticalAlign.CENTER, 
+  //     borders: this.defaultBorders(10, 'single', borderColor), // Default borders
+  //     margins: { left: 20, top: 10, right: 20 },
+  //   });
+  // }
+
+  // CommonCell(text: any, options: CellOptions = {}) {
+  //   const {
+  //     bold = false,
+  //     fontSize = 9,
+  //     fillColor = "#FFFFFF",
+  //     color = "#000000",
+  //     alignment = AlignmentType.LEFT,
+  //     rowSpan,
+  //     colSpan,
+  //     width,
+  //     borderColor,
+  //   } = options;
+  
+  //   // Split the text while keeping `\r\n` and `\r\n\r\n`
+  //   const lines = String(text).split(/\r\n|\r\n\r\n/);
+  //   const runs: TextRun[] = [];
+  
+  //   lines.forEach((line, index) => {
+  //     // Add the line as a TextRun
+  //     runs.push(
+  //       new TextRun({
+  //         text: line.trim(), // Add the text
+  //         bold,
+  //         size: fontSize * 2,
+  //         color,
+  //         font: "Calibri",
+  //       })
+  //     );
+  
+  //     // Add a break after each line, considering the original separators
+  //     if (index < lines.length - 1) {
+  //       const isDoubleBreak = text.includes(`${line}\r\n\r\n`);
+  //       const breakCount = isDoubleBreak ? 2 : 1;
+  
+  //       for (let i = 0; i < breakCount; i++) {
+  //         runs.push(new TextRun({ break: 1 })); // Add the necessary number of line breaks
+  //       }
+  //     }
+  //   });
+  
+  //   return new TableCell({
+  //     children: [
+  //       new Paragraph({
+  //         children: runs,
+  //         alignment,
+  //         indent: {
+  //           left: 50,
+  //         },
+  //       }),
+  //     ],
+  //     rowSpan,
+  //     columnSpan: colSpan,
+  //     shading: {
+  //       fill: fillColor,
+  //     },
+  //     width,
+  //     borders: this.defaultBorders(10, "single", borderColor), // Default borders
+  //     margins: { left: 20, top: 10, right: 20 },
+  //   });
+  // }
+  CommonCell(text: any, options: CellOptions = {}) {
     const {
       bold = false,
       fontSize = 9,
@@ -249,21 +439,37 @@ export class TestDataComponent implements OnInit {
       rowSpan,
       colSpan,
       width,
-      borderColor
+      borderColor,
     } = options;
-
+  
+    // Split the text into segments while keeping the original line breaks
+    const segments = String(text).split(/(\r\n\r\n|\r\n)/);
+    const runs: TextRun[] = [];
+  
+    segments.forEach((segment, index) => {
+      // If it's a line break, determine the type and add a small or larger break
+      if (segment === "\r\n") {
+        runs.push(new TextRun({ break: 1, size: fontSize * 1.5 })); // Small break
+      } else if (segment === "\r\n\r\n") {
+        runs.push(new TextRun({ break: 2, size: fontSize * 2.5 })); // Larger break
+      } else if (segment.trim()) {
+        // Add the actual text
+        runs.push(
+          new TextRun({
+            text: segment.trim(),
+            bold,
+            size: fontSize * 2,
+            color,
+            font: "Calibri",
+          })
+        );
+      }
+    });
+  
     return new TableCell({
       children: [
         new Paragraph({
-          children: [
-            new TextRun({
-              text: String(text),
-              bold,
-              size: fontSize * 2,
-              color, font: "Calibri",
-
-            }),
-          ],
+          children: runs,
           alignment,
           indent: {
             left: 50,
@@ -276,12 +482,12 @@ export class TestDataComponent implements OnInit {
         fill: fillColor,
       },
       width,
-      // verticalAlign: VerticalAlign.CENTER, 
-      borders: this.defaultBorders(10, 'single', borderColor), // Default borders
-      margins: { left: 20, top: 20 },
+      borders: this.defaultBorders(10, "single", borderColor), // Default borders
+      margins: { left: 20, top: 10, right: 20 },
     });
   }
-
+  
+  
   // For Page Title
   pageTitle(title: string, size: number = 13, color: string = "#00587C", underline?: boolean, alignment: any = "left") {
     return new Paragraph({
@@ -320,8 +526,8 @@ export class TestDataComponent implements OnInit {
 
   commonHeader = async () => {
     // Fetch the left and right image data using createImageFromBase64
-    const leftImage = await this.createImageFromBase64(pdfImages1.headerLogo, 80, 80, AlignmentType.LEFT); // Left image
-    const rightImage = await this.createImageFromBase64(pdfImages1.headerIcon, 150, 100, AlignmentType.RIGHT); // Right image
+    const leftImage = await this.createImageFromBase64(pdfImages1.headerLogo, 60, 60, AlignmentType.LEFT); // Left image
+    const rightImage = await this.createImageFromBase64(pdfImages1.headerIcon, 120, 70, AlignmentType.RIGHT); // Right image
 
     // Return a header with a single paragraph
     return new Header({
@@ -339,7 +545,7 @@ export class TestDataComponent implements OnInit {
                 }),
                 // Centered text cell
                 new TableCell({
-                  children: [this.textLine('', 0, false, 0, 0, AlignmentType.CENTER, '')],
+                  children: [this.textLine({ text: '', size: 0, bold: false, before: 0, after: 0, alignment: AlignmentType.CENTER })],
                   verticalAlign: VerticalAlign.CENTER,
                   width: { size: 34, type: WidthType.PERCENTAGE },
                   margins: { top: 0, bottom: 0, left: 0, right: 20 },
@@ -362,25 +568,20 @@ export class TestDataComponent implements OnInit {
             type: WidthType.PERCENTAGE,
           },
         }),
-        this.spaceParagraph
       ],
-
     });
   };
 
   firstPageHeader = async () => {
-    const image = await this.createImageFromBase64(pdfImages1.logo, 500, 110, AlignmentType.CENTER); // Left image
+    const image = await this.createImageFromBase64(pdfImages1.logo, 600, 160, AlignmentType.CENTER); // Left image
 
     return new Header({
       children: [
         new Paragraph({
-          alignment: AlignmentType.CENTER,  // Center the content
-          children: [image], // Add the image
-        }),
-        new Paragraph({
-          children: [],
-          spacing: { after: 30 },
-        }),
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 0, after: 0 },
+          children: [image],
+        })
       ],
     });
   };
@@ -393,7 +594,8 @@ export class TestDataComponent implements OnInit {
     return new Footer({
       children: [
         this.horizontalLine(8),
-        this.textLine(`CRN: ${CRN}`, 10, false, 0, 0, AlignmentType.CENTER),
+        this.textLine({ text: `CRN: ${CRN}`, size: 10, bold: false, before: 0, after: 0, alignment: AlignmentType.CENTER })
+        ,
         new Paragraph({
           alignment: AlignmentType.CENTER,
           children: [imageParagraph],
@@ -428,7 +630,7 @@ export class TestDataComponent implements OnInit {
                 // Empty cell for spacing or alignment (matches PDF logic with left and right alignment)
                 new TableCell({
                   children: [
-                    this.textLine("", 0, false,)
+                    this.textLine({ text: "", size: 0, bold: false, })
                   ],
                   width: { size: 25, type: WidthType.PERCENTAGE },
                   verticalAlign: VerticalAlign.BOTTOM,
@@ -438,7 +640,7 @@ export class TestDataComponent implements OnInit {
 
                 // First image cell (centered image, matching the first PDF image)
                 new TableCell({
-                  children: [this.textLine(`CRN: ${CRN}`, 10, false, 0, 0, AlignmentType.CENTER), footerImage1],
+                  children: [this.textLine({ text: `CRN: ${CRN}`, size: 10, bold: false, before: 0, after: 0, alignment: AlignmentType.CENTER }), footerImage1],
                   width: { size: 50, type: WidthType.PERCENTAGE }, // 50% width
                   verticalAlign: VerticalAlign.BOTTOM,
                   margins: { top: 0, bottom: 0, left: 20, right: 0 },
@@ -469,62 +671,62 @@ export class TestDataComponent implements OnInit {
     // Line with left and right-aligned words (Ref and Date)
     const refAndDateTable = this.refAndDate();
 
-    let greet = this.textLine('Valued Client,')
+    let greet = this.textLine({ text: 'Valued Client,' })
 
     // Information blocks 
-    const infoBlock1 = this.createInfoBlock('Proposer name: ', `${this.transformedResultResponse.companyDetails.company_name.charAt(0).toUpperCase() + this.transformedResultResponse.companyDetails.company_name.slice(1)}`);
-    const infoBlock2 = this.createInfoBlock('Insurance Period: ', `${this.transformedResultResponse?.companyDetails?.policyEffectiveDate} to ${this.transformedResultResponse?.companyDetails?.policy_end_date}\n`);
+    const infoBlock1 = this.createInfoBlock('Proposer name: ', `${this.transformedResultResponse.companyDetails.company_name.charAt(0).toUpperCase() + this.transformedResultResponse.companyDetails.company_name.slice(1)}`, false, true, true);
+    const infoBlock2 = this.createInfoBlock('Insurance Period: ', `${this.formatDate(this.transformedResultResponse?.companyDetails?.policyEffectiveDate)} to ${this.formatDate(this.transformedResultResponse?.companyDetails?.policy_end_date)}`);
     const infoBlock3 = this.createInfoBlock("Cover: ", 'As per NLGIC standard Group Medical Expenses insurance policy wording, medical clauses, definitions, general provisions, and exclusions to cover the necessary, reasonable, and customary inpatient & outpatient medical expenses incurred by the insured members up to the benefits/limits mentioned in the attached TOB.');
 
-    const textLine1 = this.textLine('"Insured Persons: All actively at work, full time & permanent employees of the Proposer and their eligible Family members."')
+    const textLine1 = this.textLine({ text: '"Insured Persons: All actively at work, full time & permanent employees of the Proposer and their eligible Family members."' })
 
 
     const infoBlock4 = this.createInfoBlock('National Life and General Insurance Co SAOG (NLG) ', 'has been established since 1995. We are one of the major Health Insurance providers in the UAE market.\n')
 
-    const textLine2 = this.textLine('NLGIC has been recognized as a Leader in the Corporate Medical Insurance Industry in the UAE, Oman, and Kuwait markets. With our expertise in \n')
+    const textLine2 = this.textLine({ text: 'NLGIC has been recognized as a Leader in the Corporate Medical Insurance Industry in the UAE, Oman, and Kuwait markets. With our expertise in', leftIndent: 500 })
 
-    const texLine3 = this.textLine('Need-based underwriting and customized solutions, we have been successful in satisfying our clients. We always strive to work with the Customer First approach and believe that ‘Customer service is an Attitude and not a department.')
+    const texLine3 = this.textLine({ text: 'Need-based underwriting and customized solutions, we have been successful in satisfying our clients. We always strive to work with the Customer First approach and believe that ‘Customer service is an Attitude and not a department.' })
 
-    const textLine4 = this.textLine('We have state-of-the-art policy administration and claims management services supporting our client-centric approach. In addition to our in-\n')
+    const textLine4 = this.textLine({ text: 'We have state-of-the-art policy administration and claims management services supporting our client-centric approach. In addition to our in-', leftIndent: 500 })
 
-    const textLine5 = this.textLine('house network, we have also tied up with all the Major third-party administrators in UAE to cater to the varying needs of our clients. We are led by a well-experienced management team and have professionally qualified employees who are well trained to deliver the best to our Insured members.')
+    const textLine5 = this.textLine({ text: 'house network, we have also tied up with all the Major third-party administrators in UAE to cater to the varying needs of our clients. We are led by a well-experienced management team and have professionally qualified employees who are well trained to deliver the best to our Insured members.' })
 
-    const textline6 = this.textLine('Hoping that our quotation will meet your expectations. Line with the above, we would like to enlist our unique deliverables in service standards that differentiate us from our competitors.')
+    const textline6 = this.textLine({ text: 'Hoping that our quotation will meet your expectations. Line with the above, we would like to enlist our unique deliverables in service standards that differentiate us from our competitors.' })
 
-    const textLine7 = this.textLine('Please accept our best regards,')
+    const textLine7 = this.textLine({ text: 'Please accept our best regards,' })
 
     const infoBlock5 = this.createInfoBlock('National Life and General Insurance SAOG, ', 'Your Trusted Insurance Partner')
 
-    const ul = [
-      'Real time WhatsApp Chat facility for policy holder’s support.',
-      'Dedicated SPOC for policies above 500 members.',
-      'Instantaneous Response to Emergencies.',
-      'Policy Setup and Activation within 3 working days.',
-      'Certificate issuance on the same day as requested.',
-      'Various modes available for claims submission including direct channel.',
-      'Electronic (Bank Transfer) Claims settlement within 7 working days.'
-    ].map(item => this.textLine(`•  ${item}`, 10, false, 0, 0, AlignmentType.LEFT, "#000000"));
-
+    // const ul = [
+    //   'Real time WhatsApp Chat facility for policy holder’s support.',
+    //   'Dedicated SPOC for policies above 500 members.',
+    //   'Instantaneous Response to Emergencies.',
+    //   'Policy Setup and Activation within 3 working days.',
+    //   'Certificate issuance on the same day as requested.',
+    //   'Various modes available for claims submission including direct channel.',
+    //   'Electronic (Bank Transfer) Claims settlement within 7 working days.'
+    // ].map(item => this.textLine({ text: `•  ${item}`, size: 10, bold: false, before: 0, after: 0, alignment: AlignmentType.LEFT, color: "#000000", leftIndent: 600 }));
+    const ulParagraphs = this.createList(firstPageUnList);
     return [
       title,
       refAndDateTable, greet, infoBlock1, infoBlock2, infoBlock3, textLine1, this.horizontalLine(10), infoBlock4, textLine2, texLine3, textLine4, textLine5,
       this.horizontalLine(10),
       textline6,
-      ...ul,
+      ...ulParagraphs,
       textLine7,
       infoBlock5
 
     ];
   }
 
-  createInfoBlock(title: string, description: string): Paragraph {
+  createInfoBlock(title: string, description: string, bold1: boolean = true, bold2: boolean = false, underline: boolean = false): Paragraph {
     return new Paragraph({
       children: [
         // Title with bold style
         new TextRun({
           text: title,
           size: 20, // Adjust size as needed
-          bold: true,
+          bold: bold1,
           color: "#000000",
           font: "Calibri",
         }),
@@ -533,9 +735,11 @@ export class TestDataComponent implements OnInit {
         new TextRun({
           text: description,
           size: 20,
-          bold: false,
+          bold: bold2,
           color: "#000000",
           font: "Calibri",
+          underline: underline ? { type: "single" } : undefined,
+
         }),
       ],
       spacing: { before: 100, after: 100 }, // Adjust spacing as needed
@@ -552,8 +756,8 @@ export class TestDataComponent implements OnInit {
           children: [
             new TableCell({
               children: [
-                this.textLine("Ref:", 10, true),
-                this.textLine(CRN, 10, true)
+                this.textLine({ text: "Ref:", size: 10, bold: true }),
+                this.textLine({ text: CRN, size: 10, bold: true })
               ],
               width: { size: 25, type: WidthType.PERCENTAGE },
               verticalAlign: VerticalAlign.BOTTOM,
@@ -563,7 +767,7 @@ export class TestDataComponent implements OnInit {
 
             new TableCell({
               children: [
-                this.textLine(`Date: ${this.todaydate}`, 10, false, 0, 0, AlignmentType.RIGHT)
+                this.textLine({ text: `Date: ${this.formatDate(this.todaydate)}`, size: 10, bold: false, before: 0, after: 0, alignment: AlignmentType.RIGHT })
               ],
               width: { size: 25, type: WidthType.PERCENTAGE },
               verticalAlign: VerticalAlign.BOTTOM,
@@ -572,116 +776,6 @@ export class TestDataComponent implements OnInit {
             }),
           ],
         }),
-      ],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    });
-  }
-
-  //****************************************************************** */
-  // Basic Table
-  basicTable(quoteData: any) {
-    let basicTableData =
-      [
-        {
-          label: 'Client / Policy Holder Name', value:
-            quoteData.companyDetails.company_name
-        },
-        {
-          label: 'Scheme Start Date/Renewal Date', value: quoteData.censusDetails.policy_start_date
-        },
-        { label: 'Scope of Coverage', value: 'As Per the Schedule of Benefits attached' },
-        { label: 'Premium payment warranty', value: '100% of inception premium is due and payable in advance or at the day of inception cover' },
-        {
-          label: 'TPA name for Direct Billing', value:
-            quoteData.quotes[0]?.data[0]?.data?.tpa?.tpa_name
-        },
-        {
-          label: 'Proposal Number', value: `${quoteData.companyDetails.client_reference_number}/${quoteData.companyDetails?.version}`
-        },
-        { label: 'Quote Generated Date', value: this.quoteGeneratedDate },
-        { label: 'Quote validity', value: '30 days from the quote generated date' },
-        { label: 'Other provision and & conditions', value: 'Please refer to the Policy Wording document for definitions and the exclusion list' },
-      ]
-
-    let basicTableRows = [
-      new TableRow({
-        children: [
-          this.CommonCell('Basic Details', { color: "#00587C", fontSize: 10, bold: true, width: { size: 35, type: "pct" }, alignment: AlignmentType.LEFT }),
-          this.CommonCell("", { fontSize: 6, bold: false, width: { size: 65, type: "pct" } })
-        ],
-      }),
-      ...basicTableData.map(({ label, value }) => this.createRow1(label, value)),
-    ];
-
-    return new Table({
-      rows: basicTableRows,
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    });
-  }
-  createRow1 = (label: string, value: string | undefined) =>
-    new TableRow({
-      children: [
-        this.CommonCell(label, { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
-        this.CommonCell(value || '', { fontSize: 9, bold: false, width: { size: 35, type: "pct" } }),
-      ],
-    });
-
-  //****************************************************************** */
-  // category member table 
-  createRow2 = (categoryName: string, members: number, option: string) =>
-    new TableRow({
-      children: [
-        this.CommonCell(categoryName, { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
-        this.CommonCell(String(members), { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
-        this.CommonCell(option, { fontSize: 9, bold: false, width: { size: 34, type: "pct" } }),
-      ],
-    });
-
-  categoriesDetailTable(categoryData: { categoryName: string; members: number; option: string }[], quoteData: any) {
-    const categoryMemberTableRows = [
-      ...categoryData
-        .sort((a, b) => {
-          // Compare category names in alphabetical order
-          if (a.categoryName < b.categoryName) return -1;
-          if (a.categoryName > b.categoryName) return 1;
-          return 0;
-        })
-        .map(({ categoryName, members, option }) =>
-          this.createRow2(categoryName, members, option)
-        ),
-      // Add the "Total" row
-      new TableRow({
-        children: [
-          this.CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-          this.CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-          this.CommonCell(
-            `${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`,
-            { fontSize: 9, bold: true, width: { size: 34, type: 'pct' } }
-          ),
-        ],
-      }),
-    ];
-
-    return new Table({
-      rows: [
-        // Header row
-        new TableRow({
-          children: [
-            this.CommonCell('Categories', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-            this.CommonCell('Members', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-            this.CommonCell('Option 1', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 34, type: 'pct' } }),
-          ],
-        }),
-        // Dynamically created rows including the "Total" row
-        ...categoryMemberTableRows,
       ],
       layout: TableLayoutType.FIXED,
       width: {
@@ -699,7 +793,7 @@ export class TestDataComponent implements OnInit {
       rows: [
         new TableRow({
           children: [
-            this.CommonCell("Quote 1", { fontSize: 11, color: "#ffffff", fillColor: '#b5b5b5', bold: true, width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER }), // First column
+            this.CommonCell("Quote 1", { fontSize: 11, color: "#ffffff", fillColor: '#b5b5b5', bold: true, width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }), // First column
             this.CommonCell(
               `${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote`,
               {
@@ -707,10 +801,10 @@ export class TestDataComponent implements OnInit {
                 bold: true,
                 color: "#ffffff", fillColor: '#b5b5b5',
                 width: { size: 34, type: "pct" },
-                alignment: AlignmentType.CENTER
+                alignment: AlignmentType.CENTER, borderColor: '#9e9e9e',
               }
             ),
-            this.CommonCell(`${quote.currency} ${this.convertNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#ffffff", fillColor: '#b5b5b5', width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell(`${this.currency} ${this.formatNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#ffffff", fillColor: '#b5b5b5', width: { size: 33, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
           ],
         }),
       ],
@@ -721,52 +815,6 @@ export class TestDataComponent implements OnInit {
       },
     });
   }
-  //****************************************************************** */
-  // Terms and Conditions Page 
-  termsConditions = termsAndConditions.map((item, index) =>
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: `${index + 1}. ${item.text}`,
-          size: 20,
-          font: "Calibri",
-
-        }),
-      ],
-      spacing: { before: 50 },
-      indent: { left: 360 },// Indents list items based on hierarchy level
-    })
-  );
-  //****************************************************************** */
-  // Acceptance and responsiblitites
-  acceptance = acceptanceAndAcknowledgment.map(
-    (item, index) =>
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: `•  ${item.text}`,
-            size: 20,
-            font: "Calibri",
-          }),
-        ],
-        spacing: { before: 50 },
-        indent: { left: 360 }
-      })
-  );
-
-  nameAndSign = NameAndSignature.map(
-    (item, index) =>
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: `${item.text}`,
-            size: 20,
-            font: "Calibri",
-          }),
-        ],
-        spacing: { before: 100 },
-      })
-  );
 
   //****************************************************************** */
   // Policy Issuance Requirements
@@ -810,8 +858,12 @@ export class TestDataComponent implements OnInit {
 
 
   //****************************************************************** */
+
   // Exclusion section 
-  createExclusionsSection(data: EmirateData[]): Table {
+  createExclusionsSection(data: EmirateData[] | null): any {
+    if (data.length === 0) {
+      return []
+    }
     const rows: TableRow[] = [];
 
     // Helper function to create a section header
@@ -922,7 +974,10 @@ export class TestDataComponent implements OnInit {
       },
       layout: TableLayoutType.FIXED,
     });
+
+
   }
+
 
   //****************************************************************** */
 
@@ -930,7 +985,6 @@ export class TestDataComponent implements OnInit {
   // age band table type 4
   AgeBandTable4(category: any, premium: any, member: any) {
     let details = category.ageValues
-    console.log("AgeBandTable4 details",details);
     const pageBreak = new Paragraph({
       children: [],
       pageBreakBefore: true,
@@ -941,31 +995,31 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age Band", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, rowSpan: 3 }),
-          this.CommonCell("Employees", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { bold: true, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age Band", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', rowSpan: 3 }),
+          this.CommonCell("Employees", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Dependents", { bold: true, color: "#ffffff", colSpan: 2, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Total", { bold: true, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell("Member Count", { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium (${this.transformedResultResponse.quotes[0]?.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell(`Premium (${this.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell(`Premium (${this.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell(`Premium (${this.currency})`, { bold: true, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
         ],
       }),
     ];
@@ -973,48 +1027,47 @@ export class TestDataComponent implements OnInit {
 
 
     // Add data rows based on the details provided
-    // Add data rows based on the details provided
-    console.log("de---", details);
+
     const dataRows: TableRow[] = details.map((row: any) => {
-      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.convertNumber(row?.member?.Employee?.malePremiumDisplay) : "";
+      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.formatNumber(row?.member?.Employee?.malePremiumDisplay) : "";
 
-      // let singleFemaleEmployeePremium = row?.member?.Employee?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.singleFemalePremiumDisplay) : "";
+      // let singleFemaleEmployeePremium = row?.member?.Employee?.singleFemalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.singleFemalePremiumDisplay) : "";
 
-      let marriedFemaleEmployeePremium = row?.member?.Employee?.marriedFemalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.marriedFemalePremiumDisplay) : "";
+      let marriedFemaleEmployeePremium = row?.member?.Employee?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.marriedFemalePremiumDisplay) : "";
 
-      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.malePremiumDisplay) : "-";
+      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.malePremiumDisplay) : "-";
 
-      // let singleFemaleDependentsPremium = row?.member?.Dependents?.singleFemalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.singleFemalePremiumDisplay) : "";
+      // let singleFemaleDependentsPremium = row?.member?.Dependents?.singleFemalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.singleFemalePremiumDisplay) : "";
 
-      let marriedFemaleDependentsPremium = row?.member?.Dependents?.marriedFemalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.marriedFemalePremiumDisplay) : "";
+      let marriedFemaleDependentsPremium = row?.member?.Dependents?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.marriedFemalePremiumDisplay) : "";
 
-      let totalMale = row?.member?.totalMale ? this.convertNumber(row?.member?.totalMale) : "";
+      let totalMale = row?.member?.totalMale ? this.formatNumber(row?.member?.totalMale) : "";
 
-      let totalSingleFemale = row?.member?.totalSingleFemale ? this.convertNumber(row?.member?.totalSingleFemale) : "";
+      let totalSingleFemale = row?.member?.totalSingleFemale ? this.formatNumber(row?.member?.totalSingleFemale) : "";
 
-      let totalMarriedFemale = row?.member?.totalMarriedFemale ? this.convertNumber(row?.member?.totalMarriedFemale) : "";
+      let totalMarriedFemale = row?.member?.totalMarriedFemale ? this.formatNumber(row?.member?.totalMarriedFemale) : "";
 
       return new TableRow({
         children: [
-          this.CommonCell(row.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(marriedFemaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(marriedFemaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.singleFemaleMemberCount + row?.member?.marriedFemaleMembeCount|| '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalSingleFemale + totalMarriedFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-         
+          this.CommonCell(row.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(marriedFemaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(marriedFemaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.singleFemaleMemberCount + row?.member?.marriedFemaleMembeCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalSingleFemale + totalMarriedFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+
         ],
       });
     });
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 5 }),
-        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 5 }),
+        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+        this.CommonCell(`Premium : ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
       ],
     });
@@ -1035,7 +1088,6 @@ export class TestDataComponent implements OnInit {
   // age band table type 5
   AgeBandTable3(category: any, premium: any, member: any) {
     let details = category.ageValues
-    console.log("AgeBandTable3 details",details);
     const pageBreak = new Paragraph({
       children: [],
       pageBreakBefore: true,
@@ -1046,70 +1098,70 @@ export class TestDataComponent implements OnInit {
     const headers = [
       new TableRow({
         children: [
-          this.CommonCell("Age Band", { bold: true, fontSize: 8, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, rowSpan: 3 }),
-          this.CommonCell("Employees", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Dependents", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Total", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Age Band", { bold: true, fontSize: 8, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', rowSpan: 3 }),
+          this.CommonCell("Employees", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Dependents", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Total", { bold: true, fontSize: 8, color: "#ffffff", colSpan: 4, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-          this.CommonCell(`Premium ${this.transformedResultResponse.quotes[0]?.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell(`Premium ${this.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell(`Premium ${this.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell("Member Count", { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+          this.CommonCell(`Premium ${this.currency}`, { bold: true, fontSize: 8, fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
         ],
       }),
       new TableRow({
         children: [
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
-          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Male", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
+          this.CommonCell("Female", { bold: false, fontSize: 8, fillColor: "#eeeeee", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e' }),
         ],
       }),
     ];
 
     const dataRows: TableRow[] = details.map((row: any) => {
 
-      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.convertNumber(row?.member?.Employee?.malePremiumDisplay) : "";
+      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.formatNumber(row?.member?.Employee?.malePremiumDisplay) : "";
 
-      let femaleEmployeePremium = row?.member?.Employee?.femalePremiumDisplay ? this.convertNumber(row?.member?.Employee?.femalePremiumDisplay) : "";
+      let femaleEmployeePremium = row?.member?.Employee?.femalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.femalePremiumDisplay) : "";
 
-      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.malePremiumDisplay) : "";
+      let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.malePremiumDisplay) : "";
 
-      let femaleDependentsPremium = row?.member?.Dependents?.femalePremiumDisplay ? this.convertNumber(row?.member?.Dependents?.femalePremiumDisplay) : "";
+      let femaleDependentsPremium = row?.member?.Dependents?.femalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.femalePremiumDisplay) : "";
 
-      let totalMale = row?.member?.totalMale ? this.convertNumber(row?.member?.totalMale) : "";
+      let totalMale = row?.member?.totalMale ? this.formatNumber(row?.member?.totalMale) : "";
 
-      let totalFemale = row?.member?.totalFemale ? this.convertNumber(row?.member?.totalFemale) : "";
+      let totalFemale = row?.member?.totalFemale ? this.formatNumber(row?.member?.totalFemale) : "";
 
 
       return new TableRow({
         children: [
-          this.CommonCell(row?.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.Employee?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.Employee?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(femaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.Dependents?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.Dependents?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(femaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(row?.member?.femaleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
-          this.CommonCell(totalFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER }),
+          this.CommonCell(row?.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Employee?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Employee?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(femaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Dependents?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Dependents?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(femaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.femaleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
         ],
       });
     });
@@ -1117,9 +1169,9 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 9 }),
-        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
-        this.CommonCell(`Premium : ${this.convertNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, colSpan: 2 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 9 }),
+        this.CommonCell(`Members ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+        this.CommonCell(`Premium : ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
       ],
     });
@@ -1141,7 +1193,6 @@ export class TestDataComponent implements OnInit {
   //****************************************************************** */
   // maf risk table 
   mafRiskTable(category: any): any[] {
-    console.log(category.census);
 
     const rows: TableRow[] = [];
 
@@ -1155,14 +1206,14 @@ export class TestDataComponent implements OnInit {
       new TableRow({
         children: [
 
-          this.CommonCell("S.No", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employee Id", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Employee Name", { fontSize: 10, bold: true, width: { size: 25, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Relations", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Age", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Premium", { fontSize: 10, bold: true, width: { size: 15, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Category", { fontSize: 10, bold: true, width: { size: 12, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
-          this.CommonCell("Member Type", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER }),
+          this.CommonCell("S.No", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Employee Id", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Employee Name", { fontSize: 10, bold: true, width: { size: 25, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Relations", { fontSize: 10, bold: true, width: { size: 13, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Age", { fontSize: 10, bold: true, width: { size: 4, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Premium", { fontSize: 10, bold: true, width: { size: 15, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Category", { fontSize: 10, bold: true, width: { size: 12, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell("Member Type", { fontSize: 10, bold: true, width: { size: 14, type: "pct" }, color: "#ffffff", fillColor: '#b5b5b5', alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
         ],
       })
     );
@@ -1172,14 +1223,14 @@ export class TestDataComponent implements OnInit {
       rows.push(
         new TableRow({
           children: [
-            this.CommonCell((index + 1).toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(String(census.employee_id), { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.employee_name, { fontSize: 10, bold: false, width: { size: 25, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.relations, { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.age.toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(`${this.transformedResultResponse.quotes[0].currency} ${this.convertNumber(census.updated_loaded_premium)}`, { fontSize: 10, bold: false, width: { size: 15, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.category.toUpperCase(), { fontSize: 10, bold: false, width: { size: 12, type: "pct" }, alignment: AlignmentType.CENTER }),
-            this.CommonCell(census.member_type, { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER }),
+            this.CommonCell((index + 1).toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(String(census.employee_id), { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(census.employee_name, { fontSize: 10, bold: false, width: { size: 25, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(census.relations, { fontSize: 10, bold: false, width: { size: 13, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(census.age.toString(), { fontSize: 10, bold: false, width: { size: 4, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(`${this.currency} ${this.formatNumber(census.updated_loaded_premium)}`, { fontSize: 10, bold: false, width: { size: 15, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(census.category.toUpperCase(), { fontSize: 10, bold: false, width: { size: 12, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+            this.CommonCell(census.member_type, { fontSize: 10, bold: false, width: { size: 14, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
           ],
         })
       );
@@ -1205,24 +1256,24 @@ export class TestDataComponent implements OnInit {
   // check for age band tables 
 
 
-    checkSingleFemalePremiumDisplay(arr: any[]): boolean {
-    if ( arr.length === 0) {
+  checkSingleFemalePremiumDisplay(arr: any[]): boolean {
+    if (arr.length === 0) {
       return false;
     }
-  
+
     const firstObject = arr[0];
     // Safely access the properties using optional chaining
-    const singleFemalePremiumDisplay = 
+    const singleFemalePremiumDisplay =
       firstObject?.member?.Dependents?.singleFemalePremiumDisplay ||
       firstObject?.member?.Employee?.singleFemalePremiumDisplay;
-  
-    return Boolean(singleFemalePremiumDisplay); 
+
+    return Boolean(singleFemalePremiumDisplay);
   }
 
 
 
 
-  createBenefitsTable(organizedData: any) {
+  createBenefitsTable(organizedData: any, showHeading = true) {
     if (Object.keys(organizedData).length === 0) {
       return [];
     }
@@ -1238,7 +1289,8 @@ export class TestDataComponent implements OnInit {
           fillColor: "#b5b5b5",
           bold: true,
           width: { size: this.columnWidth, type: "pct" },
-          alignment: AlignmentType.CENTER
+          alignment: AlignmentType.CENTER,
+          borderColor: '#9e9e9e',
         }),
         ...Array.from(new Set(Object.values(organizedData).flatMap((benefitsForGroup: any) => benefitsForGroup.map((benefit: any) => benefit.category_name))))
           .map((categoryName) =>
@@ -1248,22 +1300,25 @@ export class TestDataComponent implements OnInit {
               fillColor: "#b5b5b5",
               bold: true,
               width: { size: this.columnWidth, type: "pct" },
-              alignment: AlignmentType.CENTER
+              alignment: AlignmentType.CENTER,
+              borderColor: '#9e9e9e',
             })
           ),
       ],
     });
 
-    // Add headerRow once to the table
-    tables.push(new Table({
-      rows: [headerRow],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    }));
+    if (showHeading) {
+      // Add headerRow once to the table
+      tables.push(new Table({
+        rows: [headerRow],
+        layout: TableLayoutType.FIXED,
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
+      }));
 
+    }
     // Loop through each group detail (e.g., "Policy Details")
     Object.keys(organizedData).forEach((groupDetail) => {
       const benefitsForGroup = organizedData[groupDetail];
@@ -1279,6 +1334,7 @@ export class TestDataComponent implements OnInit {
             width: { size: 100, type: "pct" },
             colSpan: 100 / this.columnWidth,
             alignment: AlignmentType.CENTER,
+            borderColor: '#9e9e9e',
           }),
         ],
       });
@@ -1294,7 +1350,7 @@ export class TestDataComponent implements OnInit {
               fontSize: 10,
               bold: false,
               width: { size: this.columnWidth, type: "pct" },
-              fillColor: this.CommonCellBgColor(index)
+              fillColor: this.CommonCellBgColor(index, '#ffffff', '#eeeeee'), borderColor: '#9e9e9e',
             }),
             ...Array.from(new Set(benefitsForGroup.map((benefit: any) => benefit.category_name))).map((categoryName) => {
               // Find the benefit for the current category and benefit name
@@ -1305,7 +1361,7 @@ export class TestDataComponent implements OnInit {
                 fontSize: 9,
                 bold: false,
                 width: { size: this.columnWidth, type: "pct" },
-                fillColor: this.CommonCellBgColor(index)
+                fillColor: this.CommonCellBgColor(index, '#ffffff', '#eeeeee'), borderColor: '#9e9e9e'
               });
             }),
           ],
@@ -1329,23 +1385,23 @@ export class TestDataComponent implements OnInit {
   //****************************************************************** */
 
   // category and Premium table 
-  createRow3 = (tobHeader: string, values: string[]): TableRow =>
+  createRow3 = (tobHeader: string, values: string[], rowIndex: number): TableRow =>
     new TableRow({
       children: [
-        this.CommonCell(tobHeader, { fontSize: 10, bold: false, width: { size: this.columnWidth, type: "pct" } }), // First column for "Tob Header"
-        ...values.map(value => this.CommonCell(value, { fontSize: 9, bold: false, width: { size: this.columnWidth, type: "pct" } })), // Other columns for categories
+        this.CommonCell(tobHeader, { fontSize: 10, bold: false, width: { size: this.columnWidth, type: "pct" }, borderColor: '#9e9e9e', fillColor: this.CommonCellBgColor(rowIndex, '#eeeeee', '#ffffff') }), // First column for "Tob Header"
+        ...values.map(value => this.CommonCell(value, { fontSize: 9, bold: false, width: { size: this.columnWidth, type: "pct" }, borderColor: '#9e9e9e', fillColor: this.CommonCellBgColor(rowIndex, '#eeeeee', '#ffffff') })), // Other columns for categories
       ],
     });
 
   createPremiumTableRows = (data: Category[], fontColor: any, bgColor: any): TableRow[] => {
     // Extract the tob_headers (unique keys in each category)
-    const tobHeaders = data[0].premium_details.map((item: PremiumDetail) => item.tob_header);
+    const tobHeaders = data[0].premium_details.map((item: PremiumDetail, index) => item.tob_header);
 
     // First row is the header row (Tob Header and categories)
     const headerRow = new TableRow({
       children: [
-        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER }), // First column for "Tob Header"
-        ...data.map(category => this.CommonCell(category.category_name, { fontSize: 10, color: fontColor, fillColor: bgColor, bold: true, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER })), // Columns for categories
+        this.CommonCell('Premium', { fontSize: 10, bold: true, color: fontColor, fillColor: bgColor, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }), // First column for "Tob Header"
+        ...data.map(category => this.CommonCell(category.category_name, { fontSize: 10, color: fontColor, fillColor: bgColor, bold: true, width: { size: this.columnWidth, type: "pct" }, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', })), // Columns for categories
       ],
     });
 
@@ -1359,7 +1415,7 @@ export class TestDataComponent implements OnInit {
       });
     });
 
-    const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string) => {
+    const dataRows = Array.from(uniqueTobHeaders.keys()).map((tobHeader: string, rowIndex: number) => {
       const values = data.map(category => {
         const premiumDetail = category.premium_details.find(
           (detail: PremiumDetail) => detail.tob_header === tobHeader
@@ -1367,15 +1423,15 @@ export class TestDataComponent implements OnInit {
 
         const tobValue = premiumDetail ? premiumDetail.tob_value : ''; // Get tob_value or empty string
 
-        // Skip convertNumber if the tobHeader is "Member count"
+        // Skip formatNumber if the tobHeader is "Member count"
         return tobHeader === "Member count"
           ? tobValue // Return raw value for "Member count"
           : typeof tobValue === 'number'
-            ? this.convertNumber(tobValue) // Format number for other headers
+            ? this.formatNumber(tobValue) // Format number for other headers
             : tobValue; // Return as-is for non-numeric values
       });
 
-      return this.createRow3(tobHeader, values);
+      return this.createRow3(tobHeader, values, rowIndex);
     });
 
 
@@ -1394,8 +1450,108 @@ export class TestDataComponent implements OnInit {
       },
     };
   }
+  // additionAndDeletionClauseTable(): Table {
+  //   const rows: TableRow[] = [];
+
+  //   // Helper function to create section headers
+  //   const createSectionHeader = (headerText: string): TableRow => {
+  //     return new TableRow({
+  //       children: [
+  //         this.CommonCell(headerText, {
+  //           fontSize: 12,
+  //           bold: true,
+  //           color: "#ffffff",
+  //           fillColor: "#b5b5b5",
+  //           alignment: AlignmentType.CENTER,
+  //           colSpan: 1,
+  //           borderColor: '#9e9e9e'
+  //         }),
+  //       ],
+  //     });
+  //   };
+
+  //   // Function to process content with createTextRun for boldText
+  //   const processContent = (contentArray: any[]) => {
+  //     contentArray.forEach((content, index) => {
+  //       const cellBgColor = this.CommonCellBgColor(index, '#eeeeee', '#ffffff');
+
+  //       if (typeof content === "string") {
+  //         // Single text content
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               this.CommonCell(content, {
+  //                 fontSize: 10,
+  //                 fillColor: cellBgColor,
+  //                 alignment: AlignmentType.LEFT,
+  //                 borderColor: '#9e9e9e'
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       } else if (content.ul) {
+  //         // Bullet list content
+  //         content.ul.map((item: { level: number, type: string, text: string }) => {
+  //           rows.push(
+  //             new TableRow({
+  //               children: [
+  //                 this.CommonCell(`•  ${item.text}`, {
+  //                   fontSize: 10,
+  //                   fillColor: cellBgColor,
+  //                   alignment: AlignmentType.LEFT,
+  //                   borderColor: '#9e9e9e'
+  //                 }),
+  //               ],
+  //             })
+  //           );
+  //         });
+  //       } else if (content.boldText) {
+  //         // Bold text content using createTextRun for each bold item
+  //         const boldTextParagraphs = content.boldText.map((boldItem: string) => {
+  //           return new Paragraph({
+  //             children: [this.createTextRun(`${boldItem}`, true)], // Create a bold TextRun
+  //             indent: { left: 60, right: 60 }
+  //           });
+  //         });
+
+  //         rows.push(
+  //           new TableRow({
+  //             children: [
+  //               new TableCell({
+  //                 children: boldTextParagraphs,
+  //                 shading: { fill: cellBgColor },
+  //                 borders: this.defaultBorders(10, 'single', '#9e9e9e')
+  //               }),
+  //             ],
+  //           })
+  //         );
+  //       }
+  //     });
+  //   };
+
+  //   // Add Addition Clause to the table
+  //   rows.push(createSectionHeader("Addition Clause"));
+  //   processContent(additionContent);
+
+  //   // Add Deletion Clause to the table
+  //   rows.push(createSectionHeader("Deletion Clause"));
+  //   processContent(deletionContent);
+
+  //   // Construct the table
+  //   return new Table({
+  //     rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
 
 
+
+
+  //--
   additionAndDeletionClauseTable(): Table {
     const rows: TableRow[] = [];
 
@@ -1419,7 +1575,7 @@ export class TestDataComponent implements OnInit {
     // Function to process content with createTextRun for boldText
     const processContent = (contentArray: any[]) => {
       contentArray.forEach((content, index) => {
-        const cellBgColor = this.CommonCellBgColor(index);
+        const cellBgColor = this.CommonCellBgColor(index, '#eeeeee', '#ffffff');
 
         if (typeof content === "string") {
           // Single text content
@@ -1436,26 +1592,25 @@ export class TestDataComponent implements OnInit {
             })
           );
         } else if (content.ul) {
-          // Bullet list content
-          content.ul.map((item: string) => {
-            rows.push(
-              new TableRow({
-                children: [
-                  this.CommonCell(`•  ${item}`, {
-                    fontSize: 10,
-                    fillColor: cellBgColor,
-                    alignment: AlignmentType.LEFT,
-                    borderColor: '#9e9e9e'
-                  }),
-                ],
-              })
-            );
-          });
+
+          const clause = this.createList(content.ul);
+          rows.push(
+            new TableRow({
+              children: [
+                new TableCell({
+                  children: clause, // Add the paragraphs generated from listContent
+                  shading: { fill: "#eeeeee" },
+                  borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+                }),
+              ],
+            })
+          )
         } else if (content.boldText) {
           // Bold text content using createTextRun for each bold item
           const boldTextParagraphs = content.boldText.map((boldItem: string) => {
             return new Paragraph({
               children: [this.createTextRun(`${boldItem}`, true)], // Create a bold TextRun
+              indent: { left: 300 }
             });
           });
 
@@ -1496,11 +1651,119 @@ export class TestDataComponent implements OnInit {
 
 
 
+
+
   createTextRun(text: string, italics?: boolean): TextRun {
     return new TextRun({ text: `${text}`, size: 2 * 9, italics });
   };
 
 
+  // renderNotes() {
+  //   const rows: TableRow[] = [];
+
+  //   // Helper function to create a section header
+  //   const createSectionHeader = (headerText: string, backgroundColor: string): TableRow => {
+  //     return new TableRow({
+  //       children: [
+  //         this.CommonCell(headerText, {
+  //           alignment: AlignmentType.CENTER,
+  //           color: "#ffffff",
+  //           fillColor: backgroundColor,
+  //           bold: true,
+  //           borderColor: '#9e9e9e',
+  //         }),
+  //       ],
+  //     });
+  //   };
+
+  //   // Add the main header
+  //   rows.push(createSectionHeader("Notes", "#b5b5b5"));
+
+  //   // Function to process nested or flat text with numbering
+  //   const processText = (text: any, index?: number): Paragraph[] => {
+  //     const paragraphs: Paragraph[] = [];
+  //     let formattedText: string | number;
+
+  //     if (typeof text === 'string') {
+  //       // Prepare the text format with index
+  //       formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
+  //       paragraphs.push(
+  //         new Paragraph({
+  //           children: [this.createTextRun(formattedText)], // Create a TextRun wrapped inside a Paragraph
+  //           indent: { left: 30, right: 30 }
+  //         })
+  //       );
+  //       return paragraphs;
+  //     }
+
+  //     if (Array.isArray(text)) {
+  //       // Handle nested arrays and maintain indentation for each item
+  //       text.forEach((item, ind) => {
+  //         if (typeof item === 'string') {
+  //           formattedText = `${ind === 0 && index !== undefined ? `${index}. ` : ''}${item}`;
+  //           paragraphs.push(
+  //             new Paragraph({
+  //               children: [this.createTextRun(formattedText)], // Return each item as a Paragraph
+  //               indent: { left: 30, right: 30 }
+  //             })
+  //           );
+  //         } else if (item.text) {
+  //           // Handle nested objects with text property
+  //           formattedText = `${item.text}`;
+  //           paragraphs.push(
+  //             new Paragraph({
+  //               children: [this.createTextRun(`${formattedText}`)], // Return item text as a Paragraph
+  //               indent: { left: 250 }
+
+  //             })
+  //           );
+  //         }
+  //       });
+  //       return paragraphs;
+  //     }
+
+  //     // Handle invalid data format
+  //     const invalidText = 'Invalid data format'; // Default message for invalid data
+  //     paragraphs.push(
+  //       new Paragraph({
+  //         children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
+  //         indent: { left: 30, right: 30 }
+  //       })
+  //     );
+
+  //     return paragraphs;
+  //   };
+
+
+  //   // Combine all notes into numbered paragraphs
+  //   const noteParagraphs = notesList.map((note, index) => {
+  //     // Handle the nested structure and pass the current index
+  //     return processText(note.text, index + 1);
+  //   }).flat(); // Flatten the result to avoid nested arrays of paragraphs
+
+  //   // Add all notes in a single row
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: noteParagraphs,
+  //           shading: { fill: "#eeeeee" },
+  //           borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Create the table with the rows and return it
+  //   return new Table({
+  //     rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
   renderNotes() {
     const rows: TableRow[] = [];
 
@@ -1522,70 +1785,15 @@ export class TestDataComponent implements OnInit {
     // Add the main header
     rows.push(createSectionHeader("Notes", "#b5b5b5"));
 
-    // Function to process nested or flat text with numbering
-    const processText = (text: any, index?: number): Paragraph[] => {
-      const paragraphs: Paragraph[] = [];
-      let formattedText: string | number;
-      const indentation = '    ';  // 4 spaces indentation
+    // Process list content into paragraphs
+    const noteParagraphs = this.createList(notesList); // This now generates the paragraphs with appropriate numbering and nesting
 
-      if (typeof text === 'string') {
-        // Prepare the text format with index
-        formattedText = `${index !== undefined ? `${index}. ` : ''}${text}`;
-        paragraphs.push(
-          new Paragraph({
-            children: [this.createTextRun(formattedText)], // Create a TextRun wrapped inside a Paragraph
-          })
-        );
-        return paragraphs;
-      }
-
-      if (Array.isArray(text)) {
-        // Handle nested arrays and maintain indentation for each item
-        text.forEach((item, ind) => {
-          if (typeof item === 'string') {
-            formattedText = `${ind === 0 && index !== undefined ? `${index}. ` : ''}${item}`;
-            paragraphs.push(
-              new Paragraph({
-                children: [this.createTextRun(formattedText)], // Return each item as a Paragraph
-              })
-            );
-          } else if (item.text) {
-            // Handle nested objects with text property
-            formattedText = `${indentation}${item.text}`;
-            paragraphs.push(
-              new Paragraph({
-                children: [this.createTextRun(formattedText)], // Return item text as a Paragraph
-              })
-            );
-          }
-        });
-        return paragraphs;
-      }
-
-      // Handle invalid data format
-      const invalidText = 'Invalid data format'; // Default message for invalid data
-      paragraphs.push(
-        new Paragraph({
-          children: [this.createTextRun(invalidText)], // Return as a Paragraph in case of invalid format
-        })
-      );
-
-      return paragraphs;
-    };
-
-
-    // Combine all notes into numbered paragraphs
-    const noteParagraphs = notesList.map((note, index) => {
-      // Handle the nested structure and pass the current index
-      return processText(note.text, index + 1);
-    }).flat(); // Flatten the result to avoid nested arrays of paragraphs
-
-    // Add all notes in a single row
+    // Add the paragraphs to a table row
     rows.push(
       new TableRow({
         children: [
           new TableCell({
-            children: noteParagraphs,
+            children: noteParagraphs, // Add the paragraphs generated from listContent
             shading: { fill: "#eeeeee" },
             borders: this.defaultBorders(10, 'single', '#9e9e9e'),
           }),
@@ -1622,7 +1830,7 @@ export class TestDataComponent implements OnInit {
       rows.push(
         new TableRow({
           children: [
-            this.CommonCell(clause, { fillColor: this.CommonCellBgColor(index), borderColor: '#9e9e9e' }),
+            this.CommonCell(clause, { fillColor: this.CommonCellBgColor(index, '#eeeeee', '#ffffff'), borderColor: '#9e9e9e' }),
           ],
         })
       );
@@ -1639,6 +1847,117 @@ export class TestDataComponent implements OnInit {
   }
 
 
+  // renderDocIssuePolicy() {
+  //   const rows: TableRow[] = [];
+
+  //   // Header for the document
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         this.CommonCell('Required documents to issue the policy', {
+  //           bold: true,
+  //           color: '#ffffff',
+  //           alignment: AlignmentType.CENTER,
+  //           fillColor: '#b5b5b5',
+  //           borderColor: '#9e9e9e'
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Clients based in Dubai and Northern Emirates
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         this.CommonCell('Clients based in Dubai and Northern Emirates', {
+  //           alignment: AlignmentType.LEFT,
+  //           fillColor: '#eeeeee',
+  //           borderColor: '#9e9e9e'
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Documents for Dubai clients
+  //   // rows.push(
+  //   //   new TableRow({
+  //   //     children: [
+  //   //       new TableCell({
+  //   //         children: dubaiDocumentsPolicy.map((doc) =>
+  //   //           new Paragraph({
+  //   //             children: [this.createTextRun(` •  ${doc}`)], // Create TextRun for each document text
+  //   //             indent: { left: 300 },
+  //   //           })
+  //   //         ),
+  //   //         shading: { fill: "#ffffff" },
+  //   //         borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+  //   //       }),
+  //   //     ],
+  //   //   })
+  //   // );
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: this.createList(dubaiDocumentsPolicy), // Use createParagraphs here
+  //           shading: { fill: "#ffffff" },
+  //           borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+  //         }),
+  //       ],
+  //     })
+  //   );
+  //   // Clients based in Abu Dhabi
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         this.CommonCell('Clients based in Abu Dhabi:', {
+  //           alignment: AlignmentType.LEFT,
+  //           fillColor: '#eeeeee',
+  //           borderColor: '#9e9e9e'
+  //         }),
+  //       ],
+  //     })
+  //   );
+
+  //   // Documents for Abu Dhabi clients
+  //   // rows.push(
+  //   //   new TableRow({
+  //   //     children: [
+  //   //       new TableCell({
+  //   //         children: abuDhabiDocumentsPolicy.map((doc) =>
+  //   //           new Paragraph({
+  //   //             children: [this.createTextRun(` •  ${doc}`)],
+  //   //             indent: { left: 300 },
+
+  //   //           })
+  //   //         ),
+  //   //         shading: { fill: "#ffffff" },
+  //   //         borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+
+  //   //       }),
+  //   //     ],
+  //   //   })
+  //   // );
+  //   rows.push(
+  //     new TableRow({
+  //       children: [
+  //         new TableCell({
+  //           children: this.createList(abuDhabiDocumentsPolicy), // Use createParagraphs here
+  //           shading: { fill: "#ffffff" },
+  //           borders: this.defaultBorders(10, 'single', '#9e9e9e'),
+  //         }),
+  //       ],
+  //     })
+  //   );
+  //   return new Table({
+  //     rows: rows,
+  //     width: {
+  //       size: 100,
+  //       type: WidthType.PERCENTAGE,
+  //     },
+  //     layout: TableLayoutType.FIXED,
+  //   });
+  // }
   renderDocIssuePolicy() {
     const rows: TableRow[] = [];
 
@@ -1670,16 +1989,12 @@ export class TestDataComponent implements OnInit {
       })
     );
 
-    // Documents for Dubai clients
+    // Documents for Dubai clients (using createParagraphs for list)
     rows.push(
       new TableRow({
         children: [
           new TableCell({
-            children: dubaiDocumentsPolicy.map((doc) =>
-              new Paragraph({
-                children: [this.createTextRun(` •  ${doc}`)], // Create TextRun for each document text
-              })
-            ),
+            children: this.createList(dubaiDocumentsPolicy), // Use createParagraphs here
             shading: { fill: "#ffffff" },
             borders: this.defaultBorders(10, 'single', '#9e9e9e'),
           }),
@@ -1700,20 +2015,14 @@ export class TestDataComponent implements OnInit {
       })
     );
 
-    // Documents for Abu Dhabi clients
+    // Documents for Abu Dhabi clients (using createParagraphs for list)
     rows.push(
       new TableRow({
         children: [
           new TableCell({
-            children: abuDhabiDocumentsPolicy.map((doc) =>
-              new Paragraph({
-                children: [this.createTextRun(` •  ${doc}`)],
-
-              })
-            ),
+            children: this.createList(abuDhabiDocumentsPolicy), // Use createParagraphs here
             shading: { fill: "#ffffff" },
             borders: this.defaultBorders(10, 'single', '#9e9e9e'),
-
           }),
         ],
       })
@@ -1730,18 +2039,60 @@ export class TestDataComponent implements OnInit {
   }
 
 
-  CommonCellBgColor(index: number) {
-    return index % 2 === 0 ? '#eeeeee' : '#ffffff'
+  CommonCellBgColor(index: number, first: string = '#ffffff', next: string = '#eeeeee') {
+    return index % 2 === 0 ? first : next
+  }
+
+  createList(list: any): Paragraph[] {
+    return list.map((item: ListItem) => {
+      // Check if the item has a nested list
+      if (item.nestedList && Array.isArray(item.nestedList) && item.nestedList.length > 0) {
+        // Handle nested list
+        const nestedParagraphs = item.nestedList.map((nestedItem) =>
+          new Paragraph({
+            text: nestedItem.text,
+            numbering: {
+              reference: 'dynamic-bullets',
+              level: nestedItem.level,
+            },
+            alignment: AlignmentType.LEFT,
+          })
+        );
+
+        // Add the parent item and then nested items
+        return [
+          new Paragraph({
+            text: item.text,
+            numbering: {
+              reference: 'dynamic-numbering',
+              level: item.level,
+            },
+            alignment: AlignmentType.LEFT,
+          }),
+          ...nestedParagraphs, // Add nested items if they exist
+        ];
+      } else {
+        // Handle regular item without nested list
+        return new Paragraph({
+          text: item.text,
+          numbering: item.type === 'number'
+            ? { reference: 'dynamic-numbering', level: item.level }
+            : item.noBullet
+              ? undefined
+              : { reference: 'dynamic-bullets', level: item.level },
+          alignment: AlignmentType.LEFT,
+        });
+      }
+    }).flat(); // Flatten the nested array
   }
 
   async generateDocument(quoteData: any) {
+
     const header = await this.commonHeader()
     const firstPageHeader = await this.firstPageHeader()
 
     const footer = await this.commonFooter();
     const firstPageFooter = await this.firstPageFooter()
-
-    let basicDetailsTable = this.basicTable(quoteData)
 
     const combinedClauseTable = this.additionAndDeletionClauseTable();
 
@@ -1751,10 +2102,6 @@ export class TestDataComponent implements OnInit {
 
     let renderDocIssuePolicyTable = this.renderDocIssuePolicy()
 
-
-    // category member table 
-    let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
-    let categoriesDetailsTable = this.categoriesDetailTable(categoryData, quoteData)
     //****************************************************************** */
     // quote summary row 
     const summaryTable = this.createSummaryTable(quoteData.quotes[0]);
@@ -1771,14 +2118,13 @@ export class TestDataComponent implements OnInit {
       quoteData.quotes[0].data, 'mandatory_benefits');
     const optionalBenefitsData = this.benefitsTableData(
       quoteData.quotes[0].data, 'optional_benefits');
-    const mandatoryBenefitsTable = this.createBenefitsTable(mandatoryBenefitsData);
-    const optionalBenefitsTable = this.createBenefitsTable(optionalBenefitsData);
+    const mandatoryBenefitsTable = this.createBenefitsTable(mandatoryBenefitsData, true);
+    const optionalBenefitsTable = this.createBenefitsTable(optionalBenefitsData, false);
 
     //****************************************************************** */
     // Age band and Maf Tables 
     const ageBandAndMafInfo = this.ageBandAndMafData(quoteData.quotes[0].data);
 
-    console.log("age--->",ageBandAndMafInfo);
     // Age band Tables 
     const ageBandTables = ageBandAndMafInfo.map((category, index) => {
       let ageBandTable
@@ -1793,13 +2139,11 @@ export class TestDataComponent implements OnInit {
       let isSingleFemalePremiumDisplayExist = this.checkSingleFemalePremiumDisplay(category.ageValues)
 
 
-        if (isSingleFemalePremiumDisplayExist) {
-       console.log(true);
-          ageBandTable = this.AgeBandTable4(category, category.premium, category.totalMemberCount)
-        } else {
-          console.log(false);
-          ageBandTable = this.AgeBandTable3(category, category.premium, category.totalMemberCount)
-        }
+      if (isSingleFemalePremiumDisplayExist) {
+        ageBandTable = this.AgeBandTable4(category, category.premium, category.totalMemberCount)
+      } else {
+        ageBandTable = this.AgeBandTable3(category, category.premium, category.totalMemberCount)
+      }
 
 
       content.push(...ageBandTable);
@@ -1809,11 +2153,24 @@ export class TestDataComponent implements OnInit {
     let exclusionData = this.formatExclusionData(quoteData.exclusion)
     let exclusionTable = this.createExclusionsSection(exclusionData)
 
+
     //****************************************************************** */
 
+    const exclusionTableSection = exclusionData.length > 0
+      ? {
+        ...this.createLandscapeSectionProperties(),
+        children: [exclusionTable],
+      }
+      : null;
 
     // Create the Word document
     const doc = new Document({
+      numbering: {
+        config: [
+          { reference: 'dynamic-numbering', levels: NUMBERING_CONFIG.dynamicNumbering },
+          { reference: 'dynamic-bullets', levels: NUMBERING_CONFIG.dynamicBullets },
+        ],
+      },
 
       sections: [
         {
@@ -1865,13 +2222,13 @@ export class TestDataComponent implements OnInit {
             combinedClauseTable,
           ],
         },
-        {
-          ...this.createLandscapeSectionProperties(),
-          children: [
-            exclusionTable
-          ],
-        },
-
+        // {
+        //   ...this.createLandscapeSectionProperties(),
+        //   children: [
+        //     exclusionTable
+        //   ],
+        // },
+        ...(exclusionTableSection ? [exclusionTableSection] : []),
         {
           ...this.createLandscapeSectionProperties(),
           children: [
