@@ -48,6 +48,7 @@ export class TestDataComponent implements OnInit {
       maximumFractionDigits: 2,
     })
   }
+  
   formatDate(date: any) {
     return moment(date).format("DD MMM YYYY")
   }
@@ -110,7 +111,7 @@ export class TestDataComponent implements OnInit {
         emirate: category.data.emirates.emirates_name,
         tpa: category.data.tpa.tpa_name,
         ageValues: category.data.age_values,
-        premium: `${this.currency} ${category.data.totalPremium}`,
+        premium: `${this.currency} ${this.formatNumber(category.data.totalPremium)}`,
         totalMemberCount: category.data.totalMemberCount
       }
     });
@@ -237,6 +238,7 @@ export class TestDataComponent implements OnInit {
       colSpan,
       width,
       borderColor,
+      marginRight = 20,
     } = options;
 
     // Split the text into segments while keeping the original line breaks
@@ -280,7 +282,7 @@ export class TestDataComponent implements OnInit {
       },
       width,
       borders: this.defaultBorders(10, "single", borderColor), // Default borders
-      margins: { left: 20, top: 10, right: 20 },
+      margins: { left: 20, top: 10, right: marginRight},
     });
   }
 
@@ -898,7 +900,7 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 5 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 5, marginRight:150 }),
         this.CommonCell(`Members: ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
         this.CommonCell(`Premium: ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
@@ -1002,7 +1004,7 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 9 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 9, marginRight:150 }),
         this.CommonCell(`Members: ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
         this.CommonCell(`Premium: ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 

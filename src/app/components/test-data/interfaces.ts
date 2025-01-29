@@ -62,6 +62,7 @@ export interface CellOptions {
     type: "pct";
   };
   borderColor?:string
+  marginRight?:number
 }
 
 export interface TextLineOptions {
