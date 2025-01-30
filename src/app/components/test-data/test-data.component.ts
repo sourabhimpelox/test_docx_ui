@@ -246,6 +246,9 @@ export class TestDataComponent implements OnInit {
     const runs: TextRun[] = [];
 
     segments.forEach((segment, index) => {
+
+      const cleanedSegment = segment.replace(/\t/g, ' ').trim();
+
       // If it's a line break, determine the type and add a small or larger break
       if (segment === "\r\n") {
         runs.push(new TextRun({ break: 1, size: fontSize * 1.5 })); // Small break
@@ -255,7 +258,7 @@ export class TestDataComponent implements OnInit {
         // Add the actual text
         runs.push(
           new TextRun({
-            text: segment.trim(),
+            text:cleanedSegment,
             bold,
             size: fontSize * 2,
             color,
@@ -282,10 +285,9 @@ export class TestDataComponent implements OnInit {
       },
       width,
       borders: this.defaultBorders(10, "single", borderColor), // Default borders
-      margins: { left: 20, top: 10, right: marginRight},
+      margins: { left: 20, top: 10, right: marginRight },
     });
   }
-
 
   // For Page Title
   pageTitle(title: string, size: number = 13, color: string = "#00587C", underline?: boolean, alignment: any = "left") {
@@ -469,7 +471,6 @@ export class TestDataComponent implements OnInit {
   }
   //****************************************************************** */
 
-
   createList(list: any): Paragraph[] {
     return list.map((item: ListItem) => {
       // Check if the item has a nested list
@@ -479,7 +480,7 @@ export class TestDataComponent implements OnInit {
           new Paragraph({
             text: nestedItem.text,
             numbering: {
-              reference: 'dynamic-bullets',
+              reference: 'dynamic-dash',
               level: nestedItem.level,
             },
             alignment: AlignmentType.LEFT,
@@ -504,8 +505,8 @@ export class TestDataComponent implements OnInit {
           text: item.text,
           numbering: item.type === 'number'
             ? { reference: 'dynamic-numbering', level: item.level }
-            : item.noBullet
-              ? undefined
+            : item.type === 'dash'
+            ? { reference: 'dynamic-dash', level: item.level }
               : { reference: 'dynamic-bullets', level: item.level },
           alignment: AlignmentType.LEFT,
         });
@@ -513,8 +514,7 @@ export class TestDataComponent implements OnInit {
     }).flat(); // Flatten the nested array
   }
 
-  //****************************************************************** */
-
+  
 
   firstPage(): (Paragraph | Table)[] {
     const title = this.pageTitle("TOB for Group International Medical Insurance", 15, "#000000", true, "center");
@@ -864,17 +864,17 @@ export class TestDataComponent implements OnInit {
     // Add data rows based on the details provided
 
     const dataRows: TableRow[] = details.map((row: any) => {
-      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.formatNumber(row?.member?.Employee?.malePremiumDisplay) : "";
+      let maleEmployeePremium = row?.member?.Employee?.malePremiumDisplay ? this.formatNumber(row?.member?.Employee?.malePremiumDisplay) : "-";
 
       // let singleFemaleEmployeePremium = row?.member?.Employee?.singleFemalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.singleFemalePremiumDisplay) : "";
 
-      let marriedFemaleEmployeePremium = row?.member?.Employee?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.marriedFemalePremiumDisplay) : "";
+      let marriedFemaleEmployeePremium = row?.member?.Employee?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Employee?.marriedFemalePremiumDisplay) : "-";
 
       let maleDependentsPremium = row?.member?.Dependents?.malePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.malePremiumDisplay) : "-";
 
       // let singleFemaleDependentsPremium = row?.member?.Dependents?.singleFemalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.singleFemalePremiumDisplay) : "";
 
-      let marriedFemaleDependentsPremium = row?.member?.Dependents?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.marriedFemalePremiumDisplay) : "";
+      let marriedFemaleDependentsPremium = row?.member?.Dependents?.marriedFemalePremiumDisplay ? this.formatNumber(row?.member?.Dependents?.marriedFemalePremiumDisplay) : "-";
 
       let totalMale = row?.member?.totalMale ? this.formatNumber(row?.member?.totalMale) : "";
 
@@ -882,17 +882,24 @@ export class TestDataComponent implements OnInit {
 
       let totalMarriedFemale = row?.member?.totalMarriedFemale ? this.formatNumber(row?.member?.totalMarriedFemale) : "";
 
+      const totalSingleFemaleNum = totalSingleFemale ? parseFloat(totalSingleFemale.replace(/,/g, "")) : totalSingleFemale;
+      const totalMarriedFemaleNum = totalMarriedFemale ? parseFloat(totalMarriedFemale.replace(/,/g, "")) : totalMarriedFemale;
+
+      // Add the numbers
+      let totalFemale = totalSingleFemaleNum + totalMarriedFemaleNum; 
+      const formattedTotalFemale = totalFemale ? this.formatNumber(totalFemale) : totalFemale;
+
       return new TableRow({
         children: [
-          this.CommonCell(row.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(marriedFemaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(marriedFemaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.singleFemaleMemberCount + row?.member?.marriedFemaleMembeCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(totalSingleFemale + totalMarriedFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row.age || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleEmployeePremium , { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(marriedFemaleEmployeePremium , { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleDependentsPremium , { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(marriedFemaleDependentsPremium, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.maleMemberCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.singleFemaleMemberCount + row?.member?.marriedFemaleMembeCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalMale , { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(formattedTotalFemale, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
 
         ],
       });
@@ -900,9 +907,9 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 5, marginRight:150 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.RIGHT, borderColor: '#9e9e9e', colSpan: 5,  marginRight:150 }),
         this.CommonCell(`Members: ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
-        this.CommonCell(`Premium: ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+        this.CommonCell(`Premium: ${premium}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
       ],
     });
@@ -984,19 +991,19 @@ export class TestDataComponent implements OnInit {
 
       return new TableRow({
         children: [
-          this.CommonCell(row?.age || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.Employee?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.Employee?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(maleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(femaleEmployeePremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.Dependents?.maleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.Dependents?.femaleCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(maleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(femaleDependentsPremium || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.maleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(row?.member?.femaleMemberCount || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(totalMale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
-          this.CommonCell(totalFemale || '0', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.age || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Employee?.maleCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Employee?.femaleCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleEmployeePremium, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(femaleEmployeePremium, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Dependents?.maleCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.Dependents?.femaleCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(maleDependentsPremium, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(femaleDependentsPremium, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.maleMemberCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(row?.member?.femaleMemberCount || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalMale || '', { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
+          this.CommonCell(totalFemale, { fontSize: 8, alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', }),
         ],
       });
     });
@@ -1004,9 +1011,9 @@ export class TestDataComponent implements OnInit {
 
     const totalRow = new TableRow({
       children: [
-        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 9, marginRight:150 }),
+        this.CommonCell("Total", { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.RIGHT, borderColor: '#9e9e9e', colSpan: 9,  marginRight:150 }),
         this.CommonCell(`Members: ${member}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
-        this.CommonCell(`Premium: ${this.formatNumber(premium)}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
+        this.CommonCell(`Premium: ${premium}`, { bold: true, color: "#ffffff", fillColor: "#b5b5b5", alignment: AlignmentType.CENTER, borderColor: '#9e9e9e', colSpan: 2 }),
 
       ],
     });
@@ -1678,11 +1685,12 @@ export class TestDataComponent implements OnInit {
         config: [
           { reference: 'dynamic-numbering', levels: NUMBERING_CONFIG.dynamicNumbering },
           { reference: 'dynamic-bullets', levels: NUMBERING_CONFIG.dynamicBullets },
+          { reference: 'dynamic-dash', levels: NUMBERING_CONFIG.dynamicDash },
+
         ],
       },
 
       sections: [
-        
         {
           ...this.createLandscapeSectionProperties(),
           children: [

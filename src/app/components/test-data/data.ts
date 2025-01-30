@@ -9448,9 +9448,9 @@ export let notesList = [
     {
         level: 0, type: 'number', text: 'For All Card Upgrade requests, the following conditions need to be fulfilled:\n ',
         nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Promotion of the Member (and eligible for a higher category post promotion).\n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  Member is employed with the Company for a minimum of 1 (one) Year.\n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Member submits Health Declaration form.\n', }
+            { level: 1, type: 'dash', text: 'a)  Promotion of the Member (and eligible for a higher category post promotion).\n' },
+            { level: 1, type: 'dash', text: 'b)  Member is employed with the Company for a minimum of 1 (one) Year.\n' },
+            { level: 1, type: 'dash', text: 'c)  Member submits Health Declaration form.\n', }
         ]
     },
     { level: 0, type: 'number', text: 'Quoted terms are subject to National Life and General Insurance Company SAOG being informed of any major chronic and pre-existing condition or major illness or any condition diagnosed to develop into major condition at inception of the policy and at addition of a member subsequent to inception of the policy. Failure to disclose such material facts may result in claim denial or render the contract null and void ab-initio.' },
@@ -9462,9 +9462,9 @@ export let notesList = [
         level: 0, type: 'number', text:
             'For HAAD compliant policies: For the sake of “Continuity of Cover” New and Renewal confirmations can be backdated to the anniversary date if: \n ',
         nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a) The date of confirmation falls within the 30 days grace period provided by HAAD and \n' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b) The policy start date does not fall before NLGIC initial quotation date.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  For all new business HAAD COC must specify last date of cover with the previous insurer.\n' }]
+            { level: 1, type: 'dash', text: 'a) The date of confirmation falls within the 30 days grace period provided by HAAD and \n' },
+            { level: 1, type: 'dash', text: 'b) The policy start date does not fall before NLGIC initial quotation date.\n', },
+            { level: 1, type: 'dash', text: 'c)  For all new business HAAD COC must specify last date of cover with the previous insurer.\n' }]
 
     },
     { level: 0, type: 'number', text: 'The brokers, involved in Abu Dhabi territory-based groups, should be registered and approved from Health Authority of Abu Dhabi (HAAD).' },
@@ -9474,28 +9474,28 @@ export let notesList = [
         text: 'NLGIC have the right to cancel the policy with immediate effect if; \n ',
         nestedList: [
 
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Misrepresentation of information\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  None disclosure of material facts.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Premium in not paid as per the premium payment agreed terms or issued \n', style: 'listMargin' },
-            { level: 1, type: 'bullet', noBullet: true, text: 'd)  CDC/PDC Cheques are not honoured\n' },
+            { level: 1, type: 'dash', text: 'a)  Misrepresentation of information\n', },
+            { level: 1, type: 'dash', text: 'b)  None disclosure of material facts.\n', },
+            { level: 1, type: 'dash', text: 'c)  Premium in not paid as per the premium payment agreed terms or issued \n', style: 'listMargin' },
+            { level: 1, type: 'dash', text: 'd)  CDC/PDC Cheques are not honoured\n' },
         ]
     },
     {
         level: 0, type: 'number', text: 'Errors & Omissions excepted (E & OE): \n ',
         nestedList: [
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'e) You will be informed immediately if such a situation arises.\n', },
+            { level: 1, type: 'dash', text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
+            { level: 1, type: 'dash', text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
+            { level: 1, type: 'dash', text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
+            { level: 1, type: 'dash', text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
+            { level: 1, type: 'dash', text: 'e) You will be informed immediately if such a situation arises.\n', },
         ]
     },
     {
         level: 0, type: 'number', text: 'Exclusions applicable to Death & Repatriation benefit: Death and Repat benefit will not be payable in the event of :- ', nestedList: [
 
-            { level: 1, type: 'bullet', noBullet: true, text: 'a)  Death due to suicide\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'b)  Death due to HIV-AIDS\n', },
-            { level: 1, type: 'bullet', noBullet: true, text: 'c)  Death occurring whilst the member was under the influence of intoxication liquor/drugs\n', },
+            { level: 1, type: 'dash', text: 'a)  Death due to suicide\n', },
+            { level: 1, type: 'dash', text: 'b)  Death due to HIV-AIDS\n', },
+            { level: 1, type: 'dash', text: 'c)  Death occurring whilst the member was under the influence of intoxication liquor/drugs\n', },
         ]
     },
     { level: 0, type: 'number', text: 'Death occurring due to internal breach of law by insured or an assault provoked by him/her' },
@@ -9582,491 +9582,20 @@ export let NUMBERING_CONFIG = {
             },
         },
     ],
+    dynamicDash: [
+        {
+            level: 1,
+            format: LevelFormat.BULLET,
+            text: "", // Dash (—)
+            alignment: AlignmentType.LEFT,
+            style: {
+              paragraph: {
+                indent: { left: convertInchesToTwip(1), hanging: convertInchesToTwip(0.25) },
+              },
+            },
+          }
+    ],
 };
 
 
 
-
-
-
-let input = [
-    {
-        "category_name": "Category A",
-       "data":{
-        "mandatory_benefits": [
-            {
-                "group_details": "Policy Details",
-                "tob_header": "Plan",
-                "tob_value": "Gold"
-            },
-            {
-                "group_details": "Policy Details",
-                "tob_header": "TPA",
-                "tob_value": "Mednet"
-            },
-            {
-                "group_details": "General",
-                "tob_header": "Regulatory Compliance",
-                "tob_value": "DHA"
-            },
-            {
-                "benefits_headers_id": 69109,
-                "benefits_values_id": 194055,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Network ",
-                "benefits_options": "Gold Network",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Network ",
-                "tob_value": "Gold Network",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69110,
-                "benefits_values_id": 194056,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Regulator",
-                "benefits_options": "DHA",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Regulator",
-                "tob_value": "DHA",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69111,
-                "benefits_values_id": 194063,
-                "benefit_value_code": null,
-                "benefit_header_code": "",
-                "benefits_name": "Annual Medical Limit",
-                "benefits_options": "AED 1,000,000",
-                "category_id": 1399,
-                "factor": -4.63,
-                "factor_type": "percentage",
-                "tob_header": "Base Limit ",
-                "tob_value": "AED 1,000,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69112,
-                "benefits_values_id": 194067,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "In-patient and out-patient benefits",
-                "benefits_options": "IP + OP",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "In-patient and out-patient benefits",
-                "tob_value": "IP + OP",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69113,
-                "benefits_values_id": 194068,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Pre-existing and Chronic conditions",
-                "benefits_options": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Pre-existing and Chronic conditions",
-                "tob_value": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-        ],
-        "optional_benefits": [
-            {
-                "group_details": "Policy Details",
-                "tob_header": "Plan",
-                "tob_value": "Gold"
-            },
-            {
-                "group_details": "Policy Details",
-                "tob_header": "TPA",
-                "tob_value": "Mednet"
-            },
-            {
-                "group_details": "General",
-                "tob_header": "Regulatory Compliance",
-                "tob_value": "DHA"
-            },
-            {
-                "benefits_headers_id": 69109,
-                "benefits_values_id": 194055,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Network ",
-                "benefits_options": "Gold Network",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Network ",
-                "tob_value": "Gold Network",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69110,
-                "benefits_values_id": 194056,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Regulator",
-                "benefits_options": "DHA",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Regulator",
-                "tob_value": "DHA",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69111,
-                "benefits_values_id": 194063,
-                "benefit_value_code": null,
-                "benefit_header_code": "",
-                "benefits_name": "Annual Medical Limit",
-                "benefits_options": "AED 1,000,000",
-                "category_id": 1399,
-                "factor": -4.63,
-                "factor_type": "percentage",
-                "tob_header": "Base Limit ",
-                "tob_value": "AED 1,000,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69112,
-                "benefits_values_id": 194067,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "In-patient and out-patient benefits",
-                "benefits_options": "IP + OP",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "In-patient and out-patient benefits",
-                "tob_value": "IP + OP",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69113,
-                "benefits_values_id": 194068,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Pre-existing and Chronic conditions",
-                "benefits_options": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Pre-existing and Chronic conditions",
-                "tob_value": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-        ]
-       }
-    },
-    {
-        "category_name": "Category B",
-       "data":{
-        "mandatory_benefits": [
-            {
-                "group_details": "Policy Details",
-                "tob_header": "Plan",
-                "tob_value": "Gold"
-            },
-            {
-                "group_details": "Policy Details",
-                "tob_header": "TPA",
-                "tob_value": "Mednet"
-            },
-            {
-                "group_details": "General",
-                "tob_header": "Regulatory Compliance",
-                "tob_value": "DHA"
-            },
-            {
-                "benefits_headers_id": 69109,
-                "benefits_values_id": 194055,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Network ",
-                "benefits_options": "Gold Network",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Network ",
-                "tob_value": "Gold Network",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69110,
-                "benefits_values_id": 194056,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Regulator",
-                "benefits_options": "DHA",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Regulator",
-                "tob_value": "DHA",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69111,
-                "benefits_values_id": 194063,
-                "benefit_value_code": null,
-                "benefit_header_code": "",
-                "benefits_name": "Annual Medical Limit",
-                "benefits_options": "AED 1,000,000",
-                "category_id": 1399,
-                "factor": -4.63,
-                "factor_type": "percentage",
-                "tob_header": "Base Limit ",
-                "tob_value": "AED 1,000,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69112,
-                "benefits_values_id": 194067,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "In-patient and out-patient benefits",
-                "benefits_options": "IP + OP",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "In-patient and out-patient benefits",
-                "tob_value": "IP + OP",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69113,
-                "benefits_values_id": 194068,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Pre-existing and Chronic conditions",
-                "benefits_options": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Pre-existing and Chronic conditions",
-                "tob_value": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-        ],
-        "optional_benefits": [
-            {
-                "group_details": "Policy Details",
-                "tob_header": "Plan",
-                "tob_value": "Gold"
-            },
-            {
-                "group_details": "Policy Details",
-                "tob_header": "TPA",
-                "tob_value": "Mednet"
-            },
-            {
-                "group_details": "General",
-                "tob_header": "Regulatory Compliance",
-                "tob_value": "DHA"
-            },
-            {
-                "benefits_headers_id": 69109,
-                "benefits_values_id": 194055,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Network ",
-                "benefits_options": "Gold Network",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Network ",
-                "tob_value": "Gold Network",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69110,
-                "benefits_values_id": 194056,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Regulator",
-                "benefits_options": "DHA",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Regulator",
-                "tob_value": "DHA",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69111,
-                "benefits_values_id": 194063,
-                "benefit_value_code": null,
-                "benefit_header_code": "",
-                "benefits_name": "Annual Medical Limit",
-                "benefits_options": "AED 1,000,000",
-                "category_id": 1399,
-                "factor": -4.63,
-                "factor_type": "percentage",
-                "tob_header": "Base Limit ",
-                "tob_value": "AED 1,000,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 1,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69112,
-                "benefits_values_id": 194067,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "In-patient and out-patient benefits",
-                "benefits_options": "IP + OP",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "In-patient and out-patient benefits",
-                "tob_value": "IP + OP",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-            {
-                "benefits_headers_id": 69113,
-                "benefits_values_id": 194068,
-                "benefit_value_code": "-1",
-                "benefit_header_code": "",
-                "benefits_name": "Pre-existing and Chronic conditions",
-                "benefits_options": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "category_id": 1399,
-                "factor": 0,
-                "factor_type": "percentage",
-                "tob_header": "Pre-existing and Chronic conditions",
-                "tob_value": "Upto AML. AML applies if evidence of continuity of coverage (COC) in UAE is provided; otherwise, the limit will be restricted to AED 150,000",
-                "group_details": "Policy Details",
-                "benefits_type": "Mandatory",
-                "benefit_link": null,
-                "not_applicable_value": null,
-                "applicable_link": null,
-                "is_editable": 0,
-                "copay_dependency_lookup": null
-            },
-        ]
-       }
-    },
-
-]
