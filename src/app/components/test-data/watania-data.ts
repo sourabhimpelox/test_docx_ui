@@ -1,4 +1,4 @@
-let transformedResultResponse={
+export let quoteData={
     "companyDetails": {
         "company_id": 413,
         "company_name": "testnew",
