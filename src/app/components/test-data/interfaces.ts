@@ -101,7 +101,7 @@ export interface BenefitData {
     type: string;
     level: number;
     text: string;
-    noBullet?: boolean;
+    bold?: boolean;
     nestedList?: ListItem[]; // Add nestedList property
   }
   

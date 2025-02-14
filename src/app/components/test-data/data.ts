@@ -5019,7 +5019,7 @@ export let quoteData = {
                         ],
                         "totalPremium": 383791.31,
                         "totalMemberCount": 25,
-                     
+
                         "premium_details": [
                             {
                                 "group_details": "Premium",
@@ -9393,7 +9393,7 @@ export let additionContent = [
 
 // Deletion Clause content
 export let deletionContent = [
-    
+
     "The insured may at any time, upon completing and sending the insurer the relevant request form, to delete Primary insured and their Dependents from the Policy subject to:",
     { ul: [{ level: 0, type: 'bullet', text: "Submission of completed deletion request form, issued by Insurer or other mode acceptable to the insurer" }] },
     "The deletion shall be effective from the date of the receipt of the request for deletion.",
@@ -9427,19 +9427,21 @@ export let firstPageUnList = [
     { level: 0, type: 'bullet', text: 'Electronic (Bank Transfer) Claims settlement within 7 working days.' }
 ]
 // Add the ordered list of notes with alternating background colors
+
+
 export let notesList = [
     { level: 0, type: 'number', text: 'Please note that in case benefits fall below the minimum required by the regulations in UAE or the benefit which is not provided in this TOB and is  required by regulator, then the cover under the policy will automatically increase/include the benefit to the same level as requested by the regulator.' },
     { level: 0, type: 'number', text: 'The quote assumes coverage is compulsory for all employees, residing in UAE on valid Residence Visa. There is no voluntary option exercised by any employee.' },
-    { level: 0, type: 'number', text: 'If dependents are to be covered. it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa' },
+    { level: 0, type: 'number', text: 'If dependents are to be covered. it must be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa' },
     { level: 0, type: 'number', text: 'Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal with individual underwriting. There is no voluntary option exercised by any dependents.' },
     { level: 0, type: 'number', text: 'The Quotation / TOB confirmed by client herewith is subject to the Insurer being informed and advised of any chronic or major illness or any current condition which may develop into major or Critical conditions at the inception of the policy as well as on the addition of any member. Failure to disclose such material facts will prejudice the insured’s position from the Company acceptance of any claims relating to such condition and/ or considering the claim/or policy as void at discretion of NLGIC.' },
     { level: 0, type: 'number', text: 'As per regulatory requirement, we need to upload data in the DOH system within 24 hours from inception/effective date. Therefore, backdating of any policy or endorsements is not allowed. To comply with the regulatory requirements, census list data of the members should be in line with the MOI record as the same will be fetched in DOH system.' },
-    { level: 0, type: 'number', text: 'If dependents are to be covered, it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa. Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal. There is no voluntary option exercised by any dependents.' },
-    { level: 0, type: 'number', text: 'Coverage is subject to annual maximum limit and sub limits per person. Maximum age at entry shall be 65 years of age, cover for members above 65 years of age is subject to medical underwriting and benefits shall be based on the assessment of Medical Application Form and valid employment visa.' },
+    { level: 0, type: 'number', text: 'If dependents are to be covered, it must be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa. Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal. There is no voluntary option exercised by any dependents.' },
+    { level: 0, type: 'number', text: 'Coverage is subject to an annual maximum limit and sub limits per person. The maximum age at entry shall be 65 years of age, cover for members above 65 years of age is subject to medical underwriting and benefits shall be based on the assessment of Medical Application Form and valid employment visa.' },
     { level: 0, type: 'number', text: 'For non-emergency inpatient treatments, at the discretion of the insurer and subject to pre-authorization.' },
     { level: 0, type: 'number', text: 'Treatment for emergency conditions shall not require pre-authorization, but such cases are to be notified to the company within 48 hours of the emergency treatment.' },
-    { level: 0, type: 'number', text: 'Terms and conditions are as per company’s policy wording.' },
-    { level: 0, type: 'number', text: 'National Life & General Insurance Company or its TPA reserves the right to include/exclude/upgrade banding/degrade banding of any network clinic/hospital at any time from the designated provider network list.' },
+    { level: 0, type: 'number', text: 'Terms and conditions are as per the company’s policy wording.' },
+    { level: 0, type: 'number', text: 'National Life & General Insurance Company or its TPA reserves the right to include/exclude/upgrade banding/degrade banding of any network clinic/hospital at any time from the designated provider network list.', bold: true },
 
     { level: 0, type: 'number', text: 'Direct billing shall be provided only at the listed hospital network and the reimbursement at non-designated network providers shall be restricted to reasonable and customary charges of applicable network.' },
     { level: 0, type: 'number', text: 'The Benefits and Network applicable to the policy, which are negotiated and confirmed before communication of the policy shall not be modified/altered under any circumstances during the policy period.' },
@@ -9453,8 +9455,8 @@ export let notesList = [
             { level: 1, type: 'dash', text: 'c)  Member submits Health Declaration form.\n', }
         ]
     },
-    { level: 0, type: 'number', text: 'Quoted terms are subject to National Life and General Insurance Company SAOG being informed of any major chronic and pre-existing condition or major illness or any condition diagnosed to develop into major condition at inception of the policy and at addition of a member subsequent to inception of the policy. Failure to disclose such material facts may result in claim denial or render the contract null and void ab-initio.' },
-    { level: 0, type: 'number', text: "It is the duty of the Master policy holder and the Insured member, on behalf of self and their dependents, to inform insurance company about any existing illness or any diagnosis which would develop into major conditions. This is applicable for all types of enrolments including at inception of the policy as well as during midterm addition /Category changes. Failure to disclose such material facts will prejudice the insured's position from the Company's acceptance of any claims relating to such conditions." },
+    { level: 0, type: 'number', text: 'Quoted terms are subject to National Life and General Insurance Company SAOG being informed of any major chronic and pre-existing condition or major illness or any condition diagnosed to develop into major condition at inception of the policy and at addition of a member after inception of the policy. Failure to disclose such material facts may result in claim denial or render the contract null and void ab-initio.' },
+    { level: 0, type: 'number', text: "It is the duty of the Master policy holder and the Insured member, on behalf of self and their dependents, to inform the insurance company about any existing illness or any diagnosis which would develop into major conditions. This is applicable for all types of enrolments including at inception of the policy as well as during midterm addition /Category changes. Failure to disclose such material facts will prejudice the insured's position from the Company's acceptance of any claims relating to such conditions." },
     { level: 0, type: 'number', text: 'As per Dubai Health Authority (DHA) circular SN 04/2019, all member records need to be validated through Dubai Health Care Post Office (DHPO) e-Claims link before issuing the policy. DHA will validate member details with General Directorate of Residency and Foreigners Affairs (GDRFA) Dubai records using Date of Birth, Nationality, Gender and Reference ID (Visa File number for expats, Passport number for diplomats and GCC Nationals, Emirates ID for UAE Nationals and Birth certificate for new born (born in UAE)). This change is applicable for all transactions processed after 1st October 2019.' },
     { level: 0, type: 'number', text: 'Additions will be processed from reported date only. Backdating effective date is not allowed. (DHA circular Reference 5 of 2017 (GC 05/2017), All the late enrolment will require individual medical underwriting. All additions of members during the policy will have to declare all pre-existing conditions in relation to above listed conditions. Visa and passport copy is mandatory for all the additions. Member with known medical history to be notified during the addition stage, such member will be added subject to underwriting.' },
     { level: 0, type: 'number', text: 'The policyholder must report one of the following dates for the Deletion of members as a deletion effective date, based on whichever occurs first - 30 days from visa cancellation date, exit date from UAE or visa transfer date. Backdated deletion is not allowed.' },
@@ -9475,21 +9477,21 @@ export let notesList = [
         nestedList: [
 
             { level: 1, type: 'dash', text: 'a)  Misrepresentation of information\n', },
-            { level: 1, type: 'dash', text: 'b)  None disclosure of material facts.\n', },
+            { level: 1, type: 'dash', text: 'b)  No disclosure of material facts.\n', },
             { level: 1, type: 'dash', text: 'c)  Premium in not paid as per the premium payment agreed terms or issued \n', style: 'listMargin' },
             { level: 1, type: 'dash', text: 'd)  CDC/PDC Cheques are not honoured\n' },
         ]
     },
-    {
-        level: 0, type: 'number', text: 'Errors & Omissions excepted (E & OE): \n ',
-        nestedList: [
-            { level: 1, type: 'dash', text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
-            { level: 1, type: 'dash', text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
-            { level: 1, type: 'dash', text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
-            { level: 1, type: 'dash', text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
-            { level: 1, type: 'dash', text: 'e) You will be informed immediately if such a situation arises.\n', },
-        ]
-    },
+    // {
+    //     level: 0, type: 'number', text: 'Errors & Omissions excepted (E & OE): \n ',
+    //     nestedList: [
+    //         { level: 1, type: 'dash', text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
+    //         { level: 1, type: 'dash', text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
+    //         { level: 1, type: 'dash', text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
+    //         { level: 1, type: 'dash', text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
+    //         { level: 1, type: 'dash', text: 'e) You will be informed immediately if such a situation arises.\n', },
+    //     ]
+    // },
     {
         level: 0, type: 'number', text: 'Exclusions applicable to Death & Repatriation benefit: Death and Repat benefit will not be payable in the event of :- ', nestedList: [
 
@@ -9532,6 +9534,14 @@ export let abuDhabiDocumentsPolicy = [
     { level: 0, type: 'bullet', text: 'Updated members list in excel sheet format including mandatory data required by HAAD.' },
 ];
 
+
+// under writing criterias 
+
+export let underWritingCriterias = [
+    { level: 0, type: 'bullet', text: '3 Employees (15 minimum members) and a maximum 150 lives.' },
+    { level: 0, type: 'bullet', text: 'Group Health declaration (GHD) is required (format attached)' },
+    { level: 0, type: 'bullet', text: 'Individual Medical Application Form (MAF) is required for all members above 65+ years of age for underwriting' }
+]
 
 export let NUMBERING_CONFIG = {
     dynamicNumbering: [
@@ -9589,13 +9599,86 @@ export let NUMBERING_CONFIG = {
             text: "", // Dash (—)
             alignment: AlignmentType.LEFT,
             style: {
-              paragraph: {
-                indent: { left: convertInchesToTwip(1), hanging: convertInchesToTwip(0.25) },
-              },
+                paragraph: {
+                    indent: { left: convertInchesToTwip(1), hanging: convertInchesToTwip(0.25) },
+                },
             },
-          }
+        }
     ],
 };
 
 
 
+// export let notesList = [
+//     { level: 0, type: 'number', text: 'Please note that in case benefits fall below the minimum required by the regulations in UAE or the benefit which is not provided in this TOB and is  required by regulator, then the cover under the policy will automatically increase/include the benefit to the same level as requested by the regulator.' },
+//     { level: 0, type: 'number', text: 'The quote assumes coverage is compulsory for all employees, residing in UAE on valid Residence Visa. There is no voluntary option exercised by any employee.' },
+//     { level: 0, type: 'number', text: 'If dependents are to be covered. it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa' },
+//     { level: 0, type: 'number', text: 'Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal with individual underwriting. There is no voluntary option exercised by any dependents.' },
+//     { level: 0, type: 'number', text: 'The Quotation / TOB confirmed by client herewith is subject to the Insurer being informed and advised of any chronic or major illness or any current condition which may develop into major or Critical conditions at the inception of the policy as well as on the addition of any member. Failure to disclose such material facts will prejudice the insured’s position from the Company acceptance of any claims relating to such condition and/ or considering the claim/or policy as void at discretion of NLGIC.' },
+//     { level: 0, type: 'number', text: 'As per regulatory requirement, we need to upload data in the DOH system within 24 hours from inception/effective date. Therefore, backdating of any policy or endorsements is not allowed. To comply with the regulatory requirements, census list data of the members should be in line with the MOI record as the same will be fetched in DOH system.' },
+//     { level: 0, type: 'number', text: 'If dependents are to be covered, it has to be on compulsory basis within the group/sub-group for all employees dependent (spouse & children) residing in UAE on valid Residence Visa. Dependents insured elsewhere during eligibility start date and late entrants (dependents reported after reporting timelines) will be allowed to join the scheme only during policy renewal. There is no voluntary option exercised by any dependents.' },
+//     { level: 0, type: 'number', text: 'Coverage is subject to annual maximum limit and sub limits per person. Maximum age at entry shall be 65 years of age, cover for members above 65 years of age is subject to medical underwriting and benefits shall be based on the assessment of Medical Application Form and valid employment visa.' },
+//     { level: 0, type: 'number', text: 'For non-emergency inpatient treatments, at the discretion of the insurer and subject to pre-authorization.' },
+//     { level: 0, type: 'number', text: 'Treatment for emergency conditions shall not require pre-authorization, but such cases are to be notified to the company within 48 hours of the emergency treatment.' },
+//     { level: 0, type: 'number', text: 'Terms and conditions are as per company’s policy wording.' },
+//     { level: 0, type: 'number', text: 'National Life & General Insurance Company or its TPA reserves the right to include/exclude/upgrade banding/degrade banding of any network clinic/hospital at any time from the designated provider network list.', bold: true },
+
+//     { level: 0, type: 'number', text: 'Direct billing shall be provided only at the listed hospital network and the reimbursement at non-designated network providers shall be restricted to reasonable and customary charges of applicable network.' },
+//     { level: 0, type: 'number', text: 'The Benefits and Network applicable to the policy, which are negotiated and confirmed before communication of the policy shall not be modified/altered under any circumstances during the policy period.' },
+//     { level: 0, type: 'number', text: 'VAT (Value Added Tax) computed on Gross Premium at the rate stipulated as per the applicable VAT laws and regulations applicable at the time of inception of the policy shall be fully borne by the Insured. The VAT amount as per the tax invoice issued becomes payable and shall be collected in full immediately, irrespective of the agreed payment terms for the underlying premium.' },
+//     { level: 0, type: 'number', text: 'All ongoing major health condition needs to be declared including maternity during all types of endorsements.' },
+//     {
+//         level: 0, type: 'number', text: 'For All Card Upgrade requests, the following conditions need to be fulfilled:\n ',
+//         nestedList: [
+//             { level: 1, type: 'dash', text: 'a)  Promotion of the Member (and eligible for a higher category post promotion).\n' },
+//             { level: 1, type: 'dash', text: 'b)  Member is employed with the Company for a minimum of 1 (one) Year.\n' },
+//             { level: 1, type: 'dash', text: 'c)  Member submits Health Declaration form.\n', }
+//         ]
+//     },
+//     { level: 0, type: 'number', text: 'Quoted terms are subject to National Life and General Insurance Company SAOG being informed of any major chronic and pre-existing condition or major illness or any condition diagnosed to develop into major condition at inception of the policy and at addition of a member subsequent to inception of the policy. Failure to disclose such material facts may result in claim denial or render the contract null and void ab-initio.' },
+//     { level: 0, type: 'number', text: "It is the duty of the Master policy holder and the Insured member, on behalf of self and their dependents, to inform insurance company about any existing illness or any diagnosis which would develop into major conditions. This is applicable for all types of enrolments including at inception of the policy as well as during midterm addition /Category changes. Failure to disclose such material facts will prejudice the insured's position from the Company's acceptance of any claims relating to such conditions." },
+//     { level: 0, type: 'number', text: 'As per Dubai Health Authority (DHA) circular SN 04/2019, all member records need to be validated through Dubai Health Care Post Office (DHPO) e-Claims link before issuing the policy. DHA will validate member details with General Directorate of Residency and Foreigners Affairs (GDRFA) Dubai records using Date of Birth, Nationality, Gender and Reference ID (Visa File number for expats, Passport number for diplomats and GCC Nationals, Emirates ID for UAE Nationals and Birth certificate for new born (born in UAE)). This change is applicable for all transactions processed after 1st October 2019.' },
+//     { level: 0, type: 'number', text: 'Additions will be processed from reported date only. Backdating effective date is not allowed. (DHA circular Reference 5 of 2017 (GC 05/2017), All the late enrolment will require individual medical underwriting. All additions of members during the policy will have to declare all pre-existing conditions in relation to above listed conditions. Visa and passport copy is mandatory for all the additions. Member with known medical history to be notified during the addition stage, such member will be added subject to underwriting.' },
+//     { level: 0, type: 'number', text: 'The policyholder must report one of the following dates for the Deletion of members as a deletion effective date, based on whichever occurs first - 30 days from visa cancellation date, exit date from UAE or visa transfer date. Backdated deletion is not allowed.' },
+//     {
+//         level: 0, type: 'number', text:
+//             'For HAAD compliant policies: For the sake of “Continuity of Cover” New and Renewal confirmations can be backdated to the anniversary date if: \n ',
+//         nestedList: [
+//             { level: 1, type: 'dash', text: 'a) The date of confirmation falls within the 30 days grace period provided by HAAD and \n' },
+//             { level: 1, type: 'dash', text: 'b) The policy start date does not fall before NLGIC initial quotation date.\n', },
+//             { level: 1, type: 'dash', text: 'c)  For all new business HAAD COC must specify last date of cover with the previous insurer.\n' }]
+
+//     },
+//     { level: 0, type: 'number', text: 'The brokers, involved in Abu Dhabi territory-based groups, should be registered and approved from Health Authority of Abu Dhabi (HAAD).' },
+//     { level: 0, type: 'number', text: 'In an event, where the total number of members deleted during the policy period is more than 20% of the total number of members at inception and mid-term additions put together, the Insurer reserve the right to revise the deletion clause to "NIL refund" for future deletions' },
+//     {
+//         level: 0, type: 'number',
+//         text: 'NLGIC have the right to cancel the policy with immediate effect if; \n ',
+//         nestedList: [
+
+//             { level: 1, type: 'dash', text: 'a)  Misrepresentation of information\n', },
+//             { level: 1, type: 'dash', text: 'b)  None disclosure of material facts.\n', },
+//             { level: 1, type: 'dash', text: 'c)  Premium in not paid as per the premium payment agreed terms or issued \n', style: 'listMargin' },
+//             { level: 1, type: 'dash', text: 'd)  CDC/PDC Cheques are not honoured\n' },
+//         ]
+//     },
+//     {
+//         level: 0, type: 'number', text: 'Errors & Omissions excepted (E & OE): \n ',
+//         nestedList: [
+//             { level: 1, type: 'dash', text: 'a)  We make every effort to make sure that the information in this document is accurate and up to date, based on the information given to us.\n', },
+//             { level: 1, type: 'dash', text: 'b)  We will promptly correct any errors brought to our attention. If you find an error, please contact us.\n', },
+//             { level: 1, type: 'dash', text: 'c)  We cannot accept responsibility for the supply of incorrect information, copied within this document.\n', },
+//             { level: 1, type: 'dash', text: 'd) We reserve the right to withdraw this quotation and its acceptance at any point and for any reason.\n', },
+//             { level: 1, type: 'dash', text: 'e) You will be informed immediately if such a situation arises.\n', },
+//         ]
+//     },
+//     {
+//         level: 0, type: 'number', text: 'Exclusions applicable to Death & Repatriation benefit: Death and Repat benefit will not be payable in the event of :- ', nestedList: [
+
+//             { level: 1, type: 'dash', text: 'a)  Death due to suicide\n', },
+//             { level: 1, type: 'dash', text: 'b)  Death due to HIV-AIDS\n', },
+//             { level: 1, type: 'dash', text: 'c)  Death occurring whilst the member was under the influence of intoxication liquor/drugs\n', },
+//         ]
+//     },
+//     { level: 0, type: 'number', text: 'Death occurring due to internal breach of law by insured or an assault provoked by him/her' },
+// ]
