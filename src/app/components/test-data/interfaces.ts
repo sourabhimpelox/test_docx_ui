@@ -63,6 +63,8 @@ export interface CellOptions {
   };
   borderColor?:string
   marginRight?:number
+  height?: number
+  borderStyle?:string
 }
 
 export interface TextLineOptions {

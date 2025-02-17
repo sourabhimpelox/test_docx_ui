@@ -4,8 +4,8 @@ import { saveAs } from "file-saver";
 
 import { AlignmentType, Document, ImageRun, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, Header, Footer, SimpleField, BorderStyle, VerticalAlign, SectionType, PageBreak, TableLayoutType, Alignment, PageOrientation, LevelFormat, PageSize, HeadingLevel } from 'docx';
 
-import {quoteData, CRN, basicTableData, termsAndConditions, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2, NUMBERING_CONFIG } from './medgulfdata';
-// import { quoteData } from "./watania-data"
+import { CRN, basicTableData, acceptanceAndAcknowledgment, NameAndSignature, policyInsuranceRequirement1, policyInsuranceRequirement2, NUMBERING_CONFIG } from './medgulfdata';
+import { quoteData, termsAndConditions, conntribution } from "./watania-data"
 import { pdfImages } from './images';
 import { pdfImages as pdfImages1 } from "./nlgi-pdf-images"
 
@@ -123,7 +123,7 @@ export class TestDataComponent implements OnInit {
         // Always Render AgeBandTable4
         let ageBandTable = this.AgeBandTable4(data, data.premium, data.totalMemberCount);
 
-        categorySections.push({ benefitsTable,mafTable, ageBandTable });
+        categorySections.push({ benefitsTable, mafTable, ageBandTable });
 
       } catch (error) {
         console.error(`❌ Error processing category: ${category.category_name}`, error);
@@ -283,42 +283,7 @@ export class TestDataComponent implements OnInit {
       }
     }).flat();  // Flatten the nested array
   }
-  categoriesWithDetails(data: any[], quotes: any[], categoryKey = 'category') {
-    const categoryCounts: Record<string, number> = data.reduce((acc: Record<string, number>, item: any) => {
-      const category = item[categoryKey];
-      if (category) {
-        acc[category] = (acc[category] || 0) + 1;
-      }
-      return acc;
-    }, {});
 
-    this.totalCategoryCount = Object.values(categoryCounts).reduce((sum, count) => sum + count, 0);
-
-    // Map the category counts and add details from quotes
-    return Object.entries(categoryCounts).map(([categoryName, count]) => {
-      categoryName = categoryName
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-
-      const matchingQuote = quotes.find(
-        (quote: any) => {
-          return quote.category_name === categoryName;
-        }
-      );
-
-      // Extract the "Total Premium" tob_value
-      const totalPremiumValue = matchingQuote?.data.premium_details.find(
-        (detail: any) => detail.tob_header === "Total Premium"
-      )?.tob_value || null;
-
-      return {
-        categoryName: categoryName,
-        members: count,
-        option: totalPremiumValue, // Use the extracted value
-      };
-    });
-  }
 
   //****************************************************************** */
   // age band table data 
@@ -338,6 +303,15 @@ export class TestDataComponent implements OnInit {
     });
   }
   //****************************************************************** */
+  // premium table data 
+  PremiumTableData = (quoteData: any[]) => {
+    return quoteData.map((category: any) => ({
+      category_name: category.category_name,
+      premium_details: category.data?.premium_details || category.premium_details || [],
+    }));
+  };
+  //****************************************************************** */
+
   //  to add commas in number 
   formatNumber(value: any) {
     return value.toLocaleString('en-US', {
@@ -448,7 +422,9 @@ export class TestDataComponent implements OnInit {
       alignment = AlignmentType.LEFT,
       rowSpan,
       colSpan,
-      width
+      width,
+      height,
+      borderStyle = "single",
     } = options;
 
     // Split the text into segments while keeping the original line breaks
@@ -491,7 +467,7 @@ export class TestDataComponent implements OnInit {
         fill: fillColor,
       },
       width,
-      borders: this.defaultBorders(10, "single"), // Default borders
+      borders: this.defaultBorders(10, borderStyle), 
       margins: { left: 20, top: 10, right: 20 },
     });
   }
@@ -628,130 +604,9 @@ export class TestDataComponent implements OnInit {
     });
   }
 
-  // Custome footer for other pages
-  customFooter(text1: string, text2: string, text3: string, size: number, color: string): Footer {
-    return new Footer({
-      children: [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({
-              text: text1,
-              font: "Calibri",
-              color,
-              size
-            }),
-          ],
-        }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({
-              text: text2,
-              size, color,
-              font: "Calibri",
 
-            }),
-          ],
-        }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({
-              text: text3,
-              size, color,
-              font: "Calibri",
-            }),
-          ],
-        }),
-      ],
-    });
-  }
   //****************************************************************** */
-  // category member table 
-  createRow2 = (categoryName: string, members: number, option: string) =>
-    new TableRow({
-      children: [
-        this.CommonCell(categoryName, { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
-        this.CommonCell(String(members), { fontSize: 9, bold: false, width: { size: 33, type: "pct" } }),
-        this.CommonCell(option, { fontSize: 9, bold: false, width: { size: 34, type: "pct" } }),
-      ],
-    });
 
-
-  categoriesDetailTable(categoryData: { categoryName: string; members: number; option: string }[], quoteData: any) {
-    const categoryMemberTableRows = [
-      ...categoryData
-        .sort((a, b) => {
-          // Compare category names in alphabetical order
-          if (a.categoryName < b.categoryName) return -1;
-          if (a.categoryName > b.categoryName) return 1;
-          return 0;
-        })
-        .map(({ categoryName, members, option }) =>
-          this.createRow2(categoryName, members, option)
-        ),
-      // Add the "Total" row
-      new TableRow({
-        children: [
-          this.CommonCell('Total', { fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-          this.CommonCell(String(this.totalCategoryCount), { fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-          this.CommonCell(
-            `${quoteData.quotes[0].currency} ${quoteData.quotes[0].option_premium}`,
-            { fontSize: 9, bold: true, width: { size: 34, type: 'pct' } }
-          ),
-        ],
-      }),
-    ];
-
-    return new Table({
-      rows: [
-        // Header row
-        new TableRow({
-          children: [
-            this.CommonCell('Categories', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-            this.CommonCell('Members', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 33, type: 'pct' } }),
-            this.CommonCell('Option 1', { color: '#AC0233', fillColor: '#d5d5d5', fontSize: 9, bold: true, width: { size: 34, type: 'pct' } }),
-          ],
-        }),
-        // Dynamically created rows including the "Total" row
-        ...categoryMemberTableRows,
-      ],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    });
-  }
-  //****************************************************************** */
-  // quote summary row 
-  createSummaryTable(quote: any): Table {
-    return new Table({
-      rows: [
-        new TableRow({
-          children: [
-            this.CommonCell("Quote 1", { fontSize: 11, color: "#AC0233", bold: true, width: { size: 33, type: "pct" } }), // First column
-            this.CommonCell(
-              `${(quote.quote_type[0].toUpperCase()) + ((quote.quote_type).slice(1))} Quote${quote.risk_type.toLowerCase() === "no" ? "" : ` & ${(quote.risk_type).toUpperCase()}`}`,
-              {
-                fontSize: 11,
-                bold: true,
-                color: "#AC0233",
-                width: { size: 34, type: "pct" }
-              }
-            ),
-            this.CommonCell(`${quote.currency} ${this.formatNumber(quote.option_premium)}`, { fontSize: 11, bold: true, color: "#AC0233", width: { size: 33, type: "pct" } }), // Third column
-          ],
-        }),
-      ],
-      layout: TableLayoutType.FIXED,
-      width: {
-        size: 100,
-        type: WidthType.PERCENTAGE,
-      },
-    });
-  }
   AgeBandTable1(category: any) {
 
     const pageBreak = new Paragraph({
@@ -1448,19 +1303,79 @@ export class TestDataComponent implements OnInit {
     return [headerRow, ...dataRows];
   };
 
+  lastTable = () => {
+    return new Table({
+      rows: [
+        new TableRow({
+          children: [
+            this.CommonCell("For and on Behalf of the Insurance Company", { bold: true, alignment: AlignmentType.CENTER }),
+            this.CommonCell("For and on Behalf of the Group", { bold: true, alignment: AlignmentType.CENTER }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            this.CommonCell("", { bold: true, alignment: AlignmentType.CENTER, rowSpan: 5,  }),
+            this.CommonCell("", { bold: true, alignment: AlignmentType.CENTER, rowSpan: 5 }),
+          ],
+        }),
+      ],
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+    });
+  }
 
+  lastTable2 = () => {
+    return new Table({
+      rows: [
+        new TableRow({
+          children: [
+            this.CommonCell(""),
+            this.CommonCell(""),
+          ],
+        }),
+        new TableRow({
+          children: [
+            this.CommonCell("Date", { bold: true, alignment: AlignmentType.CENTER }),
+            this.CommonCell("Date", { bold: true, alignment: AlignmentType.CENTER }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            this.CommonCell(""),
+            this.CommonCell(""),
+          ],
+        }),
+      ],
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+    });
+  }
 
-
+  contributionTable = () => {
+    return new Table({
+      rows: [
+        new TableRow({
+          children: [
+            this.CommonCell(conntribution.key, {borderStyle:"none"}),
+            this.CommonCell(conntribution.value, {borderStyle:"none"})
+          ],
+        })
+      ],
+      layout: TableLayoutType.FIXED,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE,
+      },
+    });
+  }
 
   async generateDocument(quoteData: any) {
-
-
-    // category member table 
-    let categoryData = this.categoriesWithDetails(quoteData.allCensusData, quoteData.quotes[0].data, 'category');
-    let categoriesDetailsTable = this.categoriesDetailTable(categoryData, quoteData)
-
-    // quote summary row 
-    const summaryTable = this.createSummaryTable(quoteData.quotes[0]);
 
     // Category and Benifits table
     let categoryBenefitsTable = await this.generateDynamicBenefitsTable(quoteData.quotes[0].data)
@@ -1501,9 +1416,14 @@ export class TestDataComponent implements OnInit {
       return content;
     });
 
+    // category and Premium table 
+    let extractedData = this.PremiumTableData(quoteData.quotes[0].data);
+    const premiumTableRows2 = this.createPremiumTableRows(extractedData, "#365d7c", "#B7B5CF");
 
-
-
+    let lastTable = this.lastTable();
+    let lastTable2 = this.lastTable2();
+    const termsConditions = this.createList(termsAndConditions)
+    let contributionTable = this.contributionTable();
 
     // Create the Word document
     const doc = new Document({
@@ -1514,26 +1434,41 @@ export class TestDataComponent implements OnInit {
         ],
       },
       sections: [
-
-        // {
-        //   children: [
-        //     summaryTable,
-        //     this.tableTitle("Categories & Benefits", 26, '#AC0233'),
-        //     ...categoryBenefitsTable
-
-        //   ]
-        // },
         {
           children: [
             ...categoryBenefitsTable.flatMap(({ benefitsTable, ageBandTable }) => [
               benefitsTable,
               ageBandTable
-            ]).flat()
+            ]).flat(),
+            this.tableTitle("Premium Summary", 26, '#AC0233'),
+            new Table({
+              rows: premiumTableRows2,
+              layout: TableLayoutType.FIXED,
+              width: {
+                size: 100,
+                type: WidthType.PERCENTAGE,
+              },
+            }),
           ]
         },
         {
           children: [
-            ...ageBandTables.flat(),
+            lastTable,
+            this.spaceParagraph,
+            lastTable2
+          ]
+        },
+        {
+          children: [
+            this.pageTitle("Terms and Conditions", 57, "00587C"),
+            this.tableTitle("Please note that this quotation is subject to the following terms and conditions:"),
+            ...termsConditions,
+
+          ],
+        },
+        {
+          children: [
+            contributionTable
           ]
         },
       ],

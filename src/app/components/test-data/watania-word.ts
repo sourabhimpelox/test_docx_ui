@@ -1528,7 +1528,8 @@ export class TestDataComponent implements OnInit {
             ...categoryBenefitsTable.flatMap(({ benefitsTable, ageBandTable }) => [
               benefitsTable,
               ageBandTable
-            ]).flat()
+            ]).flat(),
+            
           ]
         },
         {

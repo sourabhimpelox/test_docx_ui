@@ -1,4 +1,4 @@
-export let quoteData={
+export let quoteData = {
     "companyDetails": {
         "company_id": 413,
         "company_name": "testnew",
@@ -23232,4 +23232,45 @@ export let quoteData={
             ]
         }
     ]
+}
+
+export let termsAndConditions = [
+    { level: 0, type: 'number', text: 'Premium Payment Mode: Annual in advance.' },
+    {
+        level: 0, type: 'number', text: 'The offer provided is on a compulsory basis for all employees and their eligible dependents (spouse and children). In case there are any selection criteria, please specify for underwriting review and decision.',
+    },
+    { level: 0, type: 'number', text: 'All employees should be actively at work at the time of enrolment to the policy and holding a UAE valid residence visa.' },
+    {
+        level: 0, type: 'number', text: 'The Insured must inform the joining of new members or deletions of members to the insurer as per the regulatory timelines for enrolment under this policy.',
+    },
+    { level: 0, type: 'number', text: 'The following professions are excluded from online quotation issuance and must be referred to the underwriting for special acceptance: ' },
+    {
+        level: 0, type: 'number', text: 'Medical providers, Third Party Administrator (TPA), Insurance Brokerage, Transportation, Client based outside of UAE, Educational Institutions, Aviation and Cabin Crew, Existing clients of Watania Takaful.',
+    },
+    {
+        level: 0, type: 'number', text: 'Members aged above 65 years are required to fill Individual Medical Application form (MAF) for underwriters’ review and pricing.',
+    },
+    {
+        level: 0, type: 'number', text: 'Critical Illness form is mandatory for all SME High End plans.',
+    },
+    {
+        level: 0, type: 'number', text: 'Eligibility criteria for group size is minimum 11 employees and maximum 150 members for SME High End plans.',
+    },
+    {
+        level: 0, type: 'number', text: 'Eligibility criteria for group size is minimum 11 employees and maximum 1000 members for SME ECO plans, however DHA/claims report preferred to be provided for group size above 250 members (especially for enhanced plans).'
+    },
+    { level: 0, type: 'number', text: 'The insurer reserves the right to update the network on an as and when basis.' },
+    {
+        level: 0, type: 'number', text: 'All additions and deletions will be done on a pro-rate basis.',
+    },
+    { level: 0, type: 'number', text: 'Please refer to the Policy Wording and policy Schedule for full Benefit details and coverage definitions.' },
+    {
+        level: 0, type: 'number', text: 'This quotation is valid for 30 days from the date of its issuance.',
+    },
+];
+
+export let conntribution ={
+    key :"CONTRIBUTION PAYMENT",
+    value :"Full contribution to be paid in advance directly by the client in the name of Watania Takaful Family P.J.S.C.\r\n\r\nNote: The insured shall accept and agree to pay any taxes on this Policy, in compliance with the laws and regulations applicable in the territory of sale, including but not limited to value added tax (“VAT”), which are due on the Policy, within fifteen working days from the date of request to pay by Watania Takaful Family P.J.S.C. Watania Takaful Family P.J.S.C. will contact the insured in the event if VAT is applicable on the Policy. Failure to pay any applicable taxes may result in the Policy being rendered null and void or cancelled at the insurer’s discretion."
+    
 }
