@@ -1,7 +1,6 @@
 
 import { Document, Packer, Paragraph, LevelFormat, AlignmentType, convertInchesToTwip } from 'docx';
 // nlgi 
-let abcdef=[]
 export let quoteData = {
     "companyDetails": {
         "company_id": 172,
